@@ -218,35 +218,7 @@ const calculateDistance = (
   return Math.max(diffX, diffY);
 };
 
-const noMove = new Set(["wall", "void", "door-closed", "door-locked"]);
-
-function BoardRow(room: Room, rowNum: number, player: Player, setPlayer: any) {
-  return (
-    <div key={rowNum} className="flex-container">
-      {Array(room.width)
-        .fill("")
-        .map((_val, ind) => {
-          const tileLoc = { x: ind, y: rowNum };
-          const tile = room.getTile(tileLoc);
-          const distance = calculateDistance(player, tileLoc) * room.cellSize;
-          const close = distance <= player.vision;
-          const move = !noMove.has(tile.type) && distance <= player.speed;
-          return (
-            <div className="flex-item">
-              <div
-                className={`Tile ${tile.type} ${close ? "close" : ""} ${
-                  move ? "move" : ""
-                }`}
-                onClick={() => tile.clickHandler(player, setPlayer, room)}
-              >
-                <div className="label">{tile.getLabel(player)}</div>
-              </div>
-            </div>
-          );
-        })}
-    </div>
-  );
-}
+const noMove = new Set(["wall", "void", "door-closed", "door-locked", "player"]);
 
 const getGlobalBounds = (rooms: Record<string, Room>): Bounds => {
   return Object.keys(rooms).reduce(
@@ -354,12 +326,18 @@ const getRoom = (
 ): Room | undefined => {
   return Object.values(rooms).find((room) => {
     const bounds = room.getBounds();
-    return (
+    if (
       loc.x >= bounds.x.min &&
       loc.x <= bounds.x.max &&
       loc.y >= bounds.y.min &&
       loc.y <= bounds.y.max
-    );
+    ) {
+      const tile = room.getTile(loc);
+      if (tile && tile.type !== 'void') {
+        return true;
+      }
+    }
+    return false;
   });
 };
 
@@ -396,7 +374,7 @@ function Board() {
       // prettier-ignore
       ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WALL","    ","    ","    ","    ","WALL","WALL","WALL","WALL","DOBF","WALL","WALL","WALL","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
       ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
@@ -475,14 +453,40 @@ function Board() {
       ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL",],
     ],
   } as RoomProps);
-  const rooms = { A: roomA, B: roomB, C: roomC, D: roomD, E: roomE };
+  const roomF = new Room({
+    name: "F",
+    cellSize: 5,
+    grid: [
+      // prettier-ignore
+      ["WALL","WALL","WALL","WALL","DOBF","WALL","WALL","WALL","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL"],
+    ],
+  } as RoomProps);
+  const rooms = { A: roomA, B: roomB, C: roomC, D: roomD, E: roomE, F: roomF };
   const board = roomsToBoard(rooms);
   console.log(board);
   return (
     <div>
       {board.map((row, y) => (
         <div key={y} className="flex-container">
-          {row.map((cell, x) => {
+          {row.map((_cell, x) => {
             const tileLoc = { x, y };
             const room = getRoom(rooms, tileLoc);
             if (!room) {
@@ -513,14 +517,6 @@ function Board() {
       ))}
     </div>
   );
-
-  // return (
-  //   <div>
-  //     {Array(roomB.height)
-  //       .fill("")
-  //       .map((_val, ind) => BoardRow(roomB, ind, player, setPlayer))}
-  //   </div>
-  // );
 }
 
 export default Board;
