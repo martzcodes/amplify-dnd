@@ -1,0 +1,74 @@
+.flex-container {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-flow: row;
+    justify-content: space-around;
+
+    line-height:30px;
+}
+.flex-item {
+    margin: 0px;
+    color: white;
+    font-weight: bold;
+    font-size: 1.5em;
+    text-align: center;
+    flex: 1 0 auto;
+    height:auto;
+    border: 1px solid black;
+}
+.flex-item:before {
+    content:'';
+    float:left;
+    padding-top:100%;
+}
+
+.Tile {
+    height: 100%;
+    width: 100%;
+    opacity: 0.5;
+}
+
+.normal {
+    background: white;
+    color: black;
+}
+
+.player {
+    background: blue;
+}
+
+.wall {
+    background: black;
+}
+.void {
+    background: black;
+}
+
+.door-open {
+    background: yellow;
+}
+.door-closed {
+    background: orange;
+}
+
+.door-locked {
+    background: red;
+}
+
+.close {
+    opacity: 1;
+}
+
+.move {
+    background: green;
+}
+
+.label {
+    width: 5px;
+}
