@@ -1,3 +1,4 @@
+import { promises } from "dns";
 import { useState } from "react";
 import "./Board.css";
 import { Location } from "./models/Location";
@@ -41,18 +42,11 @@ class Tile implements TileProps {
     Object.assign(this, tileProps);
   }
 
-  clickHandler(player: PlayerProps, setPlayer: any, room: Room) {
+  clickHandler(player: Player, setPlayer: any, room: Room) {
     const loc = this.location;
-    if (!noMove.has(this.type)) {
-      const dist = calculateDistance({ x: loc.x, y: loc.y }, { ...player });
-      if (dist * room.cellSize > player.speed) {
-        console.log(`${dist} is beyond player speed ${player.speed}`);
-      } else {
-        setPlayer({ ...player, x: loc.x, y: loc.y });
-        console.log(`Click at ${loc.x}, ${loc.y}`);
-      }
-    } else {
-      console.log(`can't move into wall`);
+    if (player.movement.has(hashLocation(loc))) {
+      setPlayer({ ...player, location: { x: loc.x, y: loc.y } });
+      console.log(`Click at ${loc.x}, ${loc.y}`);
     }
   }
 
@@ -66,7 +60,7 @@ class Tile implements TileProps {
         return `${
           calculateDistance(
             { x: this.location.x, y: this.location.y },
-            { ...player }
+            { ...player.location }
           ) * this.size
         }`;
       default:
@@ -194,15 +188,16 @@ class Room implements RoomProps {
 }
 
 interface PlayerProps {
-  x: number;
-  y: number;
+  location: Location;
   speed: number;
   vision: number;
 }
 
 class Player implements PlayerProps {
-  x: number = 0;
-  y: number = 0;
+  location: Location = {
+    x: 0,
+    y: 0,
+  };
   speed: number = 0;
   vision: number = 0;
   rooms: Record<string, Room> = {};
@@ -214,11 +209,58 @@ class Player implements PlayerProps {
     Object.assign(this, playerProps);
   }
 
-  addRooms(rooms: Record<string, Room>) {
+  async addRooms(rooms: Record<string, Room>) {
     this.rooms = rooms;
-    this.movement = new Set([]);
+    this.movement = new Set([hashLocation(this.location)]);
     this.visible = new Set([]);
-    this.revealed = new Set([]);
+    this.recrusiveMovement(this.location, 0, {
+      [hashLocation(this.location)]: 0,
+    });
+    console.log(this.movement);
+  }
+
+  async recrusiveMovement(
+    loc: Location,
+    current: number,
+    cost: Record<string, number>
+  ): Promise<void> {
+    const directions = [
+      { x: -1, y: -1 },
+      { x: -1, y: 0 },
+      { x: -1, y: 1 },
+      { x: 0, y: -1 },
+      { x: 0, y: 1 },
+      { x: 1, y: -1 },
+      { x: 1, y: 0 },
+      { x: 1, y: 1 },
+    ];
+    const promises = directions.map((move, moveInd) => {
+      const nextLoc: Location = {
+        x: loc.x + move.x,
+        y: loc.y + move.y,
+      };
+      const hashedLoc = hashLocation(nextLoc);
+      if (hashedLoc in cost && current >= cost[hashedLoc]) {
+        console.log(`already calculated ${hashedLoc}`);
+        return Promise.resolve();
+      }
+      const nextRoom = getRoom(this.rooms, nextLoc);
+      if (!nextRoom) {
+        console.log(`no room ${hashedLoc}`);
+        return Promise.resolve();
+      }
+      const tile = nextRoom.getTile(nextLoc);
+      console.log(tile);
+      const distance = current + tile.size;
+      if (tile && !noMove.has(tile.type) && distance <= this.speed) {
+        this.movement.add(hashedLoc);
+        cost[hashedLoc] = distance;
+        return this.recrusiveMovement(nextLoc, distance, cost);
+      }
+      console.log(`beyond or noMove: ${moveInd}`);
+      return Promise.resolve();
+    });
+    await Promise.all(promises);
   }
 }
 
@@ -226,8 +268,10 @@ const hashLocation = (loc: Location): string => `${loc.x}$$$${loc.y}`;
 // const unhashLocation = (locString: string): Location => ({ x: Number(locString.split('$$$')[0]), y: Number(locString.split('$$$')[1])});
 
 const initialPlayer: PlayerProps = {
-  x: 0,
-  y: 8,
+  location: {
+    x: 0,
+    y: 8,
+  },
   speed: 30,
   vision: 50,
 };
@@ -240,7 +284,13 @@ const calculateDistance = (
   return Math.max(diffX, diffY);
 };
 
-const noMove = new Set(["wall", "void", "door-closed", "door-locked", "player"]);
+const noMove = new Set([
+  "wall",
+  "void",
+  "door-closed",
+  "door-locked",
+  "player",
+]);
 
 const getGlobalBounds = (rooms: Record<string, Room>): Bounds => {
   return Object.keys(rooms).reduce(
@@ -355,7 +405,7 @@ const getRoom = (
       loc.y <= bounds.y.max
     ) {
       const tile = room.getTile(loc);
-      if (tile && tile.type !== 'void') {
+      if (tile && tile.type !== "void") {
         return true;
       }
     }
@@ -521,14 +571,21 @@ function Board() {
               );
             }
             const tile = room.getTile(tileLoc);
-            const distance = calculateDistance(player, tileLoc) * room.cellSize;
+            const distance =
+              calculateDistance(player.location, tileLoc) * room.cellSize;
             const close = distance <= player.vision;
-            const move = !noMove.has(tile.type) && distance <= player.speed;
             return (
               <div className="flex-item">
                 <div
-                  className={`Tile ${tile.type} ${close ? "close" : "far"} ${
-                    move ? "move" : ""
+                  className={`Tile ${tile.type} ${close ? "close" : "far"}${
+                    player.movement.has(hashLocation(tile.location))
+                      ? " move"
+                      : ""
+                  }${
+                    hashLocation(player.location) ===
+                    hashLocation(tile.location)
+                      ? " player"
+                      : ""
                   }`}
                   onClick={() => tile.clickHandler(player, setPlayer, room)}
                 >

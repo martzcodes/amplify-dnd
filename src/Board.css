@@ -39,7 +39,7 @@
 }
 
 .player {
-    background: blue;
+    background: green !important;
 }
 
 .wall {
@@ -69,7 +69,7 @@
 }
 
 .move {
-    background: green;
+    background: lightgreen;
 }
 
 .label {
