@@ -41,7 +41,7 @@ class Tile implements TileProps {
     Object.assign(this, tileProps);
   }
 
-  clickHandler(player: Player, setPlayer: any, room: Room) {
+  clickHandler(player: PlayerProps, setPlayer: any, room: Room) {
     const loc = this.location;
     if (!noMove.has(this.type)) {
       const dist = calculateDistance({ x: loc.x, y: loc.y }, { ...player });
@@ -56,7 +56,7 @@ class Tile implements TileProps {
     }
   }
 
-  getLabel(player: Player): string {
+  getLabel(player: PlayerProps): string {
     switch (this.type) {
       case "door-open":
       case "door-closed":
@@ -193,17 +193,39 @@ class Room implements RoomProps {
   }
 }
 
-interface Player {
+interface PlayerProps {
   x: number;
   y: number;
   speed: number;
   vision: number;
 }
 
+class Player implements PlayerProps {
+  x: number = 0;
+  y: number = 0;
+  speed: number = 0;
+  vision: number = 0;
+  rooms: Record<string, Room> = {};
+  movement: Set<string> = new Set([]);
+  visible: Set<string> = new Set([]);
+  revealed: Set<string> = new Set([]);
+
+  constructor(playerProps: PlayerProps) {
+    Object.assign(this, playerProps);
+  }
+
+  addRooms(rooms: Record<string, Room>) {
+    this.rooms = rooms;
+    this.movement = new Set([]);
+    this.visible = new Set([]);
+    this.revealed = new Set([]);
+  }
+}
+
 const hashLocation = (loc: Location): string => `${loc.x}$$$${loc.y}`;
 // const unhashLocation = (locString: string): Location => ({ x: Number(locString.split('$$$')[0]), y: Number(locString.split('$$$')[1])});
 
-const initialPlayer: Player = {
+const initialPlayer: PlayerProps = {
   x: 0,
   y: 8,
   speed: 30,
@@ -342,7 +364,8 @@ const getRoom = (
 };
 
 function Board() {
-  const [player, setPlayer] = useState(initialPlayer);
+  const [playerProps, setPlayer] = useState(initialPlayer);
+  const player = new Player(playerProps);
   const roomA = new Room({
     name: "A",
     cellSize: 5,
@@ -374,7 +397,7 @@ function Board() {
       // prettier-ignore
       ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","WALL","WALL","WALL","DOBF","WALL","WALL","WALL","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WALL","    ","    ","    ","    ","WALL","WALL","WALL","WALL","DCBF","WALL","WALL","WALL","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
       ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
@@ -458,7 +481,7 @@ function Board() {
     cellSize: 5,
     grid: [
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","DOBF","WALL","WALL","WALL","WALL"],
+      ["WALL","WALL","WALL","WALL","DCBF","WALL","WALL","WALL","WALL"],
       // prettier-ignore
       ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
       // prettier-ignore
@@ -482,6 +505,7 @@ function Board() {
   const rooms = { A: roomA, B: roomB, C: roomC, D: roomD, E: roomE, F: roomF };
   const board = roomsToBoard(rooms);
   console.log(board);
+  player.addRooms(rooms);
   return (
     <div>
       {board.map((row, y) => (
@@ -503,7 +527,7 @@ function Board() {
             return (
               <div className="flex-item">
                 <div
-                  className={`Tile ${tile.type} ${close ? "close" : ""} ${
+                  className={`Tile ${tile.type} ${close ? "close" : "far"} ${
                     move ? "move" : ""
                   }`}
                   onClick={() => tile.clickHandler(player, setPlayer, room)}
