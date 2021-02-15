@@ -1,77 +1,80 @@
 .flex-container {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-    display: -webkit-box;
-    display: -moz-box;
-    display: -ms-flexbox;
-    display: -webkit-flex;
-    display: flex;
-    -webkit-flex-flow: row;
-    justify-content: space-around;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row;
+  justify-content: space-around;
 
-    line-height:30px;
+  line-height: 30px;
 }
 .flex-item {
-    margin: 0px;
-    color: white;
-    font-weight: bold;
-    font-size: 1.5em;
-    text-align: center;
-    flex: 1 0 auto;
-    height:auto;
-    border: 1px solid black;
+  margin: 0px;
+  color: white;
+  font-weight: bold;
+  font-size: 1.5em;
+  text-align: center;
+  flex: 1 0 auto;
+  height: auto;
+  border: 1px solid black;
 }
 .flex-item:before {
-    content:'';
-    float:left;
-    padding-top:100%;
+  content: "";
+  float: left;
+  padding-top: 100%;
 }
 
 .Tile {
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
 }
 
 .normal {
-    background: white;
-    color: black;
+  background: white;
+  color: black;
 }
 
 .player {
-    background: green !important;
+  background: green !important;
 }
 
 .wall {
-    background: black;
+  background: black;
 }
 .void {
-    background: black;
+  background: black;
+}
+.hidden {
+  background: black !important;
 }
 
 .door-open {
-    background: yellow;
+  background: yellow;
 }
 .door-closed {
-    background: orange;
+  background: orange;
 }
 
 .door-locked {
-    background: red;
+  background: red;
 }
 
-.close {
-    opacity: 1;
+.visible {
+  opacity: 1;
 }
 
-.far {
-    background: black;
+.fog {
+  opacity: 0.5;
 }
 
 .move {
-    background: lightgreen;
+  background: lightgreen;
 }
 
 .label {
-    width: 5px;
+  width: 5px;
 }

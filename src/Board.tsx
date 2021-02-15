@@ -1,9 +1,10 @@
-import { promises } from "dns";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Board.css";
 import { Location } from "./models/Location";
+import { Room, roomA, roomB, roomC, roomD, roomE, roomF } from "./Room";
+import { hashLocation, unhashLocation } from "./utils/hashLocation";
 
-interface Bounds {
+export interface Bounds {
   x: { min: number; max: number };
   y: { min: number; max: number };
 }
@@ -22,7 +23,7 @@ export interface TileProps {
   name?: string;
 }
 
-class Tile implements TileProps {
+export class Tile implements TileProps {
   location: Location = {
     x: -1,
     y: -1,
@@ -42,10 +43,11 @@ class Tile implements TileProps {
     Object.assign(this, tileProps);
   }
 
-  clickHandler(player: Player, setPlayer: any, room: Room) {
+  async clickHandler(player: Player, setPlayerProps: any) {
     const loc = this.location;
     if (player.movement.has(hashLocation(loc))) {
-      setPlayer({ ...player, location: { x: loc.x, y: loc.y } });
+      await player.processMovement();
+      setPlayerProps({ ...player, location: { x: loc.x, y: loc.y } });
       console.log(`Click at ${loc.x}, ${loc.y}`);
     }
   }
@@ -69,122 +71,12 @@ class Tile implements TileProps {
   }
 }
 
-interface Door {
+export interface Door {
   name: string;
   location: Location;
   open: boolean;
   locked: boolean;
   room?: string;
-}
-
-interface RoomProps {
-  name: string;
-  cellSize: number;
-  width: number;
-  height: number;
-  walls: Set<string>;
-  doors: Door[];
-  grid: string[][];
-}
-
-class Room implements RoomProps {
-  name: string = "";
-  cellSize = 5;
-  width = 0;
-  height = 0;
-  walls = new Set<string>([]);
-  doors: Door[] = [];
-  grid: string[][] = [];
-  offset: Location = {
-    x: 0,
-    y: 0,
-  };
-
-  constructor(roomProps: RoomProps) {
-    Object.assign(this, roomProps);
-    this.grid.forEach((row, y) =>
-      row.forEach((cell, x) => {
-        if (cell === "WALL" || cell === "VOID") {
-          this.walls.add(hashLocation({ x, y }));
-        }
-        if (cell.startsWith("D")) {
-          this.walls.add(hashLocation({ x, y }));
-          this.addDoor(cell, { x, y });
-        }
-      })
-    );
-    this.height = this.grid.length;
-    this.width = this.grid[0].length;
-  }
-
-  applyOffset(loc: Location) {
-    this.offset = loc;
-  }
-
-  getBounds(): Bounds {
-    return {
-      x: {
-        min: 0 + this.offset.x,
-        max: this.width - 1 + this.offset.x,
-      },
-      y: {
-        min: 0 + this.offset.y,
-        max: this.height - 1 + this.offset.y,
-      },
-    };
-  }
-
-  addWall(loc: Location) {
-    this.walls.add(hashLocation(loc));
-  }
-
-  addDoor(doorName: string, loc: Location) {
-    if (this.walls.has(hashLocation(loc))) {
-      this.doors.push({
-        name: doorName,
-        location: loc,
-        open: doorName.startsWith("DO"),
-        locked: doorName.startsWith("DL"),
-        room: this.name,
-      });
-    }
-  }
-
-  getDoorByLocation(loc: Location): string {
-    const foundDoors = this.doors.filter(
-      (door) => hashLocation(door.location) === hashLocation(loc)
-    );
-    if (foundDoors.length === 1) {
-      return foundDoors[0].name;
-    }
-    return "";
-  }
-
-  getTile(loc: Location): Tile {
-    const tileProps: TileProps = {
-      type: "void",
-      location: loc,
-      size: this.cellSize,
-      name: this.getDoorByLocation(loc),
-    };
-    const gridLoc = this.grid[loc.y - this.offset.y][loc.x - this.offset.x];
-    if (gridLoc === "WALL") {
-      tileProps.type = "wall";
-    }
-    if (gridLoc.startsWith("DC")) {
-      tileProps.type = "door-closed";
-    }
-    if (gridLoc.startsWith("DO")) {
-      tileProps.type = "door-open";
-    }
-    if (gridLoc.startsWith("DL")) {
-      tileProps.type = "door-locked";
-    }
-    if (gridLoc === "    ") {
-      tileProps.type = "normal";
-    }
-    return new Tile(tileProps);
-  }
 }
 
 interface PlayerProps {
@@ -193,7 +85,7 @@ interface PlayerProps {
   vision: number;
 }
 
-class Player implements PlayerProps {
+export class Player implements PlayerProps {
   location: Location = {
     x: 0,
     y: 0,
@@ -211,12 +103,15 @@ class Player implements PlayerProps {
 
   async addRooms(rooms: Record<string, Room>) {
     this.rooms = rooms;
+  }
+
+  async processMovement() {
     this.movement = new Set([hashLocation(this.location)]);
-    this.visible = new Set([]);
-    this.recrusiveMovement(this.location, 0, {
+    this.visible = new Set([hashLocation(this.location)]);
+    await this.recrusiveMovement(this.location, 0, {
       [hashLocation(this.location)]: 0,
     });
-    console.log(this.movement);
+    await this.processVision();
   }
 
   async recrusiveMovement(
@@ -234,40 +129,137 @@ class Player implements PlayerProps {
       { x: 1, y: 0 },
       { x: 1, y: 1 },
     ];
-    const promises = directions.map((move, moveInd) => {
+    const promises = directions.map((move) => {
       const nextLoc: Location = {
         x: loc.x + move.x,
         y: loc.y + move.y,
       };
       const hashedLoc = hashLocation(nextLoc);
-      if (hashedLoc in cost && current >= cost[hashedLoc]) {
-        console.log(`already calculated ${hashedLoc}`);
-        return Promise.resolve();
-      }
       const nextRoom = getRoom(this.rooms, nextLoc);
       if (!nextRoom) {
-        console.log(`no room ${hashedLoc}`);
         return Promise.resolve();
       }
       const tile = nextRoom.getTile(nextLoc);
-      console.log(tile);
       const distance = current + tile.size;
+      if (hashedLoc in cost && distance >= cost[hashedLoc]) {
+        return Promise.resolve();
+      }
       if (tile && !noMove.has(tile.type) && distance <= this.speed) {
         this.movement.add(hashedLoc);
         cost[hashedLoc] = distance;
         return this.recrusiveMovement(nextLoc, distance, cost);
       }
-      console.log(`beyond or noMove: ${moveInd}`);
       return Promise.resolve();
     });
     await Promise.all(promises);
   }
+
+  async processVision() {
+    this.visible = new Set([]);
+    const maxVisionCells: Set<string> = new Set([]);
+    const maxCellDistance = this.vision / 5;
+    for (let j = -maxCellDistance; j < maxCellDistance; j++) {
+      maxVisionCells.add(
+        hashLocation({
+          x: this.location.x - maxCellDistance,
+          y: this.location.y + j,
+        })
+      );
+      maxVisionCells.add(
+        hashLocation({
+          x: this.location.x + maxCellDistance,
+          y: this.location.y + j,
+        })
+      );
+      maxVisionCells.add(
+        hashLocation({
+          x: this.location.x + j,
+          y: this.location.y - maxCellDistance,
+        })
+      );
+      maxVisionCells.add(
+        hashLocation({
+          x: this.location.x + j,
+          y: this.location.y + maxCellDistance,
+        })
+      );
+    }
+    const paths = Array.from(maxVisionCells).map((cell) =>
+      plotLine(this.location, unhashLocation(cell))
+    );
+    const voids: Set<string> = new Set([]);
+    const rays = paths.map((path) => {
+      let obscuredInd = -1;
+      for (let cellInd = 0; cellInd < path.length; cellInd++) {
+        const cell = path[cellInd];
+        if (voids.has(cell)) {
+          obscuredInd = cellInd;
+          break;
+        }
+        if (!this.visible.has(cell)) {
+          const nextRoom = getRoom(this.rooms, unhashLocation(cell));
+          if (!nextRoom) {
+            obscuredInd = cellInd;
+            break;
+          }
+          const tile = nextRoom.getTile(unhashLocation(cell));
+          if (tile.type === "void") {
+            voids.add(cell);
+            obscuredInd = cellInd;
+            break;
+          }
+          if (
+            tile.type === "wall" ||
+            tile.type === "door-closed" ||
+            tile.type === "door-locked"
+          ) {
+            this.revealed.add(cell);
+            if (cellInd + 1 < path.length - 1) {
+              obscuredInd = cellInd + 1;
+            }
+            break;
+          }
+          this.visible.add(cell);
+          this.revealed.add(cell);
+        }
+      }
+      if (obscuredInd !== -1) {
+        return path.slice(0, obscuredInd);
+      }
+      return path;
+    });
+    return Promise.resolve();
+  }
 }
 
-const hashLocation = (loc: Location): string => `${loc.x}$$$${loc.y}`;
-// const unhashLocation = (locString: string): Location => ({ x: Number(locString.split('$$$')[0]), y: Number(locString.split('$$$')[1])});
+const plotLine = (start: Location, end: Location) => {
+  const path: string[] = [];
+  let dx = Math.abs(end.x - start.x);
+  let sx = start.x < end.x ? 1 : -1;
+  let dy = -Math.abs(end.y - start.y);
+  let sy = start.y < end.y ? 1 : -1;
+  let err = dx + dy; /* error value e_xy */
+  let x = start.x;
+  let y = start.y;
+  while (true) {
+    path.push(hashLocation({ x, y }));
+    if (x === end.x && y === end.y) break;
+    let e2 = 2 * err;
+    if (e2 >= dy) {
+      /* e_xy+e_x > 0 */
+      err += dy;
+      x += sx;
+    }
+    if (e2 <= dx) {
+      /* e_xy+e_y < 0 */
+      err += dx;
+      y += sy;
+    }
+  }
+  return path;
+};
 
-const initialPlayer: PlayerProps = {
+const initialPlayerProps: PlayerProps = {
   location: {
     x: 0,
     y: 8,
@@ -316,7 +308,6 @@ const getGlobalBounds = (rooms: Record<string, Room>): Bounds => {
 
 const calculateGlobalBounds = (rooms: Record<string, Room>): Bounds => {
   const bounds = getGlobalBounds(rooms);
-  console.log(bounds);
   const globalOffset = {
     x: 0,
     y: 0,
@@ -338,7 +329,7 @@ const calculateGlobalBounds = (rooms: Record<string, Room>): Bounds => {
   return getGlobalBounds(rooms);
 };
 
-const roomsToBoard = (rooms: Record<string, Room>): string[][] => {
+export const roomsToBoard = (rooms: Record<string, Room>): string[][] => {
   const doors: Set<string> = Object.values(rooms).reduce((p, room) => {
     room.doors.forEach((door) => {
       p.add(door.name);
@@ -380,11 +371,6 @@ const roomsToBoard = (rooms: Record<string, Room>): string[][] => {
   Object.values(rooms).forEach((room) => {
     room.grid.forEach((row, rowInd) => {
       row.forEach((cell, colInd) => {
-        // console.log(
-        //   `Would set ${rowInd + room.offset.y}, ${
-        //     colInd + room.offset.x
-        //   } to ${cell}`
-        // );
         board[rowInd + room.offset.y][colInd + room.offset.x] = cell;
       });
     });
@@ -392,7 +378,7 @@ const roomsToBoard = (rooms: Record<string, Room>): string[][] => {
   return board;
 };
 
-const getRoom = (
+export const getRoom = (
   rooms: Record<string, Room>,
   loc: Location
 ): Room | undefined => {
@@ -414,149 +400,30 @@ const getRoom = (
 };
 
 function Board() {
-  const [playerProps, setPlayer] = useState(initialPlayer);
-  const player = new Player(playerProps);
-  const roomA = new Room({
-    name: "A",
-    cellSize: 5,
-    grid: [
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["DOAA","    ","    ","    ","DOAB",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL",],
-    ],
-  } as RoomProps);
-  const roomB = new Room({
-    name: "B",
-    cellSize: 5,
-    grid: [
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","WALL","WALL","WALL","DCBF","WALL","WALL","WALL","WALL","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["DOAB","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","DCBD",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","DLBC","WALL","WALL","WALL",],
-    ],
-  } as RoomProps);
-  const roomC = new Room({
-    name: "C",
-    cellSize: 5,
-    grid: [
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","DLBC","WALL","WALL","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","DLCE","WALL","WALL","WALL",],
-    ],
-  } as RoomProps);
-  const roomD = new Room({
-    name: "D",
-    cellSize: 5,
-    grid: [
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["DCBD","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL",],
-    ],
-  } as RoomProps);
-  const roomE = new Room({
-    name: "E",
-    cellSize: 5,
-    grid: [
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","DLCE","WALL","WALL","WALL","WALL","WALL","WALL","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL",],
-    ],
-  } as RoomProps);
-  const roomF = new Room({
-    name: "F",
-    cellSize: 5,
-    grid: [
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","DCBF","WALL","WALL","WALL","WALL"],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
-      // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL"],
-    ],
-  } as RoomProps);
-  const rooms = { A: roomA, B: roomB, C: roomC, D: roomD, E: roomE, F: roomF };
-  const board = roomsToBoard(rooms);
-  console.log(board);
-  player.addRooms(rooms);
-  return (
+  const [playerProps, setPlayerProps] = useState(initialPlayerProps);
+  const [player, setPlayer] = useState<Player>();
+  const [rooms] = useState<Record<string, Room>>({
+    A: roomA,
+    B: roomB,
+    C: roomC,
+    D: roomD,
+    E: roomE,
+    F: roomF,
+  });
+  const [board] = useState(roomsToBoard(rooms));
+
+  useEffect(() => {
+    const generatePlayer = async () => {
+      const generatedPlayer = new Player(playerProps);
+      generatedPlayer.addRooms(rooms);
+      await generatedPlayer.processMovement();
+      setPlayer(generatedPlayer);
+    };
+
+    generatePlayer();
+  }, [playerProps, rooms]);
+
+  return player ? (
     <div>
       {board.map((row, y) => (
         <div key={y} className="flex-container">
@@ -571,13 +438,15 @@ function Board() {
               );
             }
             const tile = room.getTile(tileLoc);
-            const distance =
-              calculateDistance(player.location, tileLoc) * room.cellSize;
-            const close = distance <= player.vision;
+            const visible = player.visible.has(hashLocation(tile.location));
+            const revealed = player.revealed.has(hashLocation(tile.location));
+            const fog = !visible && revealed;
             return (
               <div className="flex-item">
                 <div
-                  className={`Tile ${tile.type} ${close ? "close" : "far"}${
+                  className={`Tile ${tile.type}${visible ? " visible" : ""}${
+                    fog ? " fog" : ""
+                  }${!revealed ? " hidden" : ""}${
                     player.movement.has(hashLocation(tile.location))
                       ? " move"
                       : ""
@@ -587,7 +456,7 @@ function Board() {
                       ? " player"
                       : ""
                   }`}
-                  onClick={() => tile.clickHandler(player, setPlayer, room)}
+                  onClick={() => tile.clickHandler(player, setPlayerProps)}
                 >
                   {/* <div className="label">{tile.getLabel(player)}</div> */}
                 </div>
@@ -597,6 +466,8 @@ function Board() {
         </div>
       ))}
     </div>
+  ) : (
+    <div></div>
   );
 }
 
