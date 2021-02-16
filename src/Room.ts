@@ -1,7 +1,124 @@
-import { Door, Bounds, Tile, TileProps } from "./Board";
+import { Bounds } from "./Board";
+import { Door } from "./models/Door";
 import { Location } from "./models/Location";
+import { Tile, TileProps } from "./Tile";
 import { hashLocation } from "./utils/hashLocation";
 
+
+export const getRoom = (
+  rooms: Record<string, Room>,
+  loc: Location
+): Room | undefined => {
+  return Object.values(rooms).find((room) => {
+    const bounds = room.getBounds();
+    if (
+      loc.x >= bounds.x.min &&
+      loc.x <= bounds.x.max &&
+      loc.y >= bounds.y.min &&
+      loc.y <= bounds.y.max
+    ) {
+      const tile = room.getTile(loc);
+      if (tile && tile.type !== "void") {
+        return true;
+      }
+    }
+    return false;
+  });
+};
+
+const getGlobalBounds = (rooms: Record<string, Room>): Bounds => {
+  return Object.keys(rooms).reduce(
+    (p, roomName) => {
+      const roomBounds = rooms[roomName].getBounds();
+      if (roomBounds.x.min < p.x.min) {
+        p.x.min = roomBounds.x.min;
+      }
+      if (roomBounds.x.max > p.x.max) {
+        p.x.max = roomBounds.x.max;
+      }
+      if (roomBounds.y.min < p.y.min) {
+        p.y.min = roomBounds.y.min;
+      }
+      if (roomBounds.y.max > p.y.max) {
+        p.y.max = roomBounds.y.max;
+      }
+      return p;
+    },
+    { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } } as Bounds
+  );
+};
+
+const calculateGlobalBounds = (rooms: Record<string, Room>): Bounds => {
+  const bounds = getGlobalBounds(rooms);
+  const globalOffset = {
+    x: 0,
+    y: 0,
+  };
+  if (bounds.x.min < globalOffset.x) {
+    globalOffset.x = -bounds.x.min;
+  }
+  if (bounds.y.min < globalOffset.y) {
+    globalOffset.y = -bounds.y.min;
+  }
+  if (globalOffset.x !== 0 || globalOffset.y !== 0) {
+    Object.keys(rooms).forEach((roomName) => {
+      const roomOffset = { ...rooms[roomName].offset };
+      roomOffset.x += globalOffset.x;
+      roomOffset.y += globalOffset.y;
+      rooms[roomName].applyOffset(roomOffset);
+    });
+  }
+  return getGlobalBounds(rooms);
+};
+
+export const roomsToBoard = (rooms: Record<string, Room>): string[][] => {
+  const doors: Set<string> = Object.values(rooms).reduce((p, room) => {
+    room.doors.forEach((door) => {
+      p.add(door.name);
+    });
+    return p;
+  }, new Set([]) as Set<string>);
+  doors.forEach((door) => {
+    const doorNames = door.slice(2);
+    if (doorNames[0] !== doorNames[1]) {
+      const roomOne = rooms[doorNames[0]];
+      const roomOneDoor = roomOne.doors.find((rD) => rD.name === door);
+      const roomTwo = rooms[doorNames[1]];
+      const roomTwoDoor = roomTwo.doors.find((rD) => rD.name === door);
+      if (
+        roomOneDoor &&
+        roomTwoDoor &&
+        roomTwo.offset.x === 0 &&
+        roomTwo.offset.y === 0
+      ) {
+        const roomOneDoorLocation = {
+          ...roomOneDoor.location,
+        };
+        roomOneDoorLocation.x += roomOne.offset.x;
+        roomOneDoorLocation.y += roomOne.offset.y;
+
+        const roomTwoOffset = { ...roomTwo.offset };
+        roomTwoOffset.x -= roomTwoDoor.location.x;
+        roomTwoOffset.y -= roomTwoDoor.location.y;
+        roomTwoOffset.x += roomOneDoorLocation.x;
+        roomTwoOffset.y += roomOneDoorLocation.y;
+        rooms[doorNames[1]].applyOffset(roomTwoOffset);
+      }
+    }
+  });
+  const bounds = calculateGlobalBounds(rooms);
+  const board = Array(bounds.y.max + 1)
+    .fill([])
+    .map((_u) => Array(bounds.x.max + 1).fill("VOID"));
+  Object.values(rooms).forEach((room) => {
+    room.grid.forEach((row, rowInd) => {
+      row.forEach((cell, colInd) => {
+        board[rowInd + room.offset.y][colInd + room.offset.x] = cell;
+      });
+    });
+  });
+  return board;
+};
 interface RoomProps {
   name: string;
   cellSize: number;
@@ -201,7 +318,7 @@ export const roomA = new Room({
       // prettier-ignore
       ["DOBD","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL",],
+      ["WALL","    ","    ","    ","    ","DODG",],
       // prettier-ignore
       ["WALL","WALL","WALL","WALL","WALL","WALL",],
     ],
@@ -211,7 +328,7 @@ export const roomA = new Room({
     cellSize: 5,
     grid: [
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","DOCE","WALL","WALL","WALL","WALL","WALL","WALL","WALL",],
+      ["WALL","DOCE","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","DOEG","WALL","WALL","WALL","WALL","WALL","WALL","WALL",],
       // prettier-ignore
       ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
@@ -248,3 +365,40 @@ export const roomA = new Room({
       ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL"],
     ],
   } as RoomProps);
+  export const roomG = new Room({
+    name: "G",
+    cellSize: 5,
+    grid: [
+      // prettier-ignore
+      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL"],
+      // prettier-ignore
+      ["DODG","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","DOEG","WALL"],
+    ],
+  } as RoomProps);
+

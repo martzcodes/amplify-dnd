@@ -14,7 +14,6 @@
 }
 .flex-item {
   margin: 0px;
-  color: white;
   font-weight: bold;
   font-size: 1.5em;
   text-align: center;
@@ -40,16 +39,14 @@
 
 .player {
   background: green !important;
+  /* background: url(./dungeon_tiles.png) 0 0 !important; */
 }
 
-.wall {
-  background: black;
+.WALL {
+  background: black !important;
 }
 .void {
   background: black;
-}
-.hidden {
-  background: black !important;
 }
 
 .door-open {
@@ -66,9 +63,12 @@
 .visible {
   opacity: 1;
 }
-
 .fog {
+  background-color: gray;
   opacity: 0.5;
+}
+.hide {
+  background: black !important;
 }
 
 .move {
