@@ -1,14 +1,6 @@
 import { Location } from "./models/Location";
-import { getRoom, Room } from "./Room";
+import { getTileSpeed } from "./Tile";
 import { hashLocation, unhashLocation } from "./utils/hashLocation";
-
-const noMove = new Set([
-  "wall",
-  "void",
-  "door-closed",
-  "door-locked",
-  "player",
-]);
 
 export interface PlayerProps {
   name: string;
@@ -25,7 +17,7 @@ export class Player implements PlayerProps {
   };
   speed: number = 0;
   vision: number = 0;
-  rooms: Record<string, Room> = {};
+  board: string[][] = [];
   movement: Set<string> = new Set([]);
   visible: Set<string> = new Set([]);
   revealed: Set<string> = new Set([]);
@@ -34,20 +26,24 @@ export class Player implements PlayerProps {
     Object.assign(this, playerProps);
   }
 
-  async addRooms(rooms: Record<string, Room>) {
-    this.rooms = rooms;
+  addBoard(board: string[][]) {
+    this.board = board;
   }
 
-  async processMovement() {
+  async processMovement(board: string[][], noMove: Set<string>) {
+    console.log(board);
+    console.log(noMove);
     this.movement = new Set([hashLocation(this.location)]);
     this.visible = new Set([hashLocation(this.location)]);
-    await this.recrusiveMovement(this.location, 0, {
+    await this.recrusiveMovement(board, noMove, this.location, 0, {
       [hashLocation(this.location)]: 0,
     });
-    await this.processVision();
+    await this.processVision(board);
   }
 
   async recrusiveMovement(
+    board: string[][],
+    noMove: Set<string>,
     loc: Location,
     current: number,
     cost: Record<string, number>
@@ -68,26 +64,28 @@ export class Player implements PlayerProps {
         y: loc.y + move.y,
       };
       const hashedLoc = hashLocation(nextLoc);
-      const nextRoom = getRoom(this.rooms, nextLoc);
-      if (!nextRoom) {
+      if (nextLoc.x < 0 || nextLoc.y < 0) {
         return Promise.resolve();
       }
-      const tile = nextRoom.getTile(nextLoc);
-      const distance = current + tile.size;
+      const tileType = board[nextLoc.y][nextLoc.x];
+      if (noMove.has(tileType)) {
+        return Promise.resolve();
+      }
+      const distance = current + getTileSpeed(tileType);
       if (hashedLoc in cost && distance >= cost[hashedLoc]) {
         return Promise.resolve();
       }
-      if (tile && !noMove.has(tile.type) && distance <= this.speed) {
+      if (distance <= this.speed) {
         this.movement.add(hashedLoc);
         cost[hashedLoc] = distance;
-        return this.recrusiveMovement(nextLoc, distance, cost);
+        return this.recrusiveMovement(board, noMove, nextLoc, distance, cost);
       }
       return Promise.resolve();
     });
     await Promise.all(promises);
   }
 
-  async processVision() {
+  async processVision(board: string[][]) {
     this.visible = new Set([]);
     const maxVisionCells: Set<string> = new Set([]);
     const maxCellDistance = this.vision / 5;
@@ -129,22 +127,23 @@ export class Player implements PlayerProps {
           obscuredInd = cellInd;
           break;
         }
+        const nextLoc = unhashLocation(cell);
+        if (nextLoc.x < 0 || nextLoc.y < 0) {
+          // voids.add(cell);
+          obscuredInd = cellInd;
+          break;
+        }
+        const tileType = board[nextLoc.y][nextLoc.x];
         if (!this.visible.has(cell)) {
-          const nextRoom = getRoom(this.rooms, unhashLocation(cell));
-          if (!nextRoom) {
-            obscuredInd = cellInd;
-            break;
-          }
-          const tile = nextRoom.getTile(unhashLocation(cell));
-          if (tile.type === "void") {
+          if (tileType === "VOID") {
             voids.add(cell);
             obscuredInd = cellInd;
             break;
           }
           if (
-            tile.type === "wall" ||
-            tile.type === "door-closed" ||
-            tile.type === "door-locked"
+            tileType === "WALL" ||
+            tileType.startsWith('DC') ||
+            tileType.startsWith('DL')
           ) {
             this.revealed.add(cell);
             if (cellInd + 1 < path.length - 1) {

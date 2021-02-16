@@ -3,7 +3,7 @@ import Board from "./Board";
 import "./Game.css";
 import { Player, PlayerProps } from "./Player";
 import {
-  getRoom,
+  getDoorsFromRooms,
   Room,
   roomA,
   roomB,
@@ -14,6 +14,16 @@ import {
   roomG,
   roomsToBoard,
 } from "./Room";
+
+const noMove = new Set([
+  "wall",
+  "WALL",
+  "void",
+  "VOID",
+  "door-closed",
+  "door-locked",
+  "player",
+]);
 
 const initialPlayerProps: PlayerProps = {
   name: "martzcodes",
@@ -48,13 +58,18 @@ function Game() {
   useEffect(() => {
     const generatePlayer = async () => {
       const generatedPlayer = new Player(playerProps);
-      generatedPlayer.addRooms(rooms);
-      await generatedPlayer.processMovement();
+      generatedPlayer.addBoard(board);
+      const doors = getDoorsFromRooms(rooms);
+      const closedDoors = doors.filter(
+        (door) => door.startsWith("DL") || door.startsWith("DC")
+      );
+      closedDoors.forEach((door) => noMove.add(door));
+      await generatedPlayer.processMovement(board, noMove);
       setPlayer(generatedPlayer);
     };
 
     generatePlayer();
-  }, [playerProps, rooms]);
+  }, [playerProps, board]);
 
   useEffect(() => {
     console.log(selectedTile);
@@ -63,7 +78,12 @@ function Game() {
         console.log('has player...');
         if (player.location.x !== selectedTile.location.x || player.location.y !== selectedTile.location.y) {
           const refreshedPlayer = new Player({...player, location: selectedTile.location});
-          await refreshedPlayer.processMovement();
+          const doors = getDoorsFromRooms(rooms);
+          const closedDoors = doors.filter(
+            (door) => door.startsWith("DL") || door.startsWith("DC")
+          );
+          closedDoors.forEach((door) => noMove.add(door));
+          await refreshedPlayer.processMovement(board, noMove);
           setPlayer(refreshedPlayer);
         }
       }

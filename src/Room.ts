@@ -71,13 +71,18 @@ const calculateGlobalBounds = (rooms: Record<string, Room>): Bounds => {
   return getGlobalBounds(rooms);
 };
 
-export const roomsToBoard = (rooms: Record<string, Room>): string[][] => {
+export const getDoorsFromRooms = (rooms: Record<string, Room>): string[] => {
   const doors: Set<string> = Object.values(rooms).reduce((p, room) => {
     room.doors.forEach((door) => {
       p.add(door.name);
     });
     return p;
   }, new Set([]) as Set<string>);
+  return Array.from(doors);
+}
+
+export const roomsToBoard = (rooms: Record<string, Room>): string[][] => {
+  const doors: Set<string> = new Set(getDoorsFromRooms(rooms));
   doors.forEach((door) => {
     const doorNames = door.slice(2);
     if (doorNames[0] !== doorNames[1]) {

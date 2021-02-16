@@ -14,6 +14,16 @@ export interface TileProps {
   name?: string;
 }
 
+export const getTileSpeed = (tileType: string): number => {
+  switch(tileType) {
+    case 'void':
+    case 'wall':
+      return 0;
+    default:
+      return 5;
+  }
+}
+
 export class Tile implements TileProps {
   location: Location = {
     x: -1,
