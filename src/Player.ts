@@ -4,21 +4,49 @@ import { hashLocation, unhashLocation } from "./utils/hashLocation";
 
 export interface PlayerProps {
   name: string;
+  color: string;
   location: Location;
-  speed: number;
+  speed: Speed;
+  hp: HP;
   vision: number;
+}
+
+export interface Speed {
+  max: number;
+  current: number;
+}
+
+export interface HP {
+  max: number;
+  current: number;
+}
+
+export interface Movement {
+  cost: Record<string, number>;
+  tiles: Set<string>;
 }
 
 export class Player implements PlayerProps {
   name: string = '';
+  color: string = 'bg-purple-600';
   location: Location = {
     x: 0,
     y: 0,
   };
-  speed: number = 0;
+  speed: Speed = {
+    max: 30,
+    current: 30,
+  };
+  hp: HP = {
+    max: 10,
+    current: 10,
+  };
   vision: number = 0;
   board: string[][] = [];
-  movement: Set<string> = new Set([]);
+  movement: Movement = {
+    cost: {},
+    tiles: new Set<string>([]),
+  };
   visible: Set<string> = new Set([]);
   revealed: Set<string> = new Set([]);
 
@@ -31,13 +59,14 @@ export class Player implements PlayerProps {
   }
 
   async processMovement(board: string[][], noMove: Set<string>) {
-    console.log(board);
-    console.log(noMove);
-    this.movement = new Set([hashLocation(this.location)]);
+    this.movement = {
+      cost: {
+        [hashLocation(this.location)]: 0
+      },
+      tiles: new Set([hashLocation(this.location)]),
+    };
     this.visible = new Set([hashLocation(this.location)]);
-    await this.recrusiveMovement(board, noMove, this.location, 0, {
-      [hashLocation(this.location)]: 0,
-    });
+    await this.recrusiveMovement(board, noMove, this.location, 0);
     await this.processVision(board);
   }
 
@@ -46,7 +75,6 @@ export class Player implements PlayerProps {
     noMove: Set<string>,
     loc: Location,
     current: number,
-    cost: Record<string, number>
   ): Promise<void> {
     const directions = [
       { x: -1, y: -1 },
@@ -72,13 +100,13 @@ export class Player implements PlayerProps {
         return Promise.resolve();
       }
       const distance = current + getTileSpeed(tileType);
-      if (hashedLoc in cost && distance >= cost[hashedLoc]) {
+      if (hashedLoc in this.movement.cost && distance >= this.movement.cost[hashedLoc]) {
         return Promise.resolve();
       }
-      if (distance <= this.speed) {
-        this.movement.add(hashedLoc);
-        cost[hashedLoc] = distance;
-        return this.recrusiveMovement(board, noMove, nextLoc, distance, cost);
+      if (distance <= this.speed.current) {
+        this.movement.tiles.add(hashedLoc);
+        this.movement.cost[hashedLoc] = distance;
+        return this.recrusiveMovement(board, noMove, nextLoc, distance);
       }
       return Promise.resolve();
     });

@@ -1,6 +1,6 @@
 import "./Board.css";
+import { PlayerTracker } from "./Game";
 import { Location } from "./models/Location";
-import { Player } from "./Player";
 import { hashLocation } from "./utils/hashLocation";
 
 export interface Bounds {
@@ -11,12 +11,12 @@ export interface Bounds {
 function Board({
   selectedTile,
   setSelectedTile,
-  player,
+  tracker,
   board,
 }: {
   selectedTile: { location: Location; actions: any[] };
   setSelectedTile: any;
-  player: Player;
+  tracker: PlayerTracker;
   board: string[][];
 }) {
   return (
@@ -26,30 +26,44 @@ function Board({
           {row.map((cell, x) => {
             const tileLoc = { x, y };
             const tileHashedLocation = hashLocation(tileLoc);
-            const visible = player.visible.has(tileHashedLocation);
-            const revealed = player.revealed.has(tileHashedLocation);
+            const visible =
+              Object.values(tracker.players).filter((player) => player.visible.has(tileHashedLocation))
+                .length !== 0;
+            const revealed =
+              Object.values(tracker.players).filter((player) =>
+                player.revealed.has(tileHashedLocation)
+              ).length !== 0;
             const fog = !visible && revealed;
             const selected =
               hashLocation(selectedTile.location) === tileHashedLocation;
-            const move = player.movement.has(tileHashedLocation);
+            const move = tracker.players[tracker.active].movement.tiles.has(tileHashedLocation)
             const actions = move ? ["move"] : [];
-            const playerTile = hashLocation(player.location) === tileHashedLocation;
+            const playerTile =
+              Object.values(tracker.players).filter(
+                (player) => hashLocation(player.location) === tileHashedLocation
+              ).length !== 0;
             let className = "Tile";
-            if (visible || fog || revealed) {
-              className += ` ${cell}`;
-            }
-            if (visible) {
-              className += ` visible`;
-            } else if (fog) {
-              className += ` fog`;
-            } else if (!revealed) {
-              className += ` hide`;
-            }
-            if (move) {
-              className += ` move`;
-            }
             if (playerTile) {
-              className += ` player`;
+              className += ` ${
+                Object.values(tracker.players).filter(
+                  (player) =>
+                    hashLocation(player.location) === tileHashedLocation
+                )[0].color
+              }`;
+            } else {
+              if (visible || fog || revealed) {
+                className += ` ${cell}`;
+              }
+              if (visible) {
+                className += ` visible`;
+              } else if (fog) {
+                className += ` fog`;
+              } else if (!revealed) {
+                className += ` hide`;
+              }
+              if (move) {
+                className += ` move`;
+              }
             }
             return (
               <div
@@ -61,15 +75,13 @@ function Board({
                   className={className}
                   onClick={() => {
                     setSelectedTile({
+                      player: tracker.active,
                       location: tileLoc,
                       type: cell,
                       actions,
                     });
-                    // tile.clickHandler(player, setPlayerProps);
                   }}
-                >
-                  {/* <div className="label">{tile.getLabel(player)}</div> */}
-                </div>
+                ></div>
               </div>
             );
           })}
