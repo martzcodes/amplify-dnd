@@ -57,7 +57,6 @@ function Board({
                   tracker.players[tracker.active].location,
                   tileLoc
                 );
-                console.log(`DL: ${doorDistance}`);
                 if (doorDistance <= 5) {
                   actions.push({
                     name: "Unlock",
@@ -69,7 +68,6 @@ function Board({
                     type: "break",
                     color: "red",
                   });
-                  console.log(actions);
                 }
               }
             if (cell.startsWith("DC")) {
@@ -77,11 +75,23 @@ function Board({
                 tracker.players[tracker.active].location,
                 tileLoc
               );
-              console.log(`DC: ${doorDistance}`);
               if (doorDistance <= 5) {
                 actions.push({
                   name: "Open",
                   type: "open",
+                  color: "blue",
+                });
+              }
+            }
+            if (cell.startsWith("DO")) {
+              const doorDistance = calculateDistance(
+                tracker.players[tracker.active].location,
+                tileLoc
+              );
+              if (doorDistance === 5) {
+                actions.push({
+                  name: "Close Door",
+                  type: "close",
                   color: "blue",
                 });
               }
@@ -96,6 +106,7 @@ function Board({
                 )[0].color
               }`;
             } else {
+              let cellType = "";
               if (visible || fog || revealed) {
                 className += ` ${cell === '    ' ? 'ground' : cell}`;
               }
@@ -106,12 +117,21 @@ function Board({
               } else if (!revealed) {
                 className += ` hide`;
               }
-              if (move) {
-                className += ` move`;
-              }
               if (selected) {
                 className += " ring-4 ring-inset"
               }
+              switch (cell) {
+                case "    ":
+                  cellType = "ground";
+                  break;
+                case "WATR":
+                  cellType = "bg-blue-300";
+                  break;
+                default:
+                  cellType = "";
+                  break;
+              }
+              className += ` ${cellType}`
             }
             return (
               <div key={hashLocation(tileLoc)} className={`flex-item`}>
@@ -121,11 +141,17 @@ function Board({
                     setSelectedTile({
                       player: tracker.active,
                       location: tileLoc,
-                      type: `${cell === "    " ? "ground" : cell}`,
+                      type: cell,
                       actions,
                     });
                   }}
-                ></div>
+                >
+                  {move ? (
+                    <div className={`Tile bg-green-500 bg-opacity-50`}></div>
+                  ) : (
+                    <></>
+                  )}
+                </div>
               </div>
             );
           })}

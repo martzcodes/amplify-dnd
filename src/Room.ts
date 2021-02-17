@@ -257,29 +257,29 @@ export const roomA = new Room({
       // prettier-ignore
       ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WALL","    ","WATR","    ","    ","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WALL","    ","WATR","    ","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WALL","    ","WATR","    ","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WALL","    ","WATR","WATR","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","WALL","WALL","WALL","DLBF","WALL","WALL","WALL","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WALL","WATR","WATR","WATR","WATR","WALL","WALL","WALL","WALL","DLBF","WALL","WALL","WALL","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WALL","    ","    ","    ","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WALL","    ","    ","    ","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["DOAB","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["DOAB","    ","    ","    ","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","DLBD",],
+      ["WALL","    ","WATR","WATR","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","DLBD",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WALL","    ","WATR","WATR","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WALL","    ","WATR","WATR","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WALL","    ","WATR","WATR","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
       ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore

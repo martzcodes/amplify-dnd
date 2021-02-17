@@ -37,7 +37,7 @@ const noMove = new Set([
 const initPlayers: PlayerProps[] = [
   {
     name: "martzcodes",
-    color: "bg-blue-600",
+    color: "bg-purple-600",
     location: {
       x: 0,
       y: 8,
@@ -54,7 +54,7 @@ const initPlayers: PlayerProps[] = [
   },
   {
     name: "npc",
-    color: "bg-purple-600",
+    color: "bg-red-600",
     location: {
       x: 18,
       y: 8,
@@ -196,16 +196,31 @@ function Game() {
       setPlayerAction({ ...playerAction, action: "" });
     };
 
-    const openDoor = (doorLoc: Location) => {
+    const openDoor = (doorLoc: Location, destroy: boolean) => {
       const door = board[doorLoc.y][doorLoc.x];
       if (door.startsWith('DL') || door.startsWith('DC')) {
-        board[doorLoc.y][doorLoc.x] = `DO${door.slice(2,4)}`;
+        if (destroy) {
+          board[doorLoc.y][doorLoc.x] = `DD${door.slice(2, 4)}`;
+        } else {
+          board[doorLoc.y][doorLoc.x] = `DO${door.slice(2, 4)}`;
+        }
         console.log(`DO${door.slice(2,4)}`);
         setBoard(board);
         setPlayerAction({ ...playerAction, action: "" });
         initializePlayers();
       }
     }
+
+    const closeDoor = (doorLoc: Location) => {
+      const door = board[doorLoc.y][doorLoc.x];
+      if (door.startsWith("DO")) {
+        board[doorLoc.y][doorLoc.x] = `DC${door.slice(2, 4)}`;
+        console.log(`DC${door.slice(2, 4)}`);
+        setBoard(board);
+        setPlayerAction({ ...playerAction, action: "" });
+        initializePlayers();
+      }
+    };
 
     switch (playerAction.action) {
       case "init":
@@ -218,9 +233,14 @@ function Game() {
         movePlayer(playerAction.location);
         break;
       case "unlock":
-      case "break":
       case "open":
-        openDoor(playerAction.location);
+        openDoor(playerAction.location, false);
+        break;
+      case "break":
+        openDoor(playerAction.location, true);
+        break;
+      case "close":
+        closeDoor(playerAction.location);
         break;
       default:
         return;

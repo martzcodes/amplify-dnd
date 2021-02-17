@@ -16,9 +16,11 @@ export interface TileProps {
 
 export const getTileSpeed = (tileType: string): number => {
   switch(tileType) {
-    case 'void':
-    case 'wall':
+    case 'VOID':
+    case 'WALL':
       return 0;
+    case 'WATR':
+      return 10;
     default:
       return 5;
   }
