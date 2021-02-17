@@ -49,6 +49,7 @@ export class Player implements PlayerProps {
   };
   visible: Set<string> = new Set([]);
   revealed: Set<string> = new Set([]);
+  actionUsed: boolean = false;
 
   constructor(playerProps: PlayerProps) {
     Object.assign(this, playerProps);
@@ -192,13 +193,13 @@ export class Player implements PlayerProps {
   }
 }
 
-const calculateDistance = (
+export const calculateDistance = (
   moveFrom: { x: number; y: number },
   moveTo: { x: number; y: number }
 ) => {
   const diffX = Math.abs(moveFrom.x - moveTo.x);
   const diffY = Math.abs(moveFrom.y - moveTo.y);
-  return Math.max(diffX, diffY);
+  return Math.max(diffX, diffY) * 5;
 };
 
 const plotLine = (start: Location, end: Location) => {
