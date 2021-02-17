@@ -36,12 +36,9 @@ const noMove = new Set([
 
 const initPlayers: PlayerProps[] = [
   {
+    id: "P001",
     name: "martzcodes",
     color: "bg-purple-600",
-    location: {
-      x: 0,
-      y: 8,
-    },
     speed: {
       max: 30,
       current: 30,
@@ -53,12 +50,9 @@ const initPlayers: PlayerProps[] = [
     vision: 50,
   },
   {
+    id: "P002",
     name: "npc",
     color: "bg-red-600",
-    location: {
-      x: 18,
-      y: 8,
-    },
     speed: {
       max: 30,
       current: 30,
@@ -85,13 +79,6 @@ function Game() {
     speed: 0,
     actions: [],
   });
-  const [tracker, setTracker] = useState<PlayerTracker>({
-    active: "martzcodes",
-    initiative: ["martzcodes", "npc"],
-    players: initPlayers.reduce((p, c) => {
-      return { ...p, [c.name]: new Player(c) };
-    }, {} as Record<string, Player>),
-  });
   const [rooms] = useState<Record<string, Room>>({
     A: roomA,
     B: roomB,
@@ -102,6 +89,15 @@ function Game() {
     G: roomG,
   });
   const [board, setBoard] = useState(roomsToBoard(rooms));
+    const [tracker, setTracker] = useState<PlayerTracker>({
+      active: "martzcodes",
+      initiative: ["martzcodes", "npc"],
+      players: initPlayers.reduce((p, c) => {
+        const player = new Player(c);
+        player.addBoard(board);
+        return { ...p, [c.name]: player };
+      }, {} as Record<string, Player>),
+    });
   const [playerAction, setPlayerAction] = useState({
     ...emptyAction,
     action: "init",
@@ -145,20 +141,23 @@ function Game() {
         const speedRemaining =
           player.speed.current - player.movement.cost[hashLocation(location)];
         if (speedRemaining >= 0) {
+          board[player.location.y][player.location.x] = '    ';
+          board[playerAction.location.y][playerAction.location.x] = player.id;
           const refreshedPlayer = new Player({
             ...player,
-            location,
             speed: {
               max: player.speed.max,
               current: speedRemaining,
             },
           });
+          refreshedPlayer.addBoard(board);
           const doors = getDoorsFromRooms(rooms);
           const closedDoors = doors.filter(
             (door) => door.startsWith("DL") || door.startsWith("DC")
           );
           closedDoors.forEach((door) => noMove.add(door));
           await refreshedPlayer.processMovement(board, noMove);
+          setBoard(board);
           if (refreshedPlayer.speed.current > 0) {
             setPlayerAction({ ...emptyAction });
             setTracker({

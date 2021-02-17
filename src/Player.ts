@@ -3,9 +3,9 @@ import { getTileSpeed } from "./Tile";
 import { hashLocation, unhashLocation } from "./utils/hashLocation";
 
 export interface PlayerProps {
+  id: string;
   name: string;
   color: string;
-  location: Location;
   speed: Speed;
   hp: HP;
   vision: number;
@@ -27,6 +27,7 @@ export interface Movement {
 }
 
 export class Player implements PlayerProps {
+  id: string = '';
   name: string = '';
   color: string = 'bg-purple-600';
   location: Location = {
@@ -57,6 +58,16 @@ export class Player implements PlayerProps {
 
   addBoard(board: string[][]) {
     this.board = board;
+    for (let y = 0; y < board.length; y++) {
+      for (let x = 0; x < board[y].length; x++) {
+        if (board[y][x] === this.id) {
+          this.location = {
+            x, y
+          };
+          return;
+        }
+      }
+    }
   }
 
   async processMovement(board: string[][], noMove: Set<string>) {

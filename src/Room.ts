@@ -241,9 +241,9 @@ export const roomA = new Room({
       // prettier-ignore
       ["WALL","WALL","WALL","WALL","WALL",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","WALL",],
+      ["WALL","P001","    ","    ","WALL",],
       // prettier-ignore
-      ["DOAA","    ","    ","    ","DOAB",],
+      ["WALL","    ","    ","    ","DOAB",],
       // prettier-ignore
       ["WALL","    ","    ","    ","WALL",],
       // prettier-ignore
@@ -273,7 +273,7 @@ export const roomA = new Room({
       // prettier-ignore
       ["DOAB","    ","    ","    ","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
-      ["WALL","    ","WATR","WATR","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","DLBD",],
+      ["WALL","    ","WATR","WATR","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","P002","    ","    ","    ","    ","DLBD",],
       // prettier-ignore
       ["WALL","    ","WATR","WATR","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
       // prettier-ignore
