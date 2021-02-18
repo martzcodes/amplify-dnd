@@ -38,11 +38,11 @@ function Board({
             const fog = !visible && revealed;
             const selected = tracker.players[tracker.active] &&
               hashLocation(selectedTile.location) === tileHashedLocation;
-            const playerTile =
-              Object.values(tracker.players).filter(
-                (player) => hashLocation(player.location) === tileHashedLocation
-              ).length !== 0;
-            const move = !playerTile && tracker.players[tracker.active] && tracker.players[tracker.active].movement.tiles.has(tileHashedLocation);
+            const playerTileName =
+              Object.keys(tracker.players).find(
+                (playerName) => hashLocation(tracker.players[playerName].location) === tileHashedLocation
+              );
+            const move = !playerTileName && tracker.players[tracker.active] && tracker.players[tracker.active].movement.tiles.has(tileHashedLocation);
             const actions: any[] = [];
             if (move) {
               actions.push({
@@ -51,7 +51,10 @@ function Board({
                 color: "blue",
               });
             }
-            if (tracker.players[tracker.active]) {
+            if (
+              tracker.players[tracker.active] &&
+              !tracker.players[tracker.active].actionUsed
+            ) {
               if (cell.startsWith("DL")) {
                 const doorDistance = calculateDistance(
                   tracker.players[tracker.active].location,
@@ -70,50 +73,41 @@ function Board({
                   });
                 }
               }
-            if (cell.startsWith("DC")) {
-              const doorDistance = calculateDistance(
-                tracker.players[tracker.active].location,
-                tileLoc
-              );
-              if (doorDistance <= 5) {
-                actions.push({
-                  name: "Open",
-                  type: "open",
-                  color: "blue",
-                });
+              if (cell.startsWith("DC")) {
+                const doorDistance = calculateDistance(
+                  tracker.players[tracker.active].location,
+                  tileLoc
+                );
+                if (doorDistance <= 5) {
+                  actions.push({
+                    name: "Open",
+                    type: "open",
+                    color: "blue",
+                  });
+                }
+              }
+              if (cell.startsWith("DO")) {
+                const doorDistance = calculateDistance(
+                  tracker.players[tracker.active].location,
+                  tileLoc
+                );
+                if (doorDistance === 5) {
+                  actions.push({
+                    name: "Close Door",
+                    type: "close",
+                    color: "blue",
+                  });
+                }
               }
             }
-            if (cell.startsWith("DO")) {
-              const doorDistance = calculateDistance(
-                tracker.players[tracker.active].location,
-                tileLoc
-              );
-              if (doorDistance === 5) {
-                actions.push({
-                  name: "Close Door",
-                  type: "close",
-                  color: "blue",
-                });
-              }
-            }
-          }
             let className = "Tile";
-            if (playerTile) {
-              className += ` ${
-                Object.values(tracker.players).filter(
-                  (player) =>
-                    hashLocation(player.location) === tileHashedLocation
-                )[0].color
-              }`;
-            } else {
+            if (!playerTileName) {
               let cellType = "";
               if (visible || fog || revealed) {
                 className += ` ${cell === '    ' ? 'ground' : cell}`;
               }
               if (visible) {
                 className += ` visible`;
-              } else if (fog) {
-                className += ` fog`;
               } else if (!revealed) {
                 className += ` hide`;
               }
@@ -132,6 +126,14 @@ function Board({
                   break;
               }
               className += ` ${cellType}`
+            } else {
+              className += ` ${
+                Object.values(tracker.players).filter(
+                  (player) =>
+                    hashLocation(player.location) ===
+                    tileHashedLocation
+                )[0].color
+              }`;
             }
             return (
               <div key={hashLocation(tileLoc)} className={`flex-item`}>
@@ -142,13 +144,15 @@ function Board({
                       player: tracker.active,
                       location: tileLoc,
                       type: cell,
+                      playerAtTile:
+                        playerTileName ? tracker.players[playerTileName].getStats() : null,
                       actions,
                     });
                   }}
                 >
-                  {move ? (
-                    <div className={`Tile bg-green-500 bg-opacity-50`}></div>
-                  ) : (
+                  {move && visible ? (
+                    <div className={`Tile bg-green-300 bg-opacity-50`}></div>
+                  ) : fog ? <div className={`Tile bg-black bg-opacity-50`}></div>: (
                     <></>
                   )}
                 </div>

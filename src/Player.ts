@@ -9,6 +9,8 @@ export interface PlayerProps {
   speed: Speed;
   hp: HP;
   vision: number;
+  actionUsed: boolean;
+  roomDescription: string;
 }
 
 export interface Speed {
@@ -51,9 +53,21 @@ export class Player implements PlayerProps {
   visible: Set<string> = new Set([]);
   revealed: Set<string> = new Set([]);
   actionUsed: boolean = false;
+  roomDescription: string = '';
 
   constructor(playerProps: PlayerProps) {
     Object.assign(this, playerProps);
+  }
+
+  get damage() {
+    return this.hp.max - this.hp.current;
+  }
+
+  getStats() {
+    return {
+      name: this.name,
+      damage: this.damage,
+    }
   }
 
   addBoard(board: string[][]) {

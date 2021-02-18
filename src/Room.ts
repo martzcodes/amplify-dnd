@@ -126,6 +126,7 @@ export const roomsToBoard = (rooms: Record<string, Room>): string[][] => {
 };
 interface RoomProps {
   name: string;
+  description: string;
   cellSize: number;
   width: number;
   height: number;
@@ -139,6 +140,7 @@ export class Room implements RoomProps {
   cellSize = 5;
   width = 0;
   height = 0;
+  description = '';
   walls = new Set<string>([]);
   doors: Door[] = [];
   grid: string[][] = [];
@@ -227,7 +229,7 @@ export class Room implements RoomProps {
     if (gridLoc.startsWith("DL")) {
       tileProps.type = "door-locked";
     }
-    if (gridLoc === "    ") {
+    if (gridLoc === "    " || gridLoc.startsWith('P')) {
       tileProps.type = "normal";
     }
     return new Tile(tileProps);
@@ -236,6 +238,7 @@ export class Room implements RoomProps {
 
 export const roomA = new Room({
     name: "A",
+    description: `Bacon ipsum dolor amet ham hock biltong kielbasa, pork spare ribs leberkas tri-tip shoulder chuck. Meatball ribeye drumstick shank porchetta spare ribs pork belly brisket tri-tip. Beef alcatra chuck pancetta, tri-tip pork belly picanha corned beef sausage hamburger pastrami beef ribs meatball.`,
     cellSize: 5,
     grid: [
       // prettier-ignore
@@ -253,6 +256,7 @@ export const roomA = new Room({
   export const roomB = new Room({
     name: "B",
     cellSize: 5,
+    description: "Large room with some water running through it",
     grid: [
       // prettier-ignore
       ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL",],
@@ -298,6 +302,7 @@ export const roomA = new Room({
   } as RoomProps);
   export const roomC = new Room({
     name: "C",
+    description: "Room C Description",
     cellSize: 5,
     grid: [
       // prettier-ignore
@@ -314,6 +319,7 @@ export const roomA = new Room({
   } as RoomProps);
   export const roomD = new Room({
     name: "D",
+    description: "Room D Description",
     cellSize: 5,
     grid: [
       // prettier-ignore
@@ -330,6 +336,7 @@ export const roomA = new Room({
   } as RoomProps);
   export const roomE = new Room({
     name: "E",
+    description: "Room E Description",
     cellSize: 5,
     grid: [
       // prettier-ignore
@@ -346,6 +353,7 @@ export const roomA = new Room({
   } as RoomProps);
   export const roomF = new Room({
     name: "F",
+    description: "Room F Description",
     cellSize: 5,
     grid: [
       // prettier-ignore
@@ -372,6 +380,7 @@ export const roomA = new Room({
   } as RoomProps);
   export const roomG = new Room({
     name: "G",
+    description: "Room G Description",
     cellSize: 5,
     grid: [
       // prettier-ignore
