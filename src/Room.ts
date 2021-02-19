@@ -4,6 +4,7 @@ import { Location } from "./models/Location";
 import { TileDetails, TileDetailsProps } from "./Tile";
 import { hashLocation } from "./utils/hashLocation";
 
+const walkable = new Set(["    ", "WATR", "LAVA"]);
 
 export const getRoom = (
   rooms: Record<string, Room>,
@@ -123,9 +124,9 @@ export const roomsToBoard = (rooms: Record<string, Room>): string[][] => {
     .fill([])
     .map((_u) => Array(bounds.x.max + 1).fill("VOID"));
   Object.values(rooms).forEach((room) => {
-    room.grid.forEach((row, rowInd) => {
-      row.forEach((cell, colInd) => {
-        board[rowInd + room.offset.y][colInd + room.offset.x] = cell;
+    room.grid.forEach((row, y) => {
+      row.forEach((cell, x) => {
+        board[y + room.offset.y][x + room.offset.x] = cell;
       });
     });
   });
@@ -160,7 +161,7 @@ export class Room implements RoomProps {
     Object.assign(this, roomProps);
     this.grid.forEach((row, y) =>
       row.forEach((cell, x) => {
-        if (cell === "WALL" || cell === "VOID") {
+        if (cell.startsWith('W') || cell === "VOID") {
           this.walls.add(hashLocation({ x, y }));
         }
         if (cell.startsWith("D")) {
@@ -224,7 +225,7 @@ export class Room implements RoomProps {
       name: this.getDoorByLocation(loc),
     };
     const gridLoc = this.grid[loc.y - this.offset.y][loc.x - this.offset.x];
-    if (gridLoc === "WALL") {
+    if (gridLoc.startsWith('W')) {
       tileProps.type = "wall";
     }
     if (gridLoc.startsWith("DC")) {
@@ -249,15 +250,15 @@ export const roomA = new Room({
     cellSize: 5,
     grid: [
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL",],
+      ["WOUL","WLUL","WLUM","WLUR","WOUR",],
       // prettier-ignore
-      ["WALL","P001","    ","    ","WALL",],
+      ["WLLR","P001","    ","    ","WLRU",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","DOAB",],
+      ["WLLM","    ","    ","    ","DOAB",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","WALL",],
+      ["WLLD","    ","    ","    ","WLRD",],
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL",],
+      ["WODL","WLDL","WLDM","WLDR","WODR",],
     ],
   } as RoomProps);
   export const roomB = new Room({
@@ -266,45 +267,45 @@ export const roomA = new Room({
     description: "Large room with some water running through it",
     grid: [
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL",],
+      ["WOUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUM","WLUR","WLUR","WLUR","WLUR","WLUR","WLUR","WLUR","WLUR","WLUR","WOUR",],
       // prettier-ignore
-      ["WALL","    ","WATR","    ","    ","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLR","    ","WATR","    ","    ","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRU",],
       // prettier-ignore
-      ["WALL","    ","WATR","    ","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLR","    ","WATR","    ","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRU",],
       // prettier-ignore
-      ["WALL","    ","WATR","    ","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLR","    ","WATR","    ","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRU",],
       // prettier-ignore
-      ["WALL","    ","WATR","WATR","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLR","    ","WATR","WATR","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRU",],
       // prettier-ignore
-      ["WALL","WATR","WATR","WATR","WATR","WALL","WALL","WALL","WALL","DLBF","WALL","WALL","WALL","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WLLR","WATR","WATR","WATR","WATR","WIUL","WLDL","WLDL","WLDL","DLBF","WLDR","WLDR","WLDR","WIUR","    ","    ","    ","    ","    ","WLRU",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WLLR","    ","    ","    ","WATR","WLRU","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLR","    ","    ","    ","    ","    ","WLRU",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WLLR","    ","    ","    ","WATR","WLRU","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLR","    ","    ","    ","    ","    ","WLRU",],
       // prettier-ignore
-      ["DOAB","    ","    ","    ","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["DOAB","    ","    ","    ","WATR","WLRU","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLR","    ","    ","    ","    ","    ","WLRU",],
       // prettier-ignore
-      ["WALL","    ","WATR","WATR","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","P002","    ","    ","    ","    ","DLBD",],
+      ["WLLM","    ","WATR","WATR","WATR","WLRM","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLM","P002","    ","    ","    ","    ","DLBD",],
       // prettier-ignore
-      ["WALL","    ","WATR","WATR","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WLLD","    ","WATR","WATR","WATR","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLLD",],
       // prettier-ignore
-      ["WALL","    ","WATR","WATR","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WLLD","    ","WATR","WATR","WATR","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLLD",],
       // prettier-ignore
-      ["WALL","    ","WATR","WATR","WATR","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WLLD","    ","WATR","WATR","WATR","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLLD",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WLLD","    ","    ","    ","    ","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLLD",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","    ","    ","    ","    ","    ","WALL",],
+      ["WLLD","    ","    ","    ","    ","WIDL","WLUL","WLUL","WLUL","WLUM","WLUR","WLUR","WLUR","WIDR","    ","    ","    ","    ","    ","WLLD",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLLD",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLLD",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLLD",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLLD",],
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","DCBC","WALL","WALL","WALL",],
+      ["WODL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDM","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","DCBC","WLDR","WLDR","WODR",],
     ],
   } as RoomProps);
   export const roomC = new Room({
@@ -313,15 +314,15 @@ export const roomA = new Room({
     cellSize: 5,
     grid: [
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","DCBC","WALL","WALL","WALL",],
+      ["WOUL","WLUL","WLUL","WLUL","DCBC","WLUR","WLUR","WOUR",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLR","    ","    ","    ","    ","    ","    ","WLRU",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLM","    ","    ","    ","    ","    ","    ","WLRM",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLD","    ","    ","    ","    ","    ","    ","WLLD",],
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","DCCE","WALL","WALL","WALL",],
+      ["WODL","WLDL","WLDL","WLDL","DCCE","WLDR","WLDR","WODR",],
     ],
   } as RoomProps);
   export const roomD = new Room({
@@ -330,15 +331,15 @@ export const roomA = new Room({
     cellSize: 5,
     grid: [
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL",],
+      ["WOUL","WLUL","WLUL","WLUR","WLUR","WOUR",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","WALL",],
+      ["WLLR","    ","    ","    ","    ","WLRU",],
       // prettier-ignore
-      ["DLBD","    ","    ","    ","    ","WALL",],
+      ["DLBD","    ","    ","    ","    ","WLRM",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","DODG",],
+      ["WLLD","    ","    ","    ","    ","DODG",],
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL",],
+      ["WODL","WLDL","WLDL","WLDR","WLDR","WODR",],
     ],
   } as RoomProps);
   export const roomE = new Room({
@@ -347,15 +348,15 @@ export const roomA = new Room({
     cellSize: 5,
     grid: [
       // prettier-ignore
-      ["WALL","DCCE","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","DCEG","WALL","WALL","WALL","WALL","WALL","WALL","WALL",],
+      ["WOUL","DCCE","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUM","WLUR","WLUR","WLUR","WLUR","DCEG","WLUR","WLUR","WLUR","WLUR","WLUR","WLUR","WOUR",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRU",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLM","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRM",],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WALL",],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLLD",],
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL",],
+      ["WODL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDM","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WODR",],
     ],
   } as RoomProps);
   export const roomF = new Room({
@@ -364,23 +365,21 @@ export const roomA = new Room({
     cellSize: 5,
     grid: [
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","DLBF","WALL","WALL","WALL","WALL"],
+      ["WOUL","WLUL","WLUL","DLBF","WLUR","WLUR","WOUR"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLR","    ","    ","    ","    ","    ","WLRU"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLR","    ","    ","    ","    ","    ","WLRU"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLR","    ","    ","    ","    ","    ","WLRU"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLM","    ","    ","    ","    ","    ","WLLD"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLD","    ","    ","    ","    ","    ","WLLD"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLD","    ","    ","    ","    ","    ","WLLD"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
-      // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL"],
+      ["WODL","WLDL","WLDL","WLDM","WLDR","WLDR","WODR"],
     ],
   } as RoomProps);
   export const roomG = new Room({
@@ -389,37 +388,37 @@ export const roomA = new Room({
     cellSize: 5,
     grid: [
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL"],
+      ["WOUL","WLUL","WLUL","WLUL","WLUM","WLUR","WLUR","WLUR","WOUR"],
       // prettier-ignore
-      ["DODG","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["DODG","    ","    ","    ","    ","    ","    ","    ","WLRU"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLR","    ","    ","    ","    ","    ","    ","    ","WLRU"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLR","    ","    ","    ","    ","    ","    ","    ","WLRU"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLR","    ","    ","    ","    ","    ","    ","    ","WLRU"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLR","    ","    ","    ","    ","    ","    ","    ","WLRU"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLR","    ","    ","    ","    ","    ","    ","    ","WLRU"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLM","    ","    ","    ","    ","    ","    ","    ","WLRM"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","DCEG","WALL","WALL","WALL"],
+      ["WODL","WLDL","WLDL","WLDL","WLDM","DCEG","WLDR","WLDR","WODR"],
     ],
   } as RoomProps);
 

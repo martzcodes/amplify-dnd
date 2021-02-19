@@ -1,5 +1,5 @@
 import { Location } from "./models/Location";
-import { getTileSpeed } from "./Tile";
+import { getTileSpeed, tileTypes } from "./Tile";
 import { hashLocation, unhashLocation } from "./utils/hashLocation";
 
 export interface PlayerProps {
@@ -92,11 +92,11 @@ export class Player implements PlayerProps {
       tiles: new Set([hashLocation(this.location)]),
     };
     this.visible = new Set([hashLocation(this.location)]);
-    await this.recrusiveMovement(board, noMove, this.location, 0);
+    await this.recursiveMovement(board, noMove, this.location, 0);
     await this.processVision(board);
   }
 
-  async recrusiveMovement(
+  async recursiveMovement(
     board: string[][],
     noMove: Set<string>,
     loc: Location,
@@ -122,7 +122,7 @@ export class Player implements PlayerProps {
         return Promise.resolve();
       }
       const tileType = board[nextLoc.y][nextLoc.x];
-      if (noMove.has(tileType)) {
+      if (noMove.has(tileType) || (tileType in tileTypes && tileTypes[tileType].speed === 0)) {
         return Promise.resolve();
       }
       const distance = current + getTileSpeed(tileType);
@@ -132,7 +132,7 @@ export class Player implements PlayerProps {
       if (distance <= this.speed.current) {
         this.movement.tiles.add(hashedLoc);
         this.movement.cost[hashedLoc] = distance;
-        return this.recrusiveMovement(board, noMove, nextLoc, distance);
+        return this.recursiveMovement(board, noMove, nextLoc, distance);
       }
       return Promise.resolve();
     });
@@ -195,7 +195,7 @@ export class Player implements PlayerProps {
             break;
           }
           if (
-            tileType === "WALL" ||
+            (tileType.startsWith('W') && tileType !== 'WATR') ||
             tileType.startsWith('DC') ||
             tileType.startsWith('DL')
           ) {

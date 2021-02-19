@@ -2,9 +2,9 @@ import "./Board.css";
 import { PlayerTracker } from "./Game";
 import { Location } from "./models/Location";
 import { hashLocation } from "./utils/hashLocation";
-import { calculateDistance } from './Player';
+import { calculateDistance } from "./Player";
 import { Action } from "./models/Action";
-import Tile from "./Tile";
+import Tile, { tileTypes } from "./Tile";
 
 export interface Bounds {
   x: { min: number; max: number };
@@ -30,20 +30,28 @@ function Board({
             const tileLoc = { x, y };
             const tileHashedLocation = hashLocation(tileLoc);
             const visible =
-              Object.values(tracker.players).filter((player) => player.visible.has(tileHashedLocation))
-                .length !== 0;
+              Object.values(tracker.players).filter((player) =>
+                player.visible.has(tileHashedLocation)
+              ).length !== 0;
             const revealed =
               Object.values(tracker.players).filter((player) =>
                 player.revealed.has(tileHashedLocation)
               ).length !== 0;
-            const fog = !visible && revealed;
-            const selected = tracker.players[tracker.active] &&
+            const fog = !visible && revealed ;
+            const selected =
+              tracker.players[tracker.active] &&
               hashLocation(selectedTile.location) === tileHashedLocation;
-            const playerTileName =
-              Object.keys(tracker.players).find(
-                (playerName) => hashLocation(tracker.players[playerName].location) === tileHashedLocation
+            const playerTileName = Object.keys(tracker.players).find(
+              (playerName) =>
+                hashLocation(tracker.players[playerName].location) ===
+                tileHashedLocation
+            );
+            const move =
+              !playerTileName &&
+              tracker.players[tracker.active] &&
+              tracker.players[tracker.active].movement.tiles.has(
+                tileHashedLocation
               );
-            const move = !playerTileName && tracker.players[tracker.active] && tracker.players[tracker.active].movement.tiles.has(tileHashedLocation);
             const actions: any[] = [];
             if (move) {
               actions.push({
@@ -102,22 +110,70 @@ function Board({
               }
             }
             let className = "Tile";
+            let door = "";
+            let lock = "";
+
             if (!playerTileName) {
               let cellType = "";
               if (visible || fog || revealed) {
-                switch (cell) {
-                  case "    ":
-                    cellType = "bg-white";
-                    break;
-                  case "WATR":
-                    cellType = "bg-blue-300";
-                    break;
-                  case "WALL":
-                    cellType = "bg-pink-600";
-                    break;
-                  default:
-                    cellType = "";
-                    break;
+                if (cell in tileTypes) {
+                  cellType = tileTypes[cell].class;
+                } else {
+                  switch (cell) {
+                    case "    ":
+                      cellType = tileTypes.GRND.class;
+                      break;
+                    case "WATR":
+                      cellType = tileTypes.WATR.class;
+                      break;
+                    default:
+                      break;
+                  }
+                  if (cell.startsWith('D')) {
+                    const directions = [
+                      {
+                        x: 1,
+                        y: 0,
+                        door: tileTypes[`${cell.slice(0, 2)}L`],
+                        lock: "LOCL",
+                        wall: "WLLM",
+                      },
+                      {
+                        x: -1,
+                        y: 0,
+                        door: tileTypes[`${cell.slice(0, 2)}R`],
+                        lock: "LOCR",
+                        wall: "WLRM",
+                      },
+                      {
+                        x: 0,
+                        y: 1,
+                        door: tileTypes[`${cell.slice(0, 2)}U`],
+                        lock: "LOCU",
+                        wall: "WLUM",
+                      },
+                      {
+                        x: 0,
+                        y: -1,
+                        door: tileTypes[`${cell.slice(0, 2)}D`],
+                        lock: "LOCD",
+                        wall: "WLDM",
+                      },
+                    ];
+                    directions.forEach((dir) => {
+                      const dirX = tileLoc.x + dir.x;
+                      const dirY = tileLoc.y + dir.y;
+                      if (dirX > 0 && dirY > 0 && dirX < board[0].length && dirY < board.length) {
+                        if (board[dirY][dirX] === '    ' || (board[dirY][dirX] in tileTypes && tileTypes[board[dirY][dirX]].speed > 2.5)) {
+                          cellType = tileTypes[dir.wall].class;
+                          door = dir.door.class;
+                          if (cell.startsWith('DL')) {
+                            lock = tileTypes[dir.lock].class;
+                          }
+                        }
+                      }
+                    })
+                  }
                 }
                 className += ` ${cellType}`;
               }
@@ -127,29 +183,37 @@ function Board({
                 className += ` hide`;
               }
               if (selected) {
-                className += " ring-4 ring-inset"
+                className += " ring-4 ring-inset";
               }
             } else {
               className += ` ${
                 Object.values(tracker.players).filter(
                   (player) =>
-                    hashLocation(player.location) ===
-                    tileHashedLocation
+                    hashLocation(player.location) === tileHashedLocation
                 )[0].color
               }`;
             }
             return (
               <div key={hashLocation(tileLoc)} className={`flex-item`}>
-                <Tile tileClass={className} clickHandler={() => {
-                  setSelectedTile({
+                <Tile
+                  door={door}
+                  lock={lock}
+                  tileClass={className}
+                  clickHandler={() => {
+                    setSelectedTile({
                       player: tracker.active,
                       location: tileLoc,
                       type: cell,
-                      playerAtTile:
-                        playerTileName ? tracker.players[playerTileName].getStats() : null,
+                      playerAtTile: playerTileName
+                        ? tracker.players[playerTileName].getStats()
+                        : null,
                       actions,
                     });
-                }} fog={fog} visible={visible} move={move}></Tile>
+                  }}
+                  fog={cell.startsWith('W') && revealed ? false : fog}
+                  visible={visible}
+                  move={move}
+                ></Tile>
               </div>
             );
           })}
