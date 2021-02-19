@@ -1,7 +1,7 @@
 import { Bounds } from "./Board";
 import { Door } from "./models/Door";
 import { Location } from "./models/Location";
-import { Tile, TileProps } from "./Tile";
+import { TileDetails, TileDetailsProps } from "./Tile";
 import { hashLocation } from "./utils/hashLocation";
 
 
@@ -107,6 +107,13 @@ export const roomsToBoard = (rooms: Record<string, Room>): string[][] => {
         roomTwoOffset.y -= roomTwoDoor.location.y;
         roomTwoOffset.x += roomOneDoorLocation.x;
         roomTwoOffset.y += roomOneDoorLocation.y;
+        if (roomTwoDoor.location.x === 0) {
+          roomTwoOffset.x += 1;
+        }
+        if (roomTwoDoor.location.y === 0) {
+          roomTwoOffset.y += 1;
+        }
+
         rooms[doorNames[1]].applyOffset(roomTwoOffset);
       }
     }
@@ -209,8 +216,8 @@ export class Room implements RoomProps {
     return "";
   }
 
-  getTile(loc: Location): Tile {
-    const tileProps: TileProps = {
+  getTile(loc: Location): TileDetails {
+    const tileProps: TileDetailsProps = {
       type: "void",
       location: loc,
       size: this.cellSize,
@@ -232,7 +239,7 @@ export class Room implements RoomProps {
     if (gridLoc === "    " || gridLoc.startsWith('P')) {
       tileProps.type = "normal";
     }
-    return new Tile(tileProps);
+    return new TileDetails(tileProps);
   }
 }
 
@@ -373,8 +380,6 @@ export const roomA = new Room({
       // prettier-ignore
       ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
       // prettier-ignore
-      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
-      // prettier-ignore
       ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL","WALL"],
     ],
   } as RoomProps);
@@ -412,7 +417,9 @@ export const roomA = new Room({
       // prettier-ignore
       ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
       // prettier-ignore
-      ["WALL","WALL","WALL","WALL","WALL","WALL","WALL","DCEG","WALL"],
+      ["WALL","    ","    ","    ","    ","    ","    ","    ","WALL"],
+      // prettier-ignore
+      ["WALL","WALL","WALL","WALL","WALL","DCEG","WALL","WALL","WALL"],
     ],
   } as RoomProps);
 

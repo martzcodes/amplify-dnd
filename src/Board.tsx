@@ -4,6 +4,7 @@ import { Location } from "./models/Location";
 import { hashLocation } from "./utils/hashLocation";
 import { calculateDistance } from './Player';
 import { Action } from "./models/Action";
+import Tile from "./Tile";
 
 export interface Bounds {
   x: { min: number; max: number };
@@ -104,7 +105,21 @@ function Board({
             if (!playerTileName) {
               let cellType = "";
               if (visible || fog || revealed) {
-                className += ` ${cell === '    ' ? 'ground' : cell}`;
+                switch (cell) {
+                  case "    ":
+                    cellType = "bg-white";
+                    break;
+                  case "WATR":
+                    cellType = "bg-blue-300";
+                    break;
+                  case "WALL":
+                    cellType = "bg-pink-600";
+                    break;
+                  default:
+                    cellType = "";
+                    break;
+                }
+                className += ` ${cellType}`;
               }
               if (visible) {
                 className += ` visible`;
@@ -114,18 +129,6 @@ function Board({
               if (selected) {
                 className += " ring-4 ring-inset"
               }
-              switch (cell) {
-                case "    ":
-                  cellType = "ground";
-                  break;
-                case "WATR":
-                  cellType = "bg-blue-300";
-                  break;
-                default:
-                  cellType = "";
-                  break;
-              }
-              className += ` ${cellType}`
             } else {
               className += ` ${
                 Object.values(tracker.players).filter(
@@ -137,10 +140,8 @@ function Board({
             }
             return (
               <div key={hashLocation(tileLoc)} className={`flex-item`}>
-                <div
-                  className={className}
-                  onClick={() => {
-                    setSelectedTile({
+                <Tile tileClass={className} clickHandler={() => {
+                  setSelectedTile({
                       player: tracker.active,
                       location: tileLoc,
                       type: cell,
@@ -148,14 +149,7 @@ function Board({
                         playerTileName ? tracker.players[playerTileName].getStats() : null,
                       actions,
                     });
-                  }}
-                >
-                  {move && visible ? (
-                    <div className={`Tile bg-green-300 bg-opacity-50`}></div>
-                  ) : fog ? <div className={`Tile bg-black bg-opacity-50`}></div>: (
-                    <></>
-                  )}
-                </div>
+                }} fog={fog} visible={visible} move={move}></Tile>
               </div>
             );
           })}
