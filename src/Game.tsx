@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import Board from "./Board";
+import BaseLayer from "./BaseLayer";
+import InteractionLayer from "./InteractionLayer";
 import "./Game.css";
 import { Action } from "./models/Action";
 import { Location } from "./models/Location";
@@ -326,12 +327,19 @@ function Game() {
       {tracker ? (
         <div className="flex py-5">
           <div className="flex-1">
-            <Board
-              selectedTile={selectedTile}
-              setSelectedTile={setSelectedTile}
-              tracker={tracker}
-              board={board}
-            ></Board>
+            <div className="LayerMap">
+              <div className="Layered">
+                <BaseLayer board={emptyBoard}></BaseLayer>
+              </div>
+              <div className="Layered">
+                <InteractionLayer
+                  selectedTile={selectedTile}
+                  setSelectedTile={setSelectedTile}
+                  tracker={tracker}
+                  board={board}
+                ></InteractionLayer>
+              </div>
+            </div>
           </div>
           <div className="flex-none w-full md:max-w-xs">
             <div>{tracker.players[tracker.active].roomDescription}</div>
@@ -355,7 +363,11 @@ function Game() {
               </button>
             ))}
             <pre>{`${JSON.stringify(selectedTile, null, 2)}`}</pre>
-            <pre>{`${JSON.stringify(tracker.players[tracker.active].getStats(), null, 2)}`}</pre>
+            <pre>{`${JSON.stringify(
+              tracker.players[tracker.active].getStats(),
+              null,
+              2
+            )}`}</pre>
           </div>
         </div>
       ) : (
@@ -363,7 +375,7 @@ function Game() {
       )}
       {tracker ? (
         <div className="grid grid-cols-2 gap-4">
-          <div>
+          {/* <div>
             <Board
               selectedTile={selectedTile}
               setSelectedTile={setSelectedTile}
@@ -384,7 +396,7 @@ function Game() {
               }}
               board={board}
             ></Board>
-          </div>
+          </div> */}
         </div>
       ) : (
         <></>

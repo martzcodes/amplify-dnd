@@ -125,7 +125,7 @@ export class Player implements PlayerProps {
       if (noMove.has(tileType) || (tileType in tileTypes && tileTypes[tileType].speed === 0)) {
         return Promise.resolve();
       }
-      const distance = current + getTileSpeed(tileType);
+      const distance = current + getTileSpeed(tileType === "    " ? 'GRND' : tileType);
       if (hashedLoc in this.movement.cost && distance >= this.movement.cost[hashedLoc]) {
         return Promise.resolve();
       }

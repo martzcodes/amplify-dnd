@@ -1,0 +1,866 @@
+.flex-container {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row;
+  justify-content: space-around;
+
+  line-height: 30px;
+}
+.flex-item {
+  margin: 0px;
+  font-weight: bold;
+  font-size: 1.5em;
+  text-align: center;
+  flex: 1 0 auto;
+  height: auto;
+  /* border: 1px solid black; */
+}
+.flex-item:before {
+  content: "";
+  float: left;
+  padding-top: 100%;
+}
+
+.Tile {
+  height: 100%;
+  width: 100%;
+}
+
+.LayerMap {
+  height: 100%;
+  width: 100%;
+  float: left;
+  position: relative;
+}
+
+.LayerTile {
+  float: left;
+  position: relative;
+}
+
+.Layered {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.tiles {
+  width: 100%;
+  height: 100%;
+  background: url(./underworld_load-atlas-32x32.png) no-repeat;
+  background-size: 1750%;
+}
+
+.tile-0-0 {
+  background-position: 0% 0%;
+}
+.tile-1-0 {
+  background-position: 6.67% 0%;
+}
+.tile-2-0 {
+  background-position: 13.33% 0%;
+}
+.tile-3-0 {
+  background-position: 20% 0%;
+}
+.tile-4-0 {
+  background-position: 26.67% 0%;
+}
+.tile-5-0 {
+  background-position: 33.33% 0%;
+}
+.tile-6-0 {
+  background-position: 40% 0%;
+}
+.tile-7-0 {
+  background-position: 46.67% 0%;
+}
+.tile-8-0 {
+  background-position: 53.33% 0%;
+}
+.tile-9-0 {
+  background-position: 60% 0%;
+}
+.tile-10-0 {
+  background-position: 66.67% 0%;
+}
+.tile-11-0 {
+  background-position: 73.33% 0%;
+}
+.tile-12-0 {
+  background-position: 80% 0%;
+}
+.tile-13-0 {
+  background-position: 86.67% 0%;
+}
+.tile-14-0 {
+  background-position: 93.33% 0%;
+}
+.tile-15-0 {
+  background-position: 100% 0%;
+}
+.tile-0-1 {
+  background-position: 0% 6.67%;
+}
+.tile-1-1 {
+  background-position: 6.67% 6.67%;
+}
+.tile-2-1 {
+  background-position: 13.33% 6.67%;
+}
+.tile-3-1 {
+  background-position: 20% 6.67%;
+}
+.tile-4-1 {
+  background-position: 26.67% 6.67%;
+}
+.tile-5-1 {
+  background-position: 33.33% 6.67%;
+}
+.tile-6-1 {
+  background-position: 40% 6.67%;
+}
+.tile-7-1 {
+  background-position: 46.67% 6.67%;
+}
+.tile-8-1 {
+  background-position: 53.33% 6.67%;
+}
+.tile-9-1 {
+  background-position: 60% 6.67%;
+}
+.tile-10-1 {
+  background-position: 66.67% 6.67%;
+}
+.tile-11-1 {
+  background-position: 73.33% 6.67%;
+}
+.tile-12-1 {
+  background-position: 80% 6.67%;
+}
+.tile-13-1 {
+  background-position: 86.67% 6.67%;
+}
+.tile-14-1 {
+  background-position: 93.33% 6.67%;
+}
+.tile-15-1 {
+  background-position: 100% 6.67%;
+}
+.tile-0-2 {
+  background-position: 0% 13.33%;
+}
+.tile-1-2 {
+  background-position: 6.67% 13.33%;
+}
+.tile-2-2 {
+  background-position: 13.33% 13.33%;
+}
+.tile-3-2 {
+  background-position: 20% 13.33%;
+}
+.tile-4-2 {
+  background-position: 26.67% 13.33%;
+}
+.tile-5-2 {
+  background-position: 33.33% 13.33%;
+}
+.tile-6-2 {
+  background-position: 40% 13.33%;
+}
+.tile-7-2 {
+  background-position: 46.67% 13.33%;
+}
+.tile-8-2 {
+  background-position: 53.33% 13.33%;
+}
+.tile-9-2 {
+  background-position: 60% 13.33%;
+}
+.tile-10-2 {
+  background-position: 66.67% 13.33%;
+}
+.tile-11-2 {
+  background-position: 73.33% 13.33%;
+}
+.tile-12-2 {
+  background-position: 80% 13.33%;
+}
+.tile-13-2 {
+  background-position: 86.67% 13.33%;
+}
+.tile-14-2 {
+  background-position: 93.33% 13.33%;
+}
+.tile-15-2 {
+  background-position: 100% 13.33%;
+}
+.tile-0-3 {
+  background-position: 0% 20%;
+}
+.tile-1-3 {
+  background-position: 6.67% 20%;
+}
+.tile-2-3 {
+  background-position: 13.33% 20%;
+}
+.tile-3-3 {
+  background-position: 20% 20%;
+}
+.tile-4-3 {
+  background-position: 26.67% 20%;
+}
+.tile-5-3 {
+  background-position: 33.33% 20%;
+}
+.tile-6-3 {
+  background-position: 40% 20%;
+}
+.tile-7-3 {
+  background-position: 46.67% 20%;
+}
+.tile-8-3 {
+  background-position: 53.33% 20%;
+}
+.tile-9-3 {
+  background-position: 60% 20%;
+}
+.tile-10-3 {
+  background-position: 66.67% 20%;
+}
+.tile-11-3 {
+  background-position: 73.33% 20%;
+}
+.tile-12-3 {
+  background-position: 80% 20%;
+}
+.tile-13-3 {
+  background-position: 86.67% 20%;
+}
+.tile-14-3 {
+  background-position: 93.33% 20%;
+}
+.tile-15-3 {
+  background-position: 100% 20%;
+}
+.tile-0-4 {
+  background-position: 0% 26.67%;
+}
+.tile-1-4 {
+  background-position: 6.67% 26.67%;
+}
+.tile-2-4 {
+  background-position: 13.33% 26.67%;
+}
+.tile-3-4 {
+  background-position: 20% 26.67%;
+}
+.tile-4-4 {
+  background-position: 26.67% 26.67%;
+}
+.tile-5-4 {
+  background-position: 33.33% 26.67%;
+}
+.tile-6-4 {
+  background-position: 40% 26.67%;
+}
+.tile-7-4 {
+  background-position: 46.67% 26.67%;
+}
+.tile-8-4 {
+  background-position: 53.33% 26.67%;
+}
+.tile-9-4 {
+  background-position: 60% 26.67%;
+}
+.tile-10-4 {
+  background-position: 66.67% 26.67%;
+}
+.tile-11-4 {
+  background-position: 73.33% 26.67%;
+}
+.tile-12-4 {
+  background-position: 80% 26.67%;
+}
+.tile-13-4 {
+  background-position: 86.67% 26.67%;
+}
+.tile-14-4 {
+  background-position: 93.33% 26.67%;
+}
+.tile-15-4 {
+  background-position: 100% 26.67%;
+}
+.tile-0-5 {
+  background-position: 0% 33.33%;
+}
+.tile-1-5 {
+  background-position: 6.67% 33.33%;
+}
+.tile-2-5 {
+  background-position: 13.33% 33.33%;
+}
+.tile-3-5 {
+  background-position: 20% 33.33%;
+}
+.tile-4-5 {
+  background-position: 26.67% 33.33%;
+}
+.tile-5-5 {
+  background-position: 33.33% 33.33%;
+}
+.tile-6-5 {
+  background-position: 40% 33.33%;
+}
+.tile-7-5 {
+  background-position: 46.67% 33.33%;
+}
+.tile-8-5 {
+  background-position: 53.33% 33.33%;
+}
+.tile-9-5 {
+  background-position: 60% 33.33%;
+}
+.tile-10-5 {
+  background-position: 66.67% 33.33%;
+}
+.tile-11-5 {
+  background-position: 73.33% 33.33%;
+}
+.tile-12-5 {
+  background-position: 80% 33.33%;
+}
+.tile-13-5 {
+  background-position: 86.67% 33.33%;
+}
+.tile-14-5 {
+  background-position: 93.33% 33.33%;
+}
+.tile-15-5 {
+  background-position: 100% 33.33%;
+}
+.tile-0-6 {
+  background-position: 0% 40%;
+}
+.tile-1-6 {
+  background-position: 6.67% 40%;
+}
+.tile-2-6 {
+  background-position: 13.33% 40%;
+}
+.tile-3-6 {
+  background-position: 20% 40%;
+}
+.tile-4-6 {
+  background-position: 26.67% 40%;
+}
+.tile-5-6 {
+  background-position: 33.33% 40%;
+}
+.tile-6-6 {
+  background-position: 40% 40%;
+}
+.tile-7-6 {
+  background-position: 46.67% 40%;
+}
+.tile-8-6 {
+  background-position: 53.33% 40%;
+}
+.tile-9-6 {
+  background-position: 60% 40%;
+}
+.tile-10-6 {
+  background-position: 66.67% 40%;
+}
+.tile-11-6 {
+  background-position: 73.33% 40%;
+}
+.tile-12-6 {
+  background-position: 80% 40%;
+}
+.tile-13-6 {
+  background-position: 86.67% 40%;
+}
+.tile-14-6 {
+  background-position: 93.33% 40%;
+}
+.tile-15-6 {
+  background-position: 100% 40%;
+}
+.tile-0-7 {
+  background-position: 0% 46.67%;
+}
+.tile-1-7 {
+  background-position: 6.67% 46.67%;
+}
+.tile-2-7 {
+  background-position: 13.33% 46.67%;
+}
+.tile-3-7 {
+  background-position: 20% 46.67%;
+}
+.tile-4-7 {
+  background-position: 26.67% 46.67%;
+}
+.tile-5-7 {
+  background-position: 33.33% 46.67%;
+}
+.tile-6-7 {
+  background-position: 40% 46.67%;
+}
+.tile-7-7 {
+  background-position: 46.67% 46.67%;
+}
+.tile-8-7 {
+  background-position: 53.33% 46.67%;
+}
+.tile-9-7 {
+  background-position: 60% 46.67%;
+}
+.tile-10-7 {
+  background-position: 66.67% 46.67%;
+}
+.tile-11-7 {
+  background-position: 73.33% 46.67%;
+}
+.tile-12-7 {
+  background-position: 80% 46.67%;
+}
+.tile-13-7 {
+  background-position: 86.67% 46.67%;
+}
+.tile-14-7 {
+  background-position: 93.33% 46.67%;
+}
+.tile-15-7 {
+  background-position: 100% 46.67%;
+}
+.tile-0-8 {
+  background-position: 0% 53.33%;
+}
+.tile-1-8 {
+  background-position: 6.67% 53.33%;
+}
+.tile-2-8 {
+  background-position: 13.33% 53.33%;
+}
+.tile-3-8 {
+  background-position: 20% 53.33%;
+}
+.tile-4-8 {
+  background-position: 26.67% 53.33%;
+}
+.tile-5-8 {
+  background-position: 33.33% 53.33%;
+}
+.tile-6-8 {
+  background-position: 40% 53.33%;
+}
+.tile-7-8 {
+  background-position: 46.67% 53.33%;
+}
+.tile-8-8 {
+  background-position: 53.33% 53.33%;
+}
+.tile-9-8 {
+  background-position: 60% 53.33%;
+}
+.tile-10-8 {
+  background-position: 66.67% 53.33%;
+}
+.tile-11-8 {
+  background-position: 73.33% 53.33%;
+}
+.tile-12-8 {
+  background-position: 80% 53.33%;
+}
+.tile-13-8 {
+  background-position: 86.67% 53.33%;
+}
+.tile-14-8 {
+  background-position: 93.33% 53.33%;
+}
+.tile-15-8 {
+  background-position: 100% 53.33%;
+}
+.tile-0-9 {
+  background-position: 0% 60%;
+}
+.tile-1-9 {
+  background-position: 6.67% 60%;
+}
+.tile-2-9 {
+  background-position: 13.33% 60%;
+}
+.tile-3-9 {
+  background-position: 20% 60%;
+}
+.tile-4-9 {
+  background-position: 26.67% 60%;
+}
+.tile-5-9 {
+  background-position: 33.33% 60%;
+}
+.tile-6-9 {
+  background-position: 40% 60%;
+}
+.tile-7-9 {
+  background-position: 46.67% 60%;
+}
+.tile-8-9 {
+  background-position: 53.33% 60%;
+}
+.tile-9-9 {
+  background-position: 60% 60%;
+}
+.tile-10-9 {
+  background-position: 66.67% 60%;
+}
+.tile-11-9 {
+  background-position: 73.33% 60%;
+}
+.tile-12-9 {
+  background-position: 80% 60%;
+}
+.tile-13-9 {
+  background-position: 86.67% 60%;
+}
+.tile-14-9 {
+  background-position: 93.33% 60%;
+}
+.tile-15-9 {
+  background-position: 100% 60%;
+}
+.tile-0-10 {
+  background-position: 0% 66.67%;
+}
+.tile-1-10 {
+  background-position: 6.67% 66.67%;
+}
+.tile-2-10 {
+  background-position: 13.33% 66.67%;
+}
+.tile-3-10 {
+  background-position: 20% 66.67%;
+}
+.tile-4-10 {
+  background-position: 26.67% 66.67%;
+}
+.tile-5-10 {
+  background-position: 33.33% 66.67%;
+}
+.tile-6-10 {
+  background-position: 40% 66.67%;
+}
+.tile-7-10 {
+  background-position: 46.67% 66.67%;
+}
+.tile-8-10 {
+  background-position: 53.33% 66.67%;
+}
+.tile-9-10 {
+  background-position: 60% 66.67%;
+}
+.tile-10-10 {
+  background-position: 66.67% 66.67%;
+}
+.tile-11-10 {
+  background-position: 73.33% 66.67%;
+}
+.tile-12-10 {
+  background-position: 80% 66.67%;
+}
+.tile-13-10 {
+  background-position: 86.67% 66.67%;
+}
+.tile-14-10 {
+  background-position: 93.33% 66.67%;
+}
+.tile-15-10 {
+  background-position: 100% 66.67%;
+}
+.tile-0-11 {
+  background-position: 0% 73.33%;
+}
+.tile-1-11 {
+  background-position: 6.67% 73.33%;
+}
+.tile-2-11 {
+  background-position: 13.33% 73.33%;
+}
+.tile-3-11 {
+  background-position: 20% 73.33%;
+}
+.tile-4-11 {
+  background-position: 26.67% 73.33%;
+}
+.tile-5-11 {
+  background-position: 33.33% 73.33%;
+}
+.tile-6-11 {
+  background-position: 40% 73.33%;
+}
+.tile-7-11 {
+  background-position: 46.67% 73.33%;
+}
+.tile-8-11 {
+  background-position: 53.33% 73.33%;
+}
+.tile-9-11 {
+  background-position: 60% 73.33%;
+}
+.tile-10-11 {
+  background-position: 66.67% 73.33%;
+}
+.tile-11-11 {
+  background-position: 73.33% 73.33%;
+}
+.tile-12-11 {
+  background-position: 80% 73.33%;
+}
+.tile-13-11 {
+  background-position: 86.67% 73.33%;
+}
+.tile-14-11 {
+  background-position: 93.33% 73.33%;
+}
+.tile-15-11 {
+  background-position: 100% 73.33%;
+}
+.tile-0-12 {
+  background-position: 0% 80%;
+}
+.tile-1-12 {
+  background-position: 6.67% 80%;
+}
+.tile-2-12 {
+  background-position: 13.33% 80%;
+}
+.tile-3-12 {
+  background-position: 20% 80%;
+}
+.tile-4-12 {
+  background-position: 26.67% 80%;
+}
+.tile-5-12 {
+  background-position: 33.33% 80%;
+}
+.tile-6-12 {
+  background-position: 40% 80%;
+}
+.tile-7-12 {
+  background-position: 46.67% 80%;
+}
+.tile-8-12 {
+  background-position: 53.33% 80%;
+}
+.tile-9-12 {
+  background-position: 60% 80%;
+}
+.tile-10-12 {
+  background-position: 66.67% 80%;
+}
+.tile-11-12 {
+  background-position: 73.33% 80%;
+}
+.tile-12-12 {
+  background-position: 80% 80%;
+}
+.tile-13-12 {
+  background-position: 86.67% 80%;
+}
+.tile-14-12 {
+  background-position: 93.33% 80%;
+}
+.tile-15-12 {
+  background-position: 100% 80%;
+}
+.tile-0-13 {
+  background-position: 0% 86.67%;
+}
+.tile-1-13 {
+  background-position: 6.67% 86.67%;
+}
+.tile-2-13 {
+  background-position: 13.33% 86.67%;
+}
+.tile-3-13 {
+  background-position: 20% 86.67%;
+}
+.tile-4-13 {
+  background-position: 26.67% 86.67%;
+}
+.tile-5-13 {
+  background-position: 33.33% 86.67%;
+}
+.tile-6-13 {
+  background-position: 40% 86.67%;
+}
+.tile-7-13 {
+  background-position: 46.67% 86.67%;
+}
+.tile-8-13 {
+  background-position: 53.33% 86.67%;
+}
+.tile-9-13 {
+  background-position: 60% 86.67%;
+}
+.tile-10-13 {
+  background-position: 66.67% 86.67%;
+}
+.tile-11-13 {
+  background-position: 73.33% 86.67%;
+}
+.tile-12-13 {
+  background-position: 80% 86.67%;
+}
+.tile-13-13 {
+  background-position: 86.67% 86.67%;
+}
+.tile-14-13 {
+  background-position: 93.33% 86.67%;
+}
+.tile-15-13 {
+  background-position: 100% 86.67%;
+}
+.tile-0-14 {
+  background-position: 0% 93.33%;
+}
+.tile-1-14 {
+  background-position: 6.67% 93.33%;
+}
+.tile-2-14 {
+  background-position: 13.33% 93.33%;
+}
+.tile-3-14 {
+  background-position: 20% 93.33%;
+}
+.tile-4-14 {
+  background-position: 26.67% 93.33%;
+}
+.tile-5-14 {
+  background-position: 33.33% 93.33%;
+}
+.tile-6-14 {
+  background-position: 40% 93.33%;
+}
+.tile-7-14 {
+  background-position: 46.67% 93.33%;
+}
+.tile-8-14 {
+  background-position: 53.33% 93.33%;
+}
+.tile-9-14 {
+  background-position: 60% 93.33%;
+}
+.tile-10-14 {
+  background-position: 66.67% 93.33%;
+}
+.tile-11-14 {
+  background-position: 73.33% 93.33%;
+}
+.tile-12-14 {
+  background-position: 80% 93.33%;
+}
+.tile-13-14 {
+  background-position: 86.67% 93.33%;
+}
+.tile-14-14 {
+  background-position: 93.33% 93.33%;
+}
+.tile-15-14 {
+  background-position: 100% 93.33%;
+}
+.tile-0-15 {
+  background-position: 0% 100%;
+}
+.tile-1-15 {
+  background-position: 6.67% 100%;
+}
+.tile-2-15 {
+  background-position: 13.33% 100%;
+}
+.tile-3-15 {
+  background-position: 20% 100%;
+}
+.tile-4-15 {
+  background-position: 26.67% 100%;
+}
+.tile-5-15 {
+  background-position: 33.33% 100%;
+}
+.tile-6-15 {
+  background-position: 40% 100%;
+}
+.tile-7-15 {
+  background-position: 46.67% 100%;
+}
+.tile-8-15 {
+  background-position: 53.33% 100%;
+}
+.tile-9-15 {
+  background-position: 60% 100%;
+}
+.tile-10-15 {
+  background-position: 66.67% 100%;
+}
+.tile-11-15 {
+  background-position: 73.33% 100%;
+}
+.tile-12-15 {
+  background-position: 80% 100%;
+}
+.tile-13-15 {
+  background-position: 86.67% 100%;
+}
+.tile-14-15 {
+  background-position: 93.33% 100%;
+}
+.tile-15-15 {
+  background-position: 100% 100%;
+}
+
+.player {
+  background: green !important;
+  /* background: url(./dungeon_tiles.png) 0 0 !important; */
+}
+
+.WALL {
+  background: black !important;
+}
+.void {
+  background: black;
+}
+
+.door-open {
+  background: yellow;
+}
+.door-closed {
+  background: orange;
+}
+
+.door-locked {
+  background: red;
+}
+
+.visible {
+  opacity: 1;
+}
+.fog {
+  background-color: gray;
+  opacity: 0.5;
+}
+.hide {
+  background: black !important;
+}
+
+.label {
+  width: 5px;
+}

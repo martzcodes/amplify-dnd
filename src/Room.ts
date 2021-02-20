@@ -287,23 +287,23 @@ export const roomA = new Room({
       // prettier-ignore
       ["WLLM","    ","WATR","WATR","WATR","WLRM","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLM","P002","    ","    ","    ","    ","DLBD",],
       // prettier-ignore
-      ["WLLD","    ","WATR","WATR","WATR","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLLD",],
+      ["WLLD","    ","WATR","WATR","WATR","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLRD",],
       // prettier-ignore
-      ["WLLD","    ","WATR","WATR","WATR","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLLD",],
+      ["WLLD","    ","WATR","WATR","WATR","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLRD",],
       // prettier-ignore
-      ["WLLD","    ","WATR","WATR","WATR","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLLD",],
+      ["WLLD","    ","WATR","WATR","WATR","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLRD",],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLLD",],
+      ["WLLD","    ","    ","    ","    ","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLRD",],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","WIDL","WLUL","WLUL","WLUL","WLUM","WLUR","WLUR","WLUR","WIDR","    ","    ","    ","    ","    ","WLLD",],
+      ["WLLD","    ","    ","    ","    ","WIDL","WLUL","WLUL","WLUL","WLUM","WLUR","WLUR","WLUR","WIDR","    ","    ","    ","    ","    ","WLRD",],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLLD",],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRD",],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLLD",],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRD",],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLLD",],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRD",],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLLD",],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRD",],
       // prettier-ignore
       ["WODL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDM","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","DCBC","WLDR","WLDR","WODR",],
     ],
@@ -320,7 +320,7 @@ export const roomA = new Room({
       // prettier-ignore
       ["WLLM","    ","    ","    ","    ","    ","    ","WLRM",],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","WLLD",],
+      ["WLLD","    ","    ","    ","    ","    ","    ","WLRD",],
       // prettier-ignore
       ["WODL","WLDL","WLDL","WLDL","DCCE","WLDR","WLDR","WODR",],
     ],
@@ -354,7 +354,7 @@ export const roomA = new Room({
       // prettier-ignore
       ["WLLM","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRM",],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLLD",],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRD",],
       // prettier-ignore
       ["WODL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDM","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WODR",],
     ],
@@ -373,11 +373,11 @@ export const roomA = new Room({
       // prettier-ignore
       ["WLLR","    ","    ","    ","    ","    ","WLRU"],
       // prettier-ignore
-      ["WLLM","    ","    ","    ","    ","    ","WLLD"],
+      ["WLLM","    ","    ","    ","    ","    ","WLRD"],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","WLLD"],
+      ["WLLD","    ","    ","    ","    ","    ","WLRD"],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","WLLD"],
+      ["WLLD","    ","    ","    ","    ","    ","WLRD"],
       // prettier-ignore
       ["WODL","WLDL","WLDL","WLDM","WLDR","WLDR","WODR"],
     ],
@@ -404,19 +404,19 @@ export const roomA = new Room({
       // prettier-ignore
       ["WLLM","    ","    ","    ","    ","    ","    ","    ","WLRM"],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
       // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLLD"],
+      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
       // prettier-ignore
       ["WODL","WLDL","WLDL","WLDL","WLDM","DCEG","WLDR","WLDR","WODR"],
     ],
