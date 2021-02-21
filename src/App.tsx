@@ -21,13 +21,14 @@ function App() {
     return onAuthUIStateChange((nextAuthState, authData) => {
       setAuthState(nextAuthState);
       setUser(authData);
+      console.log(authData);
     });
   }, []);
 
   return (
     <Router>
       <div className="flex flex-col h-screen">
-        <Header authState={authState}></Header>
+        <Header authState={authState} email={user?.attributes?.email}></Header>
         <main className="flex-grow">
           <Switch>
             <Route path="/tile">
