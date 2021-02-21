@@ -1,3 +1,4 @@
+import { Action } from "./models/Action";
 import { Location } from "./models/Location";
 import { getTileSpeed, tileTypes } from "./Tile";
 import { hashLocation, unhashLocation } from "./utils/hashLocation";
@@ -10,7 +11,11 @@ export interface PlayerProps {
   hp: HP;
   vision: number;
   actionUsed: boolean;
-  roomDescription: string;
+  location: Location;
+  selectedTile?: null | {
+    location: Location;
+    actions: Action[];
+  }
 }
 
 export interface Speed {
@@ -45,7 +50,6 @@ export class Player implements PlayerProps {
     current: 10,
   };
   vision: number = 0;
-  board: string[][] = [];
   movement: Movement = {
     cost: {},
     tiles: new Set<string>([]),
@@ -53,7 +57,10 @@ export class Player implements PlayerProps {
   visible: Set<string> = new Set([]);
   revealed: Set<string> = new Set([]);
   actionUsed: boolean = false;
-  roomDescription: string = '';
+  selectedTile: null | {
+    location: Location;
+    actions: Action[];
+  } = null;
 
   constructor(playerProps: PlayerProps) {
     Object.assign(this, playerProps);
@@ -70,21 +77,14 @@ export class Player implements PlayerProps {
     }
   }
 
-  addBoard(board: string[][]) {
-    this.board = board;
-    for (let y = 0; y < board.length; y++) {
-      for (let x = 0; x < board[y].length; x++) {
-        if (board[y][x] === this.id) {
-          this.location = {
-            x, y
-          };
-          return;
-        }
-      }
-    }
+  async move(moveMap: number[][], location: Location) {
+    this.location = location;
+    this.speed.current -= this.movement.cost[hashLocation(this.location)];
+    await this.processMovement();
+    await this.recursiveMovement(moveMap, this.location, 0);
   }
 
-  async processMovement(board: string[][], noMove: Set<string>) {
+  async processMovement() {
     this.movement = {
       cost: {
         [hashLocation(this.location)]: 0
@@ -92,13 +92,10 @@ export class Player implements PlayerProps {
       tiles: new Set([hashLocation(this.location)]),
     };
     this.visible = new Set([hashLocation(this.location)]);
-    await this.recursiveMovement(board, noMove, this.location, 0);
-    await this.processVision(board);
   }
 
   async recursiveMovement(
-    board: string[][],
-    noMove: Set<string>,
+    moveMap: number[][],
     loc: Location,
     current: number,
   ): Promise<void> {
@@ -121,25 +118,22 @@ export class Player implements PlayerProps {
       if (nextLoc.x < 0 || nextLoc.y < 0) {
         return Promise.resolve();
       }
-      const tileType = board[nextLoc.y][nextLoc.x];
-      if (noMove.has(tileType) || (tileType in tileTypes && tileTypes[tileType].speed === 0)) {
-        return Promise.resolve();
-      }
-      const distance = current + getTileSpeed(tileType === "    " ? 'GRND' : tileType);
+      const tileSpeed = moveMap[nextLoc.y][nextLoc.x];
+      const distance = current + tileSpeed;
       if (hashedLoc in this.movement.cost && distance >= this.movement.cost[hashedLoc]) {
         return Promise.resolve();
       }
       if (distance <= this.speed.current) {
         this.movement.tiles.add(hashedLoc);
         this.movement.cost[hashedLoc] = distance;
-        return this.recursiveMovement(board, noMove, nextLoc, distance);
+        return this.recursiveMovement(moveMap, nextLoc, distance);
       }
       return Promise.resolve();
     });
     await Promise.all(promises);
   }
 
-  async processVision(board: string[][]) {
+  async processVision(sightMap: boolean[][][]) {
     this.visible = new Set([]);
     const maxVisionCells: Set<string> = new Set([]);
     const maxCellDistance = this.vision / 5;
@@ -187,19 +181,16 @@ export class Player implements PlayerProps {
           obscuredInd = cellInd;
           break;
         }
-        const tileType = board[nextLoc.y][nextLoc.x];
-        if (!this.visible.has(cell)) {
-          if (tileType === "VOID") {
+        const tileVisible = sightMap[nextLoc.y][nextLoc.x][0];
+        const tileBlocksSight = sightMap[nextLoc.y][nextLoc.x][1];
+          if (!tileVisible) {
             voids.add(cell);
             obscuredInd = cellInd;
             break;
           }
-          if (
-            (tileType.startsWith('W') && tileType !== 'AQUA') ||
-            tileType.startsWith('DC') ||
-            tileType.startsWith('DL')
-          ) {
+          if (tileBlocksSight) {
             this.revealed.add(cell);
+            this.visible.add(cell);
             if (cellInd + 1 < path.length - 1) {
               obscuredInd = cellInd + 1;
             }
@@ -207,7 +198,6 @@ export class Player implements PlayerProps {
           }
           this.visible.add(cell);
           this.revealed.add(cell);
-        }
       }
       if (obscuredInd !== -1) {
         return path.slice(0, obscuredInd);

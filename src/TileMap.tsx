@@ -1,4 +1,4 @@
-import "./Board.css";
+import "./Game.css";
 
 const sideLength = 16;
 
@@ -10,7 +10,7 @@ function TileMap() {
         {Array(sideLength)
           .fill("")
           .map((_row, y) => (
-            <div className="flex-container bg-green-500">
+            <div className="flex-container bg-green-500" key={`${y}`}>
               {Array(sideLength)
                 .fill("")
                 .map((_tile, x) => {
@@ -23,10 +23,10 @@ function TileMap() {
                     }% ${yProp.toFixed(2)}%; }`
                   );
                   return (
-                    <div className="flex-item">
+                    <div className="flex-item" key={`${x}-${y}`}>
                       <div className="Tile">
                         <div
-                          className={`tiles tile-snapshot tile-${x}-${y} text-xs text-white`}
+                          className={`sprites sprite-snapshot sprite-${x}-${y} text-xs text-white`}
                         >{`${x}-${y}`}</div>
                       </div>
                     </div>

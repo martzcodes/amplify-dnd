@@ -209,25 +209,27 @@ export class TileDetails implements TileDetailsProps {
 export interface TileProps {
   tileClass: string;
   move: boolean;
-  fog: boolean;
+  revealed: boolean;
   visible: boolean;
   clickHandler: any;
-  door: string;
-  lock: string;
+  door?: string;
+  lock?: string;
 }
 
 function Tile({
   tileClass,
   move,
-  fog,
+  revealed,
   visible,
   clickHandler,
   door,
   lock,
 }: TileProps) {
   const moveClass = `bg-green-300 bg-opacity-30`;
-  const fogClass = `bg-black-300 bg-opacity-30`;
-  return (
+  const fogClass = `bg-black bg-opacity-30`;
+  return !visible && !revealed ? (
+    <div className={`Tile bg-black`}></div>
+  ) : (
     <div className={`Tile LayerTile`}>
       <div
         className={`Tile Layered ${tileClass} z-10`}
@@ -237,7 +239,7 @@ function Tile({
       >
         {move && visible ? (
           <div className={`Tile ${moveClass}`}></div>
-        ) : fog ? (
+        ) : !visible && revealed ? (
           <div className={`Tile ${fogClass}`}></div>
         ) : (
           <></>
@@ -252,7 +254,7 @@ function Tile({
         >
           {move && visible ? (
             <div className={`Tile ${moveClass}`}></div>
-          ) : fog ? (
+          ) : !visible && revealed ? (
             <div className={`Tile ${fogClass}`}></div>
           ) : (
             <></>
@@ -270,7 +272,7 @@ function Tile({
         >
           {move && visible ? (
             <div className={`Tile ${moveClass}`}></div>
-          ) : fog ? (
+          ) : !visible && revealed ? (
             <div className={`Tile ${fogClass}`}></div>
           ) : (
             <></>

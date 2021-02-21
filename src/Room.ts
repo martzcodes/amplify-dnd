@@ -1,5 +1,5 @@
-import { Bounds } from "./Board";
 import { Door } from "./Door";
+import { Bounds } from "./InteractionLayer";
 import { Location } from "./models/Location";
 import { TileDetails, TileDetailsProps } from "./Tile";
 
