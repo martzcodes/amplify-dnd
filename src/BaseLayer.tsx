@@ -2,6 +2,7 @@ import { tileTypes } from "./Tile";
 import { hashLocation } from "./utils/hashLocation";
 
 function BaseLayer({ board }: { board: string[][] }) {
+  console.log('BaseLayer');
   return (
     <>
       {board.map((row, y) => (
@@ -18,8 +19,8 @@ function BaseLayer({ board }: { board: string[][] }) {
                 case "    ":
                   cellType = tileTypes.GRND.class;
                   break;
-                case "WATR":
-                  cellType = tileTypes.WATR.class;
+                case "AQUA":
+                  cellType = tileTypes.AQUA.class;
                   break;
                 default:
                   break;
@@ -78,7 +79,7 @@ function BaseLayer({ board }: { board: string[][] }) {
             className += ` ${cellType}`;
             return (
               <div key={hashLocation(tileLoc)} className={`flex-item`}>
-                <div className={className}></div>
+                <div className={`${className} tile-${x}-${y}`}></div>
               </div>
             );
           })}

@@ -1,16 +1,13 @@
 import { Bounds } from "./Board";
-import { Door } from "./models/Door";
+import { Door } from "./Door";
 import { Location } from "./models/Location";
 import { TileDetails, TileDetailsProps } from "./Tile";
-import { hashLocation } from "./utils/hashLocation";
-
-const walkable = new Set(["    ", "WATR", "LAVA"]);
 
 export const getRoom = (
-  rooms: Record<string, Room>,
+  rooms: Room[],
   loc: Location
 ): Room | undefined => {
-  return Object.values(rooms).find((room) => {
+  return rooms.find((room) => {
     const bounds = room.getBounds();
     if (
       loc.x >= bounds.x.min &&
@@ -63,7 +60,7 @@ const calculateGlobalBounds = (rooms: Record<string, Room>): Bounds => {
   }
   if (globalOffset.x !== 0 || globalOffset.y !== 0) {
     Object.keys(rooms).forEach((roomName) => {
-      const roomOffset = { ...rooms[roomName].offset };
+      const roomOffset = { ...rooms[roomName].origin };
       roomOffset.x += globalOffset.x;
       roomOffset.y += globalOffset.y;
       rooms[roomName].applyOffset(roomOffset);
@@ -72,174 +69,210 @@ const calculateGlobalBounds = (rooms: Record<string, Room>): Bounds => {
   return getGlobalBounds(rooms);
 };
 
-export const getDoorsFromRooms = (rooms: Record<string, Room>): string[] => {
-  const doors: Set<string> = Object.values(rooms).reduce((p, room) => {
-    room.doors.forEach((door) => {
-      p.add(door.name);
-    });
-    return p;
-  }, new Set([]) as Set<string>);
-  return Array.from(doors);
+// export const roomsToBoard = (rooms: Room[]): string[][] => {
+//   const doors: Set<string> = new Set(getDoorsFromRooms(rooms));
+//   doors.forEach((door) => {
+//     const doorNames = door.slice(2);
+//     if (doorNames[0] !== doorNames[1]) {
+//       const roomOne = rooms[doorNames[0]];
+//       const roomOneDoor = roomOne.doors.find((rD) => rD.name === door);
+//       const roomTwo = rooms[doorNames[1]];
+//       const roomTwoDoor = roomTwo.doors.find((rD) => rD.name === door);
+//       if (
+//         roomOneDoor &&
+//         roomTwoDoor &&
+//         roomTwo.offset.x === 0 &&
+//         roomTwo.offset.y === 0
+//       ) {
+//         const roomOneDoorLocation = {
+//           ...roomOneDoor.location,
+//         };
+//         roomOneDoorLocation.x += roomOne.offset.x;
+//         roomOneDoorLocation.y += roomOne.offset.y;
+
+//         const roomTwoOffset = { ...roomTwo.offset };
+//         roomTwoOffset.x -= roomTwoDoor.location.x;
+//         roomTwoOffset.y -= roomTwoDoor.location.y;
+//         roomTwoOffset.x += roomOneDoorLocation.x;
+//         roomTwoOffset.y += roomOneDoorLocation.y;
+//         if (roomTwoDoor.location.x === 0) {
+//           roomTwoOffset.x += 1;
+//         }
+//         if (roomTwoDoor.location.y === 0) {
+//           roomTwoOffset.y += 1;
+//         }
+
+//         rooms[doorNames[1]].applyOffset(roomTwoOffset);
+//       }
+//     }
+//   });
+//   const bounds = calculateGlobalBounds(rooms);
+//   const board = Array(bounds.y.max + 1)
+//     .fill([])
+//     .map((_u) => Array(bounds.x.max + 1).fill("VOID"));
+//   Object.values(rooms).forEach((room) => {
+//     room.grid.forEach((row, y) => {
+//       row.forEach((cell, x) => {
+//         board[y + room.offset.y][x + room.offset.x] = cell;
+//       });
+//     });
+//   });
+//   return board;
+// };
+
+interface PlayerSpawn {
+  playerId: string;
+  location: Location;
 }
-
-export const roomsToBoard = (rooms: Record<string, Room>): string[][] => {
-  const doors: Set<string> = new Set(getDoorsFromRooms(rooms));
-  doors.forEach((door) => {
-    const doorNames = door.slice(2);
-    if (doorNames[0] !== doorNames[1]) {
-      const roomOne = rooms[doorNames[0]];
-      const roomOneDoor = roomOne.doors.find((rD) => rD.name === door);
-      const roomTwo = rooms[doorNames[1]];
-      const roomTwoDoor = roomTwo.doors.find((rD) => rD.name === door);
-      if (
-        roomOneDoor &&
-        roomTwoDoor &&
-        roomTwo.offset.x === 0 &&
-        roomTwo.offset.y === 0
-      ) {
-        const roomOneDoorLocation = {
-          ...roomOneDoor.location,
-        };
-        roomOneDoorLocation.x += roomOne.offset.x;
-        roomOneDoorLocation.y += roomOne.offset.y;
-
-        const roomTwoOffset = { ...roomTwo.offset };
-        roomTwoOffset.x -= roomTwoDoor.location.x;
-        roomTwoOffset.y -= roomTwoDoor.location.y;
-        roomTwoOffset.x += roomOneDoorLocation.x;
-        roomTwoOffset.y += roomOneDoorLocation.y;
-        if (roomTwoDoor.location.x === 0) {
-          roomTwoOffset.x += 1;
-        }
-        if (roomTwoDoor.location.y === 0) {
-          roomTwoOffset.y += 1;
-        }
-
-        rooms[doorNames[1]].applyOffset(roomTwoOffset);
-      }
-    }
-  });
-  const bounds = calculateGlobalBounds(rooms);
-  const board = Array(bounds.y.max + 1)
-    .fill([])
-    .map((_u) => Array(bounds.x.max + 1).fill("VOID"));
-  Object.values(rooms).forEach((room) => {
-    room.grid.forEach((row, y) => {
-      row.forEach((cell, x) => {
-        board[y + room.offset.y][x + room.offset.x] = cell;
-      });
-    });
-  });
-  return board;
-};
+interface Void {
+  start: Location;
+  end: Location;
+}
 interface RoomProps {
   name: string;
   description: string;
-  cellSize: number;
   width: number;
   height: number;
   walls: Set<string>;
-  doors: Door[];
-  grid: string[][];
+  origin: Location;
+  groundType: string;
+  water?: Location[];
+  lava?: Location[];
+  voids?: Void[];
+  grid?: string[][];
+}
+
+export const getWall = ({ x, y, startX, endX, startY, endY, inner, fillType }: { x: number; y: number; startX: number; endX: number; startY: number; endY: number; inner: boolean; fillType: string; }) => {
+  if (x === startX && y === startX) {
+    return inner ? 'WIUL' : 'WOUL';
+  }
+  if (x === startX && y === endY) {
+    return inner ? 'WIDL' : 'WODL';
+  }
+  if (x === endX && y === startY) {
+    return inner ? 'WIUR' : 'WOUR';
+  }
+  if (x === endX && y === endY) {
+    return inner ? 'WIDR' : 'WODR';
+  }
+  if (x === startX) {
+    if ((y - startY) === (endY - startY) / 2) {
+      return inner ? 'WLRM' : 'WLLM';
+    }
+    if ((y - startY) < (endY - startY) / 2) {
+      return inner ? 'WLRU' : 'WLLR';
+    }
+    return inner ? 'WLRD' : 'WLLD';
+  }
+  if (y === startY) {
+    if ((x - startX) === (endX - startX) / 2) {
+      return inner ? 'WLDM' : 'WLUM';
+    }
+    if ((x - startX) < (endX - startX) / 2) {
+      return inner ? 'WLDL' : 'WLUL';
+    }
+    return inner ? 'WLDR' : 'WLUR';
+  }
+  if (x === endX) {
+    if ((y - startY) === (endY - startY) / 2) {
+      return inner ? 'WLLM' : 'WLRM';
+    }
+    if ((y - startY) < (endY - startY) / 2) {
+      return inner ? 'WLLR' : 'WLRU';
+    }
+    return inner ? 'WLLD' : 'WLRD';
+  }
+  if (y === endY) {
+    if ((x - startX) === (endX - startX) / 2) {
+      return inner ? 'WLUM' : 'WLDM';
+    }
+    if ((x - startX) < (endX - startX) / 2) {
+      return inner ? 'WLUL' : 'WLDL';
+    }
+    return inner ? 'WLUR' : 'WLDR';
+  }
+  return fillType;
 }
 
 export class Room implements RoomProps {
   name: string = "";
-  cellSize = 5;
   width = 0;
   height = 0;
   description = '';
+  groundType = 'GRND';
   walls = new Set<string>([]);
   doors: Door[] = [];
   grid: string[][] = [];
-  offset: Location = {
+  origin: Location = {
     x: 0,
     y: 0,
   };
+  water: Location[] = [];
+  lava: Location[] = [];
+  voids: Void[] = [];
 
   constructor(roomProps: RoomProps) {
     Object.assign(this, roomProps);
-    this.grid.forEach((row, y) =>
-      row.forEach((cell, x) => {
-        if (cell.startsWith('W') || cell === "VOID") {
-          this.walls.add(hashLocation({ x, y }));
+    this.grid = Array(this.height).fill('').map((row, y) => {
+      return Array(this.width).fill('').map((tile, x) => {
+        return getWall({ x, y, startX: 0, startY: 0, endX: this.width - 1, endY: this.height - 1, inner: false, fillType: this.groundType });
+      });
+    });
+    this.voids.forEach((innerVoid) => {
+      for (let y = innerVoid.start.y; y <= innerVoid.end.y; y++) {
+        for (let x = innerVoid.start.x; x <= innerVoid.end.x; x++) {
+          this.grid[y][x] = getWall({ x, y, startX: innerVoid.start.x, startY: innerVoid.start.y, endX: innerVoid.end.x, endY: innerVoid.end.y, inner: true, fillType: 'VOID' });
         }
-        if (cell.startsWith("D")) {
-          this.walls.add(hashLocation({ x, y }));
-          this.addDoor(cell, { x, y });
-        }
-      })
-    );
-    this.height = this.grid.length;
-    this.width = this.grid[0].length;
+      }
+    });
+    this.water.forEach((waterLoc) => {
+      this.grid[waterLoc.y][waterLoc.x] = 'AQUA';
+    });
+    this.lava.forEach((lavaLoc) => {
+      this.grid[lavaLoc.y][lavaLoc.x] = 'LAVA';
+    });
   }
 
   applyOffset(loc: Location) {
-    this.offset = loc;
+    this.origin = loc;
   }
 
   getBounds(): Bounds {
     return {
       x: {
-        min: 0 + this.offset.x,
-        max: this.width - 1 + this.offset.x,
+        min: 0 + this.origin.x,
+        max: this.width - 1 + this.origin.x,
       },
       y: {
-        min: 0 + this.offset.y,
-        max: this.height - 1 + this.offset.y,
+        min: 0 + this.origin.y,
+        max: this.height - 1 + this.origin.y,
       },
     };
-  }
-
-  addWall(loc: Location) {
-    this.walls.add(hashLocation(loc));
-  }
-
-  addDoor(doorName: string, loc: Location) {
-    if (this.walls.has(hashLocation(loc))) {
-      this.doors.push({
-        name: doorName,
-        location: loc,
-        open: doorName.startsWith("DO"),
-        locked: doorName.startsWith("DL"),
-        room: this.name,
-      });
-    }
-  }
-
-  getDoorByLocation(loc: Location): string {
-    const foundDoors = this.doors.filter(
-      (door) => hashLocation(door.location) === hashLocation(loc)
-    );
-    if (foundDoors.length === 1) {
-      return foundDoors[0].name;
-    }
-    return "";
   }
 
   getTile(loc: Location): TileDetails {
     const tileProps: TileDetailsProps = {
       type: "void",
       location: loc,
-      size: this.cellSize,
-      name: this.getDoorByLocation(loc),
+      // size: this.cellSize,
+      // name: this.getDoorByLocation(loc),
     };
-    const gridLoc = this.grid[loc.y - this.offset.y][loc.x - this.offset.x];
-    if (gridLoc.startsWith('W')) {
-      tileProps.type = "wall";
-    }
-    if (gridLoc.startsWith("DC")) {
-      tileProps.type = "door-closed";
-    }
-    if (gridLoc.startsWith("DO")) {
-      tileProps.type = "door-open";
-    }
-    if (gridLoc.startsWith("DL")) {
-      tileProps.type = "door-locked";
-    }
-    if (gridLoc === "    " || gridLoc.startsWith('P')) {
-      tileProps.type = "normal";
-    }
+    // const gridLoc = this.grid[loc.y - this.offset.y][loc.x - this.offset.x];
+    // if (gridLoc.startsWith('W')) {
+    //   tileProps.type = "wall";
+    // }
+    // if (gridLoc.startsWith("DC")) {
+    //   tileProps.type = "door-closed";
+    // }
+    // if (gridLoc.startsWith("DO")) {
+    //   tileProps.type = "door-open";
+    // }
+    // if (gridLoc.startsWith("DL")) {
+    //   tileProps.type = "door-locked";
+    // }
+    // if (gridLoc === "    " || gridLoc.startsWith('P')) {
+    //   tileProps.type = "normal";
+    // }
     return new TileDetails(tileProps);
   }
 }
@@ -247,178 +280,114 @@ export class Room implements RoomProps {
 export const roomA = new Room({
     name: "A",
     description: `Bacon ipsum dolor amet ham hock biltong kielbasa, pork spare ribs leberkas tri-tip shoulder chuck. Meatball ribeye drumstick shank porchetta spare ribs pork belly brisket tri-tip. Beef alcatra chuck pancetta, tri-tip pork belly picanha corned beef sausage hamburger pastrami beef ribs meatball.`,
-    cellSize: 5,
-    grid: [
-      // prettier-ignore
-      ["WOUL","WLUL","WLUM","WLUR","WOUR",],
-      // prettier-ignore
-      ["WLLR","P001","    ","    ","WLRU",],
-      // prettier-ignore
-      ["WLLM","    ","    ","    ","DOAB",],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","WLRD",],
-      // prettier-ignore
-      ["WODL","WLDL","WLDM","WLDR","WODR",],
-    ],
+    width: 5,
+    height: 5,
+    origin: {
+      x: 0,
+      y: 6,
+    }
   } as RoomProps);
   export const roomB = new Room({
     name: "B",
-    cellSize: 5,
     description: "Large room with some water running through it",
-    grid: [
-      // prettier-ignore
-      ["WOUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUM","WLUR","WLUR","WLUR","WLUR","WLUR","WLUR","WLUR","WLUR","WLUR","WOUR",],
-      // prettier-ignore
-      ["WLLR","    ","WATR","    ","    ","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRU",],
-      // prettier-ignore
-      ["WLLR","    ","WATR","    ","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRU",],
-      // prettier-ignore
-      ["WLLR","    ","WATR","    ","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRU",],
-      // prettier-ignore
-      ["WLLR","    ","WATR","WATR","WATR","WATR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRU",],
-      // prettier-ignore
-      ["WLLR","WATR","WATR","WATR","WATR","WIUL","WLDL","WLDL","WLDL","DLBF","WLDR","WLDR","WLDR","WIUR","    ","    ","    ","    ","    ","WLRU",],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","WATR","WLRU","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLR","    ","    ","    ","    ","    ","WLRU",],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","WATR","WLRU","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLR","    ","    ","    ","    ","    ","WLRU",],
-      // prettier-ignore
-      ["DOAB","    ","    ","    ","WATR","WLRU","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLR","    ","    ","    ","    ","    ","WLRU",],
-      // prettier-ignore
-      ["WLLM","    ","WATR","WATR","WATR","WLRM","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLM","P002","    ","    ","    ","    ","DLBD",],
-      // prettier-ignore
-      ["WLLD","    ","WATR","WATR","WATR","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLRD",],
-      // prettier-ignore
-      ["WLLD","    ","WATR","WATR","WATR","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLRD",],
-      // prettier-ignore
-      ["WLLD","    ","WATR","WATR","WATR","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLRD",],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","WLRD","VOID","VOID","VOID","VOID","VOID","VOID","VOID","WLLD","    ","    ","    ","    ","    ","WLRD",],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","WIDL","WLUL","WLUL","WLUL","WLUM","WLUR","WLUR","WLUR","WIDR","    ","    ","    ","    ","    ","WLRD",],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRD",],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRD",],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRD",],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRD",],
-      // prettier-ignore
-      ["WODL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDM","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","DCBC","WLDR","WLDR","WODR",],
+    width: 20,
+    height: 20,
+    origin: {
+      x: 5,
+      y: 0,
+    },
+    water: [
+      { x: 1, y: 5, },
+      { x: 2, y: 1, },
+      { x: 2, y: 2, },
+      { x: 2, y: 3, },
+      { x: 2, y: 4, },
+      { x: 2, y: 5, },
+      { x: 2, y: 9, },
+      { x: 2, y: 10, },
+      { x: 2, y: 11, },
+      { x: 2, y: 12, },
+      { x: 3, y: 4, },
+      { x: 3, y: 5, },
+      { x: 3, y: 9, },
+      { x: 3, y: 10, },
+      { x: 3, y: 11, },
+      { x: 3, y: 12, },
+      { x: 4, y: 2, },
+      { x: 4, y: 3, },
+      { x: 4, y: 4, },
+      { x: 4, y: 5, },
+      { x: 4, y: 6, },
+      { x: 4, y: 7, },
+      { x: 4, y: 8, },
+      { x: 4, y: 9, },
+      { x: 4, y: 10, },
+      { x: 4, y: 11, },
+      { x: 4, y: 12, },
+      { x: 5, y: 1, },
+      { x: 5, y: 2, },
+      { x: 5, y: 3, },
+      { x: 5, y: 4, },
+      { x: 6, y: 1, },
+    ],
+    voids: [
+      { start: { x: 5, y: 5 }, end: {x: 13, y: 14} }
     ],
   } as RoomProps);
   export const roomC = new Room({
     name: "C",
     description: "Room C Description",
-    cellSize: 5,
-    grid: [
-      // prettier-ignore
-      ["WOUL","WLUL","WLUL","WLUL","DCBC","WLUR","WLUR","WOUR",],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","    ","    ","    ","WLRU",],
-      // prettier-ignore
-      ["WLLM","    ","    ","    ","    ","    ","    ","WLRM",],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","WLRD",],
-      // prettier-ignore
-      ["WODL","WLDL","WLDL","WLDL","DCCE","WLDR","WLDR","WODR",],
+    width: 8,
+    height: 5,
+    origin: {
+      x: 15,
+      y: 20,
+    },
+    lava: [
+      { x: 2, y: 2 },
+      { x: 3, y: 2 },
+      { x: 4, y: 2 },
+      { x: 5, y: 2 },
     ],
   } as RoomProps);
   export const roomD = new Room({
     name: "D",
     description: "Room D Description",
-    cellSize: 5,
-    grid: [
-      // prettier-ignore
-      ["WOUL","WLUL","WLUL","WLUR","WLUR","WOUR",],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","    ","WLRU",],
-      // prettier-ignore
-      ["DLBD","    ","    ","    ","    ","WLRM",],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","DODG",],
-      // prettier-ignore
-      ["WODL","WLDL","WLDL","WLDR","WLDR","WODR",],
-    ],
+    width: 6,
+    height: 5,
+    origin: {
+      x: 25,
+      y: 11,
+    },
   } as RoomProps);
   export const roomE = new Room({
     name: "E",
     description: "Room E Description",
-    cellSize: 5,
-    grid: [
-      // prettier-ignore
-      ["WOUL","DCCE","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUL","WLUM","WLUR","WLUR","WLUR","WLUR","DCEG","WLUR","WLUR","WLUR","WLUR","WLUR","WLUR","WOUR",],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRU",],
-      // prettier-ignore
-      ["WLLM","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRM",],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","    ","WLRD",],
-      // prettier-ignore
-      ["WODL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDL","WLDM","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WLDR","WODR",],
-    ],
+    width: 24,
+    height: 5,
+    origin: {
+      x: 7,
+      y: 25,
+    },
   } as RoomProps);
   export const roomF = new Room({
     name: "F",
     description: "Room F Description",
-    cellSize: 5,
-    grid: [
-      // prettier-ignore
-      ["WOUL","WLUL","WLUL","DLBF","WLUR","WLUR","WOUR"],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","    ","    ","WLRU"],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","    ","    ","WLRU"],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","    ","    ","WLRU"],
-      // prettier-ignore
-      ["WLLM","    ","    ","    ","    ","    ","WLRD"],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","WLRD"],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","WLRD"],
-      // prettier-ignore
-      ["WODL","WLDL","WLDL","WLDM","WLDR","WLDR","WODR"],
-    ],
+    width: 7,
+    height: 8,
+        origin: {
+      x: 11,
+      y: 6,
+    },
   } as RoomProps);
   export const roomG = new Room({
     name: "G",
     description: "Room G Description",
-    cellSize: 5,
-    grid: [
-      // prettier-ignore
-      ["WOUL","WLUL","WLUL","WLUL","WLUM","WLUR","WLUR","WLUR","WOUR"],
-      // prettier-ignore
-      ["DODG","    ","    ","    ","    ","    ","    ","    ","WLRU"],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","    ","    ","    ","    ","WLRU"],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","    ","    ","    ","    ","WLRU"],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","    ","    ","    ","    ","WLRU"],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","    ","    ","    ","    ","WLRU"],
-      // prettier-ignore
-      ["WLLR","    ","    ","    ","    ","    ","    ","    ","WLRU"],
-      // prettier-ignore
-      ["WLLM","    ","    ","    ","    ","    ","    ","    ","WLRM"],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
-      // prettier-ignore
-      ["WLLD","    ","    ","    ","    ","    ","    ","    ","WLRD"],
-      // prettier-ignore
-      ["WODL","WLDL","WLDL","WLDL","WLDM","DCEG","WLDR","WLDR","WODR"],
-    ],
+    width: 9,
+    height: 16,
+    origin: {
+      x: 31,
+      y: 12,
+    },
   } as RoomProps);
 

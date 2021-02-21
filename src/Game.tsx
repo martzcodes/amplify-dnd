@@ -6,8 +6,6 @@ import { Action } from "./models/Action";
 import { Location } from "./models/Location";
 import { Player, PlayerProps } from "./Player";
 import {
-  getDoorsFromRooms,
-  getRoom,
   Room,
   roomA,
   roomB,
@@ -16,9 +14,10 @@ import {
   roomE,
   roomF,
   roomG,
-  roomsToBoard,
 } from "./Room";
+import { tileTypes } from './Tile';
 import { hashLocation } from "./utils/hashLocation";
+import { Door } from "./Door";
 
 export interface PlayerTracker {
   active: string;
@@ -85,242 +84,369 @@ const emptyTile = {
   actions: [],
 };
 
+const generateBoard = ({
+  rooms,
+}: {
+  rooms: Room[];
+}): string[][] => {
+  let height = 0;
+  let width = 0;
+  rooms.forEach((room) => {
+    if (room.origin.x + room.width > width) {
+      width = room.origin.x + room.width;
+    }
+    if (room.origin.y + room.height > height) {
+      height = room.origin.y + room.height;
+    }
+  });
+  const board = Array(height)
+    .fill("")
+    .map((row) => {
+      return Array(width)
+        .fill("")
+        .map((tile) => {
+          return "VOID";
+        });
+    });
+    rooms.forEach((room) => {
+      for (let y = 0; y < room.height; y++) {
+        for (let x = 0; x < room.width; x++) {
+          board[y + room.origin.y][x + room.origin.x] = room.grid[y][x];
+        }
+      }
+    });
+    return board;
+};
+
 function Game() {
-  const [selectedTile, setSelectedTile] = useState(emptyTile);
-  const [rooms] = useState<Record<string, Room>>({
-    A: roomA,
-    B: roomB,
-    C: roomC,
-    D: roomD,
-    E: roomE,
-    F: roomF,
-    G: roomG,
+  const doors: Door[] = [
+    new Door({
+      name: "AB",
+      origin: { x: 4, y: 8 },
+      northSouth: false,
+      open: true,
+      locked: false,
+    }),
+    new Door({
+      name: "BC",
+      origin: { x: 18, y: 19 },
+      northSouth: true,
+      open: false,
+      locked: false,
+    }),
+    new Door({
+      name: "BD",
+      origin: { x: 24, y: 14 },
+      northSouth: false,
+      open: false,
+      locked: true,
+    }),
+    new Door({
+      name: "CE",
+      origin: { x: 19, y: 24 },
+      northSouth: true,
+      open: false,
+      locked: false,
+    }),
+    new Door({
+      name: "BF",
+      origin: { x: 14, y: 5 },
+      northSouth: true,
+      open: false,
+      locked: true,
+    }),
+    new Door({
+      name: "EG",
+      origin: { x: 30, y: 13 },
+      northSouth: false,
+      open: false,
+      locked: true,
+    }),
+    new Door({
+      name: "FG",
+      origin: { x: 30, y: 26 },
+      northSouth: false,
+      open: false,
+      locked: true,
+    }),
+  ];
+  const emptyBoard = generateBoard({
+    rooms: [roomA, roomB, roomC, roomD, roomE, roomF, roomG],
   });
-  const emptyBoard = roomsToBoard(rooms);
+  console.log(emptyBoard);
   const [board, setBoard] = useState(emptyBoard);
-  const [tracker, setTracker] = useState<PlayerTracker>({
-    active: "martzcodes",
-    initiative: ["martzcodes", "npc"],
-    players: initPlayers.reduce((p, c) => {
-      const player = new Player(c);
-      player.addBoard(board);
-      player.roomDescription = `${getRoom(rooms, player.location)?.description}`;
-      return { ...p, [c.name]: player };
-    }, {} as Record<string, Player>),
-  });
-  const [playerAction, setPlayerAction] = useState({
-    ...emptyAction,
-    action: "init",
-  });
 
-  useEffect(() => {
-    const nextPlayer = async (players: Record<string, Player>) => {
-      let nextActiveInd = tracker.initiative.indexOf(tracker.active) + 1;
-      if (nextActiveInd >= tracker.initiative.length) {
-        nextActiveInd = 0;
+  const initialSightMap = emptyBoard.map((row, y) => row.map((tile, x) => {
+    if (tile === 'VOID') {
+      return false;
+    }
+    if (tile.startsWith('W')) {
+      const doorInd = doors.findIndex((door) => door.checkDoor({ x, y }).door);
+      if (doorInd !== -1) {
+        return doors[doorInd].open;
       }
-      console.log(`Next Active: ${tracker.initiative[nextActiveInd]}`);
-      const nextPlayerName = tracker.initiative[nextActiveInd];
-      const nextPlayer = new Player({
-        ...tracker.players[nextPlayerName],
-        actionUsed: false,
-        speed: {
-          max: tracker.players[nextPlayerName].speed.max,
-          current: tracker.players[nextPlayerName].speed.max,
-        },
-      });
-      await nextPlayer.processMovement(board, noMove);
-      setPlayerAction({ ...emptyAction });
-      setTracker({
-        ...tracker,
-        active: tracker.initiative[nextActiveInd],
-        players: {
-          ...tracker.players,
-          ...players,
-          [nextPlayerName]: nextPlayer,
-        },
-      });
-    };
+      return false;
+    }
+    return true;
+  }));
+  console.log(initialSightMap);
+  const [sightMap, setSightMap] = useState(initialSightMap);
 
-    const movePlayer = async (location: Location) => {
-      const player = tracker.players[tracker.active];
-      if (
-        playerAction.player === player.name &&
-        (player.location.x !== playerAction.location.x ||
-          player.location.y !== playerAction.location.y)
-      ) {
-        const speedRemaining =
-          player.speed.current - player.movement.cost[hashLocation(location)];
-        if (speedRemaining >= 0) {
-          if (emptyBoard[player.location.y][player.location.x].startsWith("P")) {
-            board[player.location.y][player.location.x] = '    ';
-          } else if (
-            emptyBoard[player.location.y][player.location.x].startsWith("D")
-          ) {
-            board[player.location.y][player.location.x] = `DO${emptyBoard[
-              player.location.y
-            ][player.location.x].slice(2, 4)}`;
-          } else {
-            board[player.location.y][player.location.x] =
-              emptyBoard[player.location.y][player.location.x];
-          }
-          board[playerAction.location.y][playerAction.location.x] = player.id;
-          const refreshedPlayer = new Player({
-            ...player,
-            speed: {
-              max: player.speed.max,
-              current: speedRemaining,
-            },
-          });
-          refreshedPlayer.addBoard(board);
-          refreshedPlayer.roomDescription = `${
-            getRoom(rooms, refreshedPlayer.location)?.description
-          }`;
-          const doors = getDoorsFromRooms(rooms);
-          const closedDoors = doors.filter(
-            (door) => door.startsWith("DL") || door.startsWith("DC")
+    const initialSpeedMap = emptyBoard.map((row, y) =>
+      row.map((tile, x) => {
+        if (tile.startsWith("W")) {
+          const doorInd = doors.findIndex(
+            (door) => door.checkDoor({ x, y }).door
           );
-          closedDoors.forEach((door) => noMove.add(door));
-          await refreshedPlayer.processMovement(board, noMove);
-          setBoard(board);
-          if (refreshedPlayer.speed.current > 0 || !refreshedPlayer.actionUsed) {
-            setPlayerAction({ ...emptyAction });
-            setTracker({
-              ...tracker,
-              players: {
-                ...tracker.players,
-                [refreshedPlayer.name]: refreshedPlayer,
-              },
-            });
-          } else {
-            await nextPlayer({ [refreshedPlayer.name]: refreshedPlayer });
+          if (doorInd !== -1) {
+            return doors[doorInd].open ? 2.5 : 999;
           }
+          return 999;
         }
-      }
-    };
+        return tileTypes[tile].speed || 999;
+      })
+    );
+    console.log(initialSpeedMap);
+    const [speedMap, setSpeedMap] = useState(initialSpeedMap);
 
-    const initializePlayers = async () => {
-      const doors = getDoorsFromRooms(rooms);
-      const closedDoors = doors.filter(
-        (door) => door.startsWith("DL") || door.startsWith("DC")
-      );
-      closedDoors.forEach((door) => noMove.add(door));
-      const initialized: Record<string, Player> = {};
-      const playerNames = Object.keys(tracker.players);
-      for (let j = 0; j < playerNames.length; j++) {
-        const refreshedPlayer = new Player(tracker.players[playerNames[j]]);
-        await refreshedPlayer.processMovement(board, noMove);
-        refreshedPlayer.roomDescription = `${
-          getRoom(rooms, refreshedPlayer.location)?.description
-        }`;
-        initialized[playerNames[j]] = refreshedPlayer;
-      }
+  const [selectedTile, setSelectedTile] = useState(emptyTile);
+  // const [rooms] = useState<{ rooms: Room[] }>({
+  //   rooms: [roomA, roomB, roomC, roomD, roomE, roomF, roomG],
+  // });
+  // // const emptyBoard = roomsToBoard(rooms);
+  // const [board, setBoard] = useState(emptyBoard);
+  // const [tracker, setTracker] = useState<PlayerTracker>({
+  //   active: "martzcodes",
+  //   initiative: ["martzcodes", "npc"],
+  //   players: initPlayers.reduce((p, c) => {
+  //     const player = new Player(c);
+  //     player.addBoard(board);
+  //     player.roomDescription = `${
+  //       getRoom(rooms, player.location)?.description
+  //     }`;
+  //     return { ...p, [c.name]: player };
+  //   }, {} as Record<string, Player>),
+  // });
+  // const [playerAction, setPlayerAction] = useState({
+  //   ...emptyAction,
+  //   action: "init",
+  // });
 
-      setTracker({
-        ...tracker,
-        players: initialized,
-      });
-      setPlayerAction(emptyAction);
-    };
+  // useEffect(() => {
+  //   const nextPlayer = async (players: Record<string, Player>) => {
+  //     let nextActiveInd = tracker.initiative.indexOf(tracker.active) + 1;
+  //     if (nextActiveInd >= tracker.initiative.length) {
+  //       nextActiveInd = 0;
+  //     }
+  //     console.log(`Next Active: ${tracker.initiative[nextActiveInd]}`);
+  //     const nextPlayerName = tracker.initiative[nextActiveInd];
+  //     const nextPlayer = new Player({
+  //       ...tracker.players[nextPlayerName],
+  //       actionUsed: false,
+  //       speed: {
+  //         max: tracker.players[nextPlayerName].speed.max,
+  //         current: tracker.players[nextPlayerName].speed.max,
+  //       },
+  //     });
+  //     await nextPlayer.processMovement(board, noMove);
+  //     setPlayerAction({ ...emptyAction });
+  //     setTracker({
+  //       ...tracker,
+  //       active: tracker.initiative[nextActiveInd],
+  //       players: {
+  //         ...tracker.players,
+  //         ...players,
+  //         [nextPlayerName]: nextPlayer,
+  //       },
+  //     });
+  //   };
 
-    const openDoor = (doorLoc: Location, destroy: boolean) => {
-      const door = board[doorLoc.y][doorLoc.x];
-      if (door.startsWith("DL") || door.startsWith("DC")) {
-        if (destroy) {
-          board[doorLoc.y][doorLoc.x] = `DD${door.slice(2, 4)}`;
-        } else {
-          board[doorLoc.y][doorLoc.x] = `DO${door.slice(2, 4)}`;
-        }
-        console.log(`DO${door.slice(2, 4)}`);
-        setBoard(board);
-        usedAction(true);
-      }
-    };
+  //   const movePlayer = async (location: Location) => {
+  //     const player = tracker.players[tracker.active];
+  //     if (
+  //       playerAction.player === player.name &&
+  //       (player.location.x !== playerAction.location.x ||
+  //         player.location.y !== playerAction.location.y)
+  //     ) {
+  //       const speedRemaining =
+  //         player.speed.current - player.movement.cost[hashLocation(location)];
+  //       if (speedRemaining >= 0) {
+  //         if (
+  //           emptyBoard[player.location.y][player.location.x].startsWith("P")
+  //         ) {
+  //           board[player.location.y][player.location.x] = "    ";
+  //         } else if (
+  //           emptyBoard[player.location.y][player.location.x].startsWith("D")
+  //         ) {
+  //           board[player.location.y][player.location.x] = `DO${emptyBoard[
+  //             player.location.y
+  //           ][player.location.x].slice(2, 4)}`;
+  //         } else {
+  //           board[player.location.y][player.location.x] =
+  //             emptyBoard[player.location.y][player.location.x];
+  //         }
+  //         board[playerAction.location.y][playerAction.location.x] = player.id;
+  //         const refreshedPlayer = new Player({
+  //           ...player,
+  //           speed: {
+  //             max: player.speed.max,
+  //             current: speedRemaining,
+  //           },
+  //         });
+  //         refreshedPlayer.addBoard(board);
+  //         refreshedPlayer.roomDescription = `${
+  //           getRoom(rooms, refreshedPlayer.location)?.description
+  //         }`;
+  //         const doors = getDoorsFromRooms(rooms);
+  //         const closedDoors = doors.filter(
+  //           (door) => door.startsWith("DL") || door.startsWith("DC")
+  //         );
+  //         closedDoors.forEach((door) => noMove.add(door));
+  //         await refreshedPlayer.processMovement(board, noMove);
+  //         setBoard(board);
+  //         if (
+  //           refreshedPlayer.speed.current > 0 ||
+  //           !refreshedPlayer.actionUsed
+  //         ) {
+  //           setPlayerAction({ ...emptyAction });
+  //           setTracker({
+  //             ...tracker,
+  //             players: {
+  //               ...tracker.players,
+  //               [refreshedPlayer.name]: refreshedPlayer,
+  //             },
+  //           });
+  //         } else {
+  //           await nextPlayer({ [refreshedPlayer.name]: refreshedPlayer });
+  //         }
+  //       }
+  //     }
+  //   };
 
-    const closeDoor = (doorLoc: Location) => {
-      const door = board[doorLoc.y][doorLoc.x];
-      if (door.startsWith("DO")) {
-        board[doorLoc.y][doorLoc.x] = `DC${door.slice(2, 4)}`;
-        console.log(`DC${door.slice(2, 4)}`);
-        setBoard(board);
-        usedAction(true);
-      }
-    };
+  //   const initializePlayers = async () => {
+  //     const doors = getDoorsFromRooms(rooms);
+  //     const closedDoors = doors.filter(
+  //       (door) => door.startsWith("DL") || door.startsWith("DC")
+  //     );
+  //     closedDoors.forEach((door) => noMove.add(door));
+  //     const initialized: Record<string, Player> = {};
+  //     const playerNames = Object.keys(tracker.players);
+  //     for (let j = 0; j < playerNames.length; j++) {
+  //       const refreshedPlayer = new Player(tracker.players[playerNames[j]]);
+  //       await refreshedPlayer.processMovement(board, noMove);
+  //       refreshedPlayer.roomDescription = `${
+  //         getRoom(rooms, refreshedPlayer.location)?.description
+  //       }`;
+  //       initialized[playerNames[j]] = refreshedPlayer;
+  //     }
 
-    const usedAction = (init: boolean = false) => {
-      setPlayerAction(emptyAction);
-      if (tracker.players[tracker.active].speed.current === 0) {
-        nextPlayer({});
-      } else {
-        const refreshedPlayer = new Player({
-          ...tracker.players[tracker.active],
-          actionUsed: true,
-        });
-        setTracker({
-          ...tracker,
-          players: {
-            ...tracker.players,
-            [refreshedPlayer.name]: refreshedPlayer,
-          },
-        });
-      }
-      initializePlayers();
-    }
+  //     setTracker({
+  //       ...tracker,
+  //       players: initialized,
+  //     });
+  //     setPlayerAction(emptyAction);
+  //   };
 
-    const dashAction = async () => {
-      const currentPlayer = tracker.players[tracker.active];;
-      const refreshedPlayer = new Player({
-        ...tracker.players[tracker.active],
-        actionUsed: true,
-        speed: {
-          max: currentPlayer.speed.max,
-          current: currentPlayer.speed.current + currentPlayer.speed.max,
-        },
-      });
-      await refreshedPlayer.processMovement(board, noMove);
-      setPlayerAction(emptyAction);
-      setTracker({
-        ...tracker,
-        players: {
-          ...tracker.players,
-          [refreshedPlayer.name]: refreshedPlayer,
-        },
-      });
-    };
+  //   const openDoor = (doorLoc: Location, destroy: boolean) => {
+  //     const door = board[doorLoc.y][doorLoc.x];
+  //     if (door.startsWith("DL") || door.startsWith("DC")) {
+  //       if (destroy) {
+  //         board[doorLoc.y][doorLoc.x] = `DD${door.slice(2, 4)}`;
+  //       } else {
+  //         board[doorLoc.y][doorLoc.x] = `DO${door.slice(2, 4)}`;
+  //       }
+  //       console.log(`DO${door.slice(2, 4)}`);
+  //       setBoard(board);
+  //       usedAction(true);
+  //     }
+  //   };
 
-    switch (playerAction.action) {
-      case "init":
-        initializePlayers();
-        break;
-      case "end":
-        nextPlayer({});
-        break;
-      case "move":
-        movePlayer(playerAction.location);
-        break;
-      case "unlock":
-      case "open":
-        openDoor(playerAction.location, false);
-        break;
-      case "break":
-        openDoor(playerAction.location, true);
-        break;
-      case "close":
-        closeDoor(playerAction.location);
-        break;
-      case "dash":
-        dashAction();
-        break;
-      default:
-        return;
-    }
-  }, [playerAction, tracker, board, rooms, emptyBoard]);
+  //   const closeDoor = (doorLoc: Location) => {
+  //     const door = board[doorLoc.y][doorLoc.x];
+  //     if (door.startsWith("DO")) {
+  //       board[doorLoc.y][doorLoc.x] = `DC${door.slice(2, 4)}`;
+  //       console.log(`DC${door.slice(2, 4)}`);
+  //       setBoard(board);
+  //       usedAction(true);
+  //     }
+  //   };
 
-  useEffect(() => {
-    if (playerAction.action === "") {
-      setSelectedTile(emptyTile);
-    }
-  }, [playerAction]);
+  //   const usedAction = (init: boolean = false) => {
+  //     setPlayerAction(emptyAction);
+  //     if (tracker.players[tracker.active].speed.current === 0) {
+  //       nextPlayer({});
+  //     } else {
+  //       const refreshedPlayer = new Player({
+  //         ...tracker.players[tracker.active],
+  //         actionUsed: true,
+  //       });
+  //       setTracker({
+  //         ...tracker,
+  //         players: {
+  //           ...tracker.players,
+  //           [refreshedPlayer.name]: refreshedPlayer,
+  //         },
+  //       });
+  //     }
+  //     initializePlayers();
+  //   };
+
+  //   const dashAction = async () => {
+  //     const currentPlayer = tracker.players[tracker.active];
+  //     const refreshedPlayer = new Player({
+  //       ...tracker.players[tracker.active],
+  //       actionUsed: true,
+  //       speed: {
+  //         max: currentPlayer.speed.max,
+  //         current: currentPlayer.speed.current + currentPlayer.speed.max,
+  //       },
+  //     });
+  //     await refreshedPlayer.processMovement(board, noMove);
+  //     setPlayerAction(emptyAction);
+  //     setTracker({
+  //       ...tracker,
+  //       players: {
+  //         ...tracker.players,
+  //         [refreshedPlayer.name]: refreshedPlayer,
+  //       },
+  //     });
+  //   };
+
+  //   switch (playerAction.action) {
+  //     case "init":
+  //       initializePlayers();
+  //       break;
+  //     case "end":
+  //       nextPlayer({});
+  //       break;
+  //     case "move":
+  //       movePlayer(playerAction.location);
+  //       break;
+  //     case "unlock":
+  //     case "open":
+  //       openDoor(playerAction.location, false);
+  //       break;
+  //     case "break":
+  //       openDoor(playerAction.location, true);
+  //       break;
+  //     case "close":
+  //       closeDoor(playerAction.location);
+  //       break;
+  //     case "dash":
+  //       dashAction();
+  //       break;
+  //     default:
+  //       return;
+  //   }
+  // }, [playerAction, tracker, board, rooms, emptyBoard]);
+
+  // useEffect(() => {
+  //   if (playerAction.action === "") {
+  //     setSelectedTile(emptyTile);
+  //   }
+  // }, [playerAction]);
+  const tracker = true;
+  console.log(board);
 
   return (
     <>
@@ -328,21 +454,22 @@ function Game() {
         <div className="flex py-5">
           <div className="flex-1">
             <div className="LayerMap">
-              <div className="Layered">
-                <BaseLayer board={emptyBoard}></BaseLayer>
+              <div className={`Layered bg-black`}>
+                <BaseLayer board={board}></BaseLayer>
               </div>
               <div className="Layered">
                 <InteractionLayer
                   selectedTile={selectedTile}
                   setSelectedTile={setSelectedTile}
-                  tracker={tracker}
-                  board={board}
+                  width={board[0].length}
+                  height={board.length}
+                  doors={doors}
                 ></InteractionLayer>
               </div>
             </div>
           </div>
           <div className="flex-none w-full md:max-w-xs">
-            <div>{tracker.players[tracker.active].roomDescription}</div>
+            {/* <div>{tracker.players[tracker.active].roomDescription}</div>
             {[
               { name: "End Turn", type: "end", color: "red" },
               { name: "Dash", type: "dash", color: "green" },
@@ -367,7 +494,7 @@ function Game() {
               tracker.players[tracker.active].getStats(),
               null,
               2
-            )}`}</pre>
+            )}`}</pre> */}
           </div>
         </div>
       ) : (

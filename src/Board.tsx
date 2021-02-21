@@ -123,8 +123,8 @@ function Board({
                     case "    ":
                       cellType = tileTypes.GRND.class;
                       break;
-                    case "WATR":
-                      cellType = tileTypes.WATR.class;
+                    case "AQUA":
+                      cellType = tileTypes.AQUA.class;
                       break;
                     default:
                       break;

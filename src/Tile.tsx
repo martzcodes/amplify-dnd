@@ -2,181 +2,164 @@ import { Location } from "./models/Location";
 
 export const tileTypes: Record<string, { class: string; speed: number }> = {
   WLUM: {
-    class: `tiles tile-14-13`,
-    speed: 100000,
+    class: `sprites sprite-14-13`,
+    speed: 999,
   },
   WLUR: {
-    class: `tiles tile-14-12`,
-    speed: 100000,
+    class: `sprites sprite-14-12`,
+    speed: 999,
   },
   WLUL: {
-    class: `tiles tile-13-12`,
-    speed: 100000,
+    class: `sprites sprite-13-12`,
+    speed: 999,
   },
   WLRM: {
-    class: `tiles tile-14-13 transform rotate-90`,
-    speed: 100000,
+    class: `sprites sprite-14-13 transform rotate-90`,
+    speed: 999,
   },
   WLRU: {
-    class: `tiles tile-13-12 transform rotate-90`,
-    speed: 100000,
+    class: `sprites sprite-13-12 transform rotate-90`,
+    speed: 999,
   },
   WLRD: {
-    class: `tiles tile-14-12 transform rotate-90`,
-    speed: 100000,
+    class: `sprites sprite-14-12 transform rotate-90`,
+    speed: 999,
   },
   WLDM: {
-    class: `tiles tile-14-13 transform rotate-180`,
-    speed: 100000,
+    class: `sprites sprite-14-13 transform rotate-180`,
+    speed: 999,
   },
   WLDR: {
-    class: `tiles tile-13-12 transform rotate-180`,
-    speed: 100000,
+    class: `sprites sprite-13-12 transform rotate-180`,
+    speed: 999,
   },
   WLDL: {
-    class: `tiles tile-14-12 transform rotate-180`,
-    speed: 100000,
+    class: `sprites sprite-14-12 transform rotate-180`,
+    speed: 999,
   },
   WLLM: {
-    class: `tiles tile-14-13 transform -rotate-90`,
-    speed: 100000,
+    class: `sprites sprite-14-13 transform -rotate-90`,
+    speed: 999,
   },
   WLLR: {
-    class: `tiles tile-14-12 transform -rotate-90`,
-    speed: 100000,
+    class: `sprites sprite-14-12 transform -rotate-90`,
+    speed: 999,
   },
   WLLD: {
-    class: `tiles tile-13-12 transform -rotate-90`,
-    speed: 100000,
+    class: `sprites sprite-13-12 transform -rotate-90`,
+    speed: 999,
   },
   WOUL: {
-    class: `tiles tile-12-12`,
-    speed: 100000,
+    class: `sprites sprite-12-12`,
+    speed: 999,
   },
   WIUL: {
-    class: `tiles tile-15-13`,
-    speed: 100000,
+    class: `sprites sprite-15-13`,
+    speed: 999,
   },
   WOUR: {
-    class: `tiles tile-12-12 transform rotate-90`,
-    speed: 100000,
+    class: `sprites sprite-12-12 transform rotate-90`,
+    speed: 999,
   },
   WIUR: {
-    class: `tiles tile-15-13 transform rotate-90`,
-    speed: 100000,
+    class: `sprites sprite-15-13 transform rotate-90`,
+    speed: 999,
   },
   WODR: {
-    class: `tiles tile-12-12 transform rotate-180`,
-    speed: 100000,
+    class: `sprites sprite-12-12 transform rotate-180`,
+    speed: 999,
   },
   WIDR: {
-    class: `tiles tile-15-13 transform rotate-180`,
-    speed: 100000,
+    class: `sprites sprite-15-13 transform rotate-180`,
+    speed: 999,
   },
   WODL: {
-    class: `tiles tile-12-12 transform -rotate-90`,
-    speed: 100000,
+    class: `sprites sprite-12-12 transform -rotate-90`,
+    speed: 999,
   },
   WIDL: {
-    class: `tiles tile-15-13 transform -rotate-90`,
-    speed: 100000,
+    class: `sprites sprite-15-13 transform -rotate-90`,
+    speed: 999,
   },
   WDMU: {
-    class: `tiles tile-11-12`,
-    speed: 100000,
+    class: `sprites sprite-11-12`,
+    speed: 999,
   },
   WDMR: {
-    class: `tiles tile-11-12 transform rotate-90`,
-    speed: 100000,
+    class: `sprites sprite-11-12 transform rotate-90`,
+    speed: 999,
   },
   WDMD: {
-    class: `tiles tile-11-12 transform rotate-180`,
-    speed: 100000,
+    class: `sprites sprite-11-12 transform rotate-180`,
+    speed: 999,
   },
   WDML: {
-    class: `tiles tile-11-12 transform -rotate-90`,
-    speed: 100000,
+    class: `sprites sprite-11-12 transform -rotate-90`,
+    speed: 999,
   },
   GRND: {
-    class: `tiles tile-15-11`,
+    class: `sprites sprite-15-11`,
     speed: 5,
   },
-  DCD: {
-    class: `tiles tile-10-12 transform rotate-180`,
-    speed: 100000,
+  DRCN: {
+    class: `sprites sprite-10-12 transform rotate-180`,
+    speed: 999,
   },
-  DCL: {
-    class: `tiles tile-10-12 transform -rotate-90`,
-    speed: 100000,
+  DRCE: {
+    class: `sprites sprite-10-12 transform -rotate-90`,
+    speed: 999,
   },
-  DCR: {
-    class: `tiles tile-10-12 transform rotate-90`,
-    speed: 100000,
+  DRCW: {
+    class: `sprites sprite-10-12 transform rotate-90`,
+    speed: 999,
   },
-  DCU: {
-    class: `tiles tile-10-12`,
-    speed: 100000,
+  DRCS: {
+    class: `sprites sprite-10-12`,
+    speed: 999,
   },
-  DLD: {
-    class: `tiles tile-10-12 transform rotate-180`,
-    speed: 100000,
+  DRLN: {
+    class: `sprites sprite-10-13 transform rotate-180`,
+    speed: 999,
   },
-  DLL: {
-    class: `tiles tile-10-12 transform -rotate-90`,
-    speed: 100000,
+  DRLE: {
+    class: `sprites sprite-10-13 transform -rotate-90`,
+    speed: 999,
   },
-  DLR: {
-    class: `tiles tile-10-12 transform rotate-90`,
-    speed: 100000,
+  DRLW: {
+    class: `sprites sprite-10-13 transform rotate-90`,
+    speed: 999,
   },
-  DLU: {
-    class: `tiles tile-10-12`,
-    speed: 100000,
+  DRLS: {
+    class: `sprites sprite-10-13`,
+    speed: 999,
   },
-
-  LOCD: {
-    class: `tiles tile-10-12 tile-10-13 transform rotate-180`,
-    speed: 100000,
-  },
-  LOCL: {
-    class: `tiles tile-10-12 tile-10-13 transform -rotate-90`,
-    speed: 100000,
-  },
-  LOCR: {
-    class: `tiles tile-10-12 tile-10-13 transform rotate-90`,
-    speed: 100000,
-  },
-  LOCU: {
-    class: `tiles tile-10-12 tile-10-13`,
-    speed: 100000,
-  },
-  DOD: {
-    class: `tiles tile-10-14 transform rotate-180`,
+  DRON: {
+    class: `sprites sprite-10-14 transform rotate-180`,
     speed: 2.5,
   },
-  DOL: {
-    class: `tiles tile-10-14 transform -rotate-90`,
+  DROE: {
+    class: `sprites sprite-10-14 transform -rotate-90`,
     speed: 2.5,
   },
-  DOR: {
-    class: `tiles tile-10-14 transform rotate-90`,
+  DROW: {
+    class: `sprites sprite-10-14 transform rotate-90`,
     speed: 2.5,
   },
-  DOU: {
-    class: `tiles tile-10-14`,
+  DROS: {
+    class: `sprites sprite-10-14`,
     speed: 2.5,
   },
-  WATR: {
-    class: `tiles tile-3-11`,
+  AQUA: {
+    class: `sprites sprite-3-11`,
     speed: 10,
   },
   LAVA: {
-    class: `tiles tile-3-9`,
+    class: `sprites sprite-3-9`,
     speed: 10,
   },
   VOID: {
     class: "hide",
-    speed: 100000,
+    speed: 999,
   },
 };
 
@@ -184,10 +167,10 @@ export const getTileSpeed = (tileType: string): number => {
   if (Object.keys(tileTypes).includes(tileType)) {
     return tileTypes[tileType].speed;
   }
-  if (tileType.startsWith('DO')) {
+  if (tileType.startsWith("DRO")) {
     return 2.5;
   }
-  return 100000;
+  return 999;
 };
 
 export interface TileDetailsProps {
@@ -200,7 +183,6 @@ export interface TileDetailsProps {
     | "normal"
     | "player"
     | "void";
-  size: number;
   name?: string;
 }
 export class TileDetails implements TileDetailsProps {

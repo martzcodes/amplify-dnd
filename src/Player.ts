@@ -195,7 +195,7 @@ export class Player implements PlayerProps {
             break;
           }
           if (
-            (tileType.startsWith('W') && tileType !== 'WATR') ||
+            (tileType.startsWith('W') && tileType !== 'AQUA') ||
             tileType.startsWith('DC') ||
             tileType.startsWith('DL')
           ) {
