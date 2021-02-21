@@ -10,6 +10,7 @@ import { tileTypes } from "./Tile";
 import { hashLocation } from "./utils/hashLocation";
 import { Door } from "./Door";
 import UserLayer from "./UserLayer";
+import { useParams } from "react-router-dom";
 
 export interface PlayerTracker {
   active: Player;
@@ -175,7 +176,8 @@ const calculateMoveMap = (board: string[][], doors: Door[]) => {
   );
 };
 
-function Game() {
+function Game({ dm }: { dm?: boolean }) {
+  const { gameId, playerId } = useParams<{gameId: string; playerId: string}>();
   const initialDoors: Door[] = startingDoors.map(
     (startingDoor) => new Door(startingDoor)
   );
@@ -306,29 +308,6 @@ function Game() {
       }
     };
 
-    const initializePlayers = async () => {
-      // const doors = getDoorsFromRooms(rooms);
-      // const closedDoors = doors.filter(
-      //   (door) => door.startsWith("DL") || door.startsWith("DC")
-      // );
-      // closedDoors.forEach((door) => noMove.add(door));
-      // const initialized: Record<string, Player> = {};
-      // const playerNames = Object.keys(tracker.players);
-      // for (let j = 0; j < playerNames.length; j++) {
-      //   const refreshedPlayer = new Player(tracker.players[playerNames[j]]);
-      //   await refreshedPlayer.processMovement(board, noMove);
-      //   refreshedPlayer.roomDescription = `${
-      //     getRoom(rooms, refreshedPlayer.location)?.description
-      //   }`;
-      //   initialized[playerNames[j]] = refreshedPlayer;
-      // }
-      // setTracker({
-      //   ...tracker,
-      //   players: initialized,
-      // });
-      // setPlayerAction(emptyAction);
-    };
-
     const openDoor = (doorLoc: Location, destroy: boolean) => {
       const doorInd = doors.findIndex((door) => {
         return door.getDoors().filter(specificDoor => {
@@ -412,7 +391,6 @@ function Game() {
 
     switch (playerAction.action) {
       case "init":
-        initializePlayers();
         break;
       case "end":
         nextPlayer(tracker.players);
@@ -458,8 +436,11 @@ function Game() {
   }, [doors]);
   console.log(maps);
 
-  const dm = false;
-
+  const playerToView = playerId
+    ? tracker.players.filter(
+        (trackerPlayer) => trackerPlayer.id === playerId
+      )[0]
+    : tracker.active;
   return (
     <>
       {tracker ? (
@@ -475,12 +456,12 @@ function Game() {
                   board={maps.board}
                   doors={doors}
                   dm={dm}
-                  player={tracker.active}
+                  player={playerToView}
                   updatePlayer={(player: Player) => {
                     console.log(player);
                     updatePlayer(player);
                   }}
-                  renderable={tracker.players.filter(player => player.id !== tracker.active.id).map(player => ({
+                  renderable={tracker.players.filter(player => player.id !== playerToView.id).map(player => ({
                     name: player.name,
                     class: player.color,
                     location: player.location,
@@ -492,7 +473,7 @@ function Game() {
             </div>
           </div>
           <div className="flex-none w-full md:max-w-xs">
-            {[
+            {playerToView.id === tracker.active.id ? [
               { name: "End Turn", type: "end", color: "red" },
               { name: "Dash", type: "dash", color: "blue" },
               ...(tracker.active.selectedTile?.actions || []),
@@ -510,7 +491,7 @@ function Game() {
               >
                 {action.name}
               </button>
-            ))}
+            )) : <></>}
             <pre>{`${JSON.stringify(
               tracker.active.selectedTile,
               null,

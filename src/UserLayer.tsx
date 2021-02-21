@@ -35,6 +35,7 @@ function UserLayer({
   renderable?: Renderable[];
   dm?: boolean;
 }) {
+  console.log(player.id);
   const [selectedTile, setSelectedTile] = useState(emptyTile);
 
   useEffect(() => {
