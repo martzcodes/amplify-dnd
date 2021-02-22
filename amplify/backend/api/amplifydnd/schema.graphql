@@ -1,0 +1,134 @@
+enum GameType {
+  PUBLIC
+  PRIVATE
+}
+
+type Game
+  @model
+  @auth(rules: [{ allow: owner, operations: [create, update, delete] }]) {
+  id: ID!
+  name: String!
+  type: GameType!
+  joinPassword: String
+  dm: String!
+  paused: Boolean
+  active: String
+  initiative: [String!]
+  rooms: [GameRoom!] @connection(keyName: "byGame", fields: ["id"])
+  doors: [GameDoor!] @connection(keyName: "byGame", fields: ["id"])
+  areas: [GameArea!] @connection(keyName: "byGame", fields: ["id"])
+  requests: [GameJoinRequest!] @connection(keyName: "byGame", fields: ["id"])
+  characters: [GameCharacter!] @connection(keyName: "byGame", fields: ["id"])
+  items: [GameItem!] @connection(keyName: "byGame", fields: ["id"])
+  history: [GameHistory!] @connection(keyName: "byGame", fields: ["id"])
+}
+
+type Location {
+  x: Int!
+  y: Int!
+}
+
+enum SpecialGroundType {
+  LAVA
+  AQUA
+  VOID
+}
+
+type GameRoomGround {
+  type: SpecialGroundType!
+  origin: Location!
+  height: Int!
+  width: Int!
+}
+
+type GameRoom
+  @model
+  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
+  @key(name: "byGame", fields: ["gameID"]) {
+  id: ID!
+  gameID: ID!
+  name: String!
+  origin: Location!
+  height: Int!
+  width: Int!
+  defaultGroundType: String!
+  specialGrounds: [GameRoomGround!]!
+}
+
+type GameJoinRequest
+  @model
+  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
+  @key(name: "byGame", fields: ["gameID"]) {
+  id: ID!
+  gameID: ID!
+  character: String!
+}
+
+type CurrentMax {
+  current: Int!
+  max: Int!
+}
+
+type GameDoor
+  @model
+  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
+  @key(name: "byGame", fields: ["gameID"]) {
+  id: ID!
+  gameID: ID!
+  origin: Location!
+  open: Boolean
+  locked: Boolean
+  northSouth: Boolean
+}
+
+type GameHistory
+  @model
+  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
+  @key(name: "byGame", fields: ["gameID"]) {
+  id: ID!
+  gameID: ID!
+  datetime: String!
+  character: String!
+  action: String!
+  location: Location!
+}
+
+type GameCharacter
+  @model
+  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
+  @key(name: "byGame", fields: ["gameID"]) {
+  id: ID!
+  gameID: ID!
+  name: String!
+  color: String!
+  perception: Int!
+  speed: CurrentMax!
+  hp: CurrentMax!
+  location: Location!
+  vision: Int!
+  actionUsed: Boolean!
+}
+
+type GameItem
+  @model
+  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
+  @key(name: "byGame", fields: ["gameID"]) {
+  id: ID!
+  gameID: ID!
+  name: String!
+  description: String
+  location: Location!
+}
+
+type GameArea
+  @model
+  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
+  @key(name: "byGame", fields: ["gameID"]) {
+  id: ID!
+  gameID: ID!
+  name: String!
+  description: String!
+  origin: Location!
+  height: Int!
+  width: Int!
+}

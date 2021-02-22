@@ -3,6 +3,13 @@ import { Bounds } from "./InteractionLayer";
 import { Location } from "./models/Location";
 import { TileDetails, TileDetailsProps } from "./Tile";
 
+export interface SpecialGround {
+    origin: Location;
+    height: number;
+    width: number;
+    type: 'LAVA' | 'AQUA' | 'VOID'
+}
+
 export const getRoom = (
   rooms: Room[],
   loc: Location
@@ -128,18 +135,14 @@ interface Void {
   start: Location;
   end: Location;
 }
-interface RoomProps {
+export interface RoomProps {
+  id?: string;
   name: string;
-  description: string;
   width: number;
   height: number;
-  walls: Set<string>;
   origin: Location;
-  groundType: string;
-  water?: Location[];
-  lava?: Location[];
-  voids?: Void[];
-  grid?: string[][];
+  defaultGroundType: string;
+  specialGrounds: SpecialGround[];
 }
 
 export const getWall = ({ x, y, startX, endX, startY, endY, inner, fillType }: { x: number; y: number; startX: number; endX: number; startY: number; endY: number; inner: boolean; fillType: string; }) => {
@@ -195,41 +198,36 @@ export const getWall = ({ x, y, startX, endX, startY, endY, inner, fillType }: {
 }
 
 export class Room implements RoomProps {
+  id: string = "";
   name: string = "";
   width = 0;
   height = 0;
-  description = '';
-  groundType = 'GRND';
-  walls = new Set<string>([]);
+  defaultGroundType = 'GRND';
   doors: Door[] = [];
   grid: string[][] = [];
   origin: Location = {
     x: 0,
     y: 0,
   };
-  water: Location[] = [];
-  lava: Location[] = [];
-  voids: Void[] = [];
+  specialGrounds: SpecialGround[] = [];
 
   constructor(roomProps: RoomProps) {
     Object.assign(this, roomProps);
     this.grid = Array(this.height).fill('').map((row, y) => {
       return Array(this.width).fill('').map((tile, x) => {
-        return getWall({ x, y, startX: 0, startY: 0, endX: this.width - 1, endY: this.height - 1, inner: false, fillType: this.groundType });
+        return getWall({ x, y, startX: 0, startY: 0, endX: this.width - 1, endY: this.height - 1, inner: false, fillType: this.defaultGroundType });
       });
     });
-    this.voids.forEach((innerVoid) => {
-      for (let y = innerVoid.start.y; y <= innerVoid.end.y; y++) {
-        for (let x = innerVoid.start.x; x <= innerVoid.end.x; x++) {
-          this.grid[y][x] = getWall({ x, y, startX: innerVoid.start.x, startY: innerVoid.start.y, endX: innerVoid.end.x, endY: innerVoid.end.y, inner: true, fillType: 'VOID' });
+    this.specialGrounds.forEach((specialGround) => {
+      for (let y = specialGround.origin.y; y < specialGround.origin.y + specialGround.height; y++) {
+        for (let x = specialGround.origin.x; x < specialGround.origin.x + specialGround.width; x++) {
+          if (specialGround.type === 'VOID') {
+            this.grid[y][x] = getWall({ x, y, startX: specialGround.origin.x, startY: specialGround.origin.y, endX: specialGround.origin.x, endY: specialGround.origin.y, inner: true, fillType: specialGround.type });
+          } else {
+            this.grid[y][x] = specialGround.type;
+          }
         }
       }
-    });
-    this.water.forEach((waterLoc) => {
-      this.grid[waterLoc.y][waterLoc.x] = 'AQUA';
-    });
-    this.lava.forEach((lavaLoc) => {
-      this.grid[lavaLoc.y][lavaLoc.x] = 'LAVA';
     });
   }
 
@@ -279,7 +277,6 @@ export class Room implements RoomProps {
 
 export const roomA = new Room({
     name: "A",
-    description: `Bacon ipsum dolor amet ham hock biltong kielbasa, pork spare ribs leberkas tri-tip shoulder chuck. Meatball ribeye drumstick shank porchetta spare ribs pork belly brisket tri-tip. Beef alcatra chuck pancetta, tri-tip pork belly picanha corned beef sausage hamburger pastrami beef ribs meatball.`,
     width: 5,
     height: 5,
     origin: {
@@ -289,70 +286,67 @@ export const roomA = new Room({
   } as RoomProps);
   export const roomB = new Room({
     name: "B",
-    description: "Large room with some water running through it",
     width: 20,
     height: 20,
     origin: {
       x: 5,
       y: 0,
     },
-    water: [
-      { x: 1, y: 5, },
-      { x: 2, y: 1, },
-      { x: 2, y: 2, },
-      { x: 2, y: 3, },
-      { x: 2, y: 4, },
-      { x: 2, y: 5, },
-      { x: 2, y: 9, },
-      { x: 2, y: 10, },
-      { x: 2, y: 11, },
-      { x: 2, y: 12, },
-      { x: 3, y: 4, },
-      { x: 3, y: 5, },
-      { x: 3, y: 9, },
-      { x: 3, y: 10, },
-      { x: 3, y: 11, },
-      { x: 3, y: 12, },
-      { x: 4, y: 2, },
-      { x: 4, y: 3, },
-      { x: 4, y: 4, },
-      { x: 4, y: 5, },
-      { x: 4, y: 6, },
-      { x: 4, y: 7, },
-      { x: 4, y: 8, },
-      { x: 4, y: 9, },
-      { x: 4, y: 10, },
-      { x: 4, y: 11, },
-      { x: 4, y: 12, },
-      { x: 5, y: 1, },
-      { x: 5, y: 2, },
-      { x: 5, y: 3, },
-      { x: 5, y: 4, },
-      { x: 6, y: 1, },
-    ],
-    voids: [
-      { start: { x: 5, y: 5 }, end: {x: 13, y: 14} }
-    ],
+    // water: [
+    //   { x: 1, y: 5, },
+    //   { x: 2, y: 1, },
+    //   { x: 2, y: 2, },
+    //   { x: 2, y: 3, },
+    //   { x: 2, y: 4, },
+    //   { x: 2, y: 5, },
+    //   { x: 2, y: 9, },
+    //   { x: 2, y: 10, },
+    //   { x: 2, y: 11, },
+    //   { x: 2, y: 12, },
+    //   { x: 3, y: 4, },
+    //   { x: 3, y: 5, },
+    //   { x: 3, y: 9, },
+    //   { x: 3, y: 10, },
+    //   { x: 3, y: 11, },
+    //   { x: 3, y: 12, },
+    //   { x: 4, y: 2, },
+    //   { x: 4, y: 3, },
+    //   { x: 4, y: 4, },
+    //   { x: 4, y: 5, },
+    //   { x: 4, y: 6, },
+    //   { x: 4, y: 7, },
+    //   { x: 4, y: 8, },
+    //   { x: 4, y: 9, },
+    //   { x: 4, y: 10, },
+    //   { x: 4, y: 11, },
+    //   { x: 4, y: 12, },
+    //   { x: 5, y: 1, },
+    //   { x: 5, y: 2, },
+    //   { x: 5, y: 3, },
+    //   { x: 5, y: 4, },
+    //   { x: 6, y: 1, },
+    // ],
+    // voids: [
+    //   { start: { x: 5, y: 5 }, end: {x: 13, y: 14} }
+    // ],
   } as RoomProps);
   export const roomC = new Room({
     name: "C",
-    description: "Room C Description",
     width: 8,
     height: 5,
     origin: {
       x: 15,
       y: 20,
     },
-    lava: [
-      { x: 2, y: 2 },
-      { x: 3, y: 2 },
-      { x: 4, y: 2 },
-      { x: 5, y: 2 },
-    ],
+    // lava: [
+    //   { x: 2, y: 2 },
+    //   { x: 3, y: 2 },
+    //   { x: 4, y: 2 },
+    //   { x: 5, y: 2 },
+    // ],
   } as RoomProps);
   export const roomD = new Room({
     name: "D",
-    description: "Room D Description",
     width: 6,
     height: 5,
     origin: {
@@ -362,7 +356,6 @@ export const roomA = new Room({
   } as RoomProps);
   export const roomE = new Room({
     name: "E",
-    description: "Room E Description",
     width: 24,
     height: 5,
     origin: {
@@ -372,7 +365,6 @@ export const roomA = new Room({
   } as RoomProps);
   export const roomF = new Room({
     name: "F",
-    description: "Room F Description",
     width: 7,
     height: 8,
         origin: {
@@ -382,7 +374,6 @@ export const roomA = new Room({
   } as RoomProps);
   export const roomG = new Room({
     name: "G",
-    description: "Room G Description",
     width: 9,
     height: 16,
     origin: {

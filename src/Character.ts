@@ -3,7 +3,7 @@ import { Location } from "./models/Location";
 import { getTileSpeed, tileTypes } from "./Tile";
 import { hashLocation, unhashLocation } from "./utils/hashLocation";
 
-export interface PlayerProps {
+export interface CharacterProps {
   id: string;
   name: string;
   color: string;
@@ -33,7 +33,7 @@ export interface Movement {
   tiles: Set<string>;
 }
 
-export class Player implements PlayerProps {
+export class Character implements CharacterProps {
   id: string = '';
   name: string = '';
   color: string = 'bg-purple-600';
@@ -62,7 +62,7 @@ export class Player implements PlayerProps {
     actions: Action[];
   } = null;
 
-  constructor(playerProps: PlayerProps) {
+  constructor(playerProps: CharacterProps) {
     Object.assign(this, playerProps);
   }
 

@@ -32,11 +32,7 @@ function Header({ authState, email }: {authState: AuthState, email?: string}) {
             ) : (
               <></>
             )}
-            {authState === AuthState.SignedIn ? (
-              <AmplifySignOut></AmplifySignOut>
-            ) : (
-              <></>
-            )}
+            <AmplifySignOut></AmplifySignOut>
           </div>
         </div>
       </div>

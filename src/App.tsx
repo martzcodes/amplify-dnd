@@ -3,11 +3,12 @@ import { Route, BrowserRouter as Router, Switch } from "react-router-dom";
 import { AuthState, onAuthUIStateChange } from "@aws-amplify/ui-components";
 import './App.css';
 import Footer from './Footer';
-import Game from './Game';
 import Games from './Games';
 import Header from './Header';
 import TileMap from './TileMap';
 import { AmplifyAuthenticator } from '@aws-amplify/ui-react';
+import DM from './DM';
+import Player from './Player';
 
 const ProtectedRoute = ({path, children, authState}: { path: string; children: JSX.Element, authState: AuthState }) => (
   <Route path={path} children={authState === AuthState.SignedIn ? children : <AmplifyAuthenticator />} />
@@ -36,16 +37,16 @@ function App() {
             </Route>
             <ProtectedRoute
               path="/games/:gameId/dm"
-              children={<Game dm={true} />}
+              children={<DM user={user} />}
               authState={authState}
             />
             <ProtectedRoute
-              path="/games/:gameId/players/:playerId"
-              children={<Game />}
+              path="/games/:gameId/characters/:characterId"
+              children={<Player />}
               authState={authState}
             />
             <Route path="/">
-              <Games></Games>
+              <Games user={user || {}}></Games>
             </Route>
           </Switch>
         </main>

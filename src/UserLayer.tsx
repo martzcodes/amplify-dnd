@@ -2,11 +2,11 @@ import { useEffect, useState } from "react";
 import { Door } from "./Door";
 import InteractionLayer from "./InteractionLayer";
 import { Location } from "./models/Location";
-import { Player } from "./Player";
+import { Character } from "./Character";
 
 const emptyTile = {
   location: { x: -1, y: -1 },
-  player: "",
+  character: "",
   type: "",
   speed: 0,
   actions: [],
@@ -23,46 +23,45 @@ export interface Renderable {
 function UserLayer({
   board,
   doors,
-  player,
-  updatePlayer,
+  character,
+  updateCharacter,
   renderable,
   dm,
 }: {
   board: string[][];
   doors: Door[];
-  player: Player;
-  updatePlayer: any;
+  character: Character;
+  updateCharacter: any;
   renderable?: Renderable[];
   dm?: boolean;
 }) {
-  console.log(player.id);
   const [selectedTile, setSelectedTile] = useState(emptyTile);
 
   useEffect(() => {
-    if (
-      !player.selectedTile ||
-      selectedTile.location.x !== player.selectedTile.location.x ||
-      selectedTile.location.y !== player.selectedTile.location.y
-    ) {
-      const updatedPlayer = new Player({ ...player });
-      updatedPlayer.selectedTile = selectedTile;
-      updatePlayer(updatedPlayer);
+    if ( character && (
+      !character.selectedTile ||
+      selectedTile.location.x !== character.selectedTile.location.x ||
+      selectedTile.location.y !== character.selectedTile.location.y
+    )) {
+      const updatedCharacter = new Character({ ...character });
+      updatedCharacter.selectedTile = selectedTile;
+      updateCharacter(updatedCharacter);
       return;
     }
   }, [selectedTile]);
 
-  return (
+  return character ? (
     <InteractionLayer
       selectedTile={selectedTile}
       setSelectedTile={setSelectedTile}
       width={board[0].length}
       height={board.length}
       doors={doors}
-      player={player}
+      character={character}
       renderable={renderable || []}
       dm={dm}
     ></InteractionLayer>
-  );
+  ) : <></>;
 }
 
 export default UserLayer;
