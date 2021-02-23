@@ -102,92 +102,93 @@ function InteractionLayer({
           })}
       </div>
     ));
-  if (character) {
-    doors.forEach((door) => {
-      const specificDoors = door.getDoors();
-      specificDoors.forEach((specificDoor) => {
-        const tileLoc = specificDoor.location;
-        const characterRange = calculateDistance(
-          character.location,
-          specificDoor.location
-        );
+  doors.forEach((door) => {
+    const specificDoors = door.getDoors();
+    specificDoors.forEach((specificDoor) => {
+      const tileLoc = specificDoor.location;
+      const characterRange = character
+        ? calculateDistance(character.location, specificDoor.location)
+        : 999;
 
-        const actions: Action[] = [];
-        if (door.open && canMove({ character, tileLoc, renderable })) {
-          actions.push({
-            name: "Move",
-            type: "move",
-            color: "green",
-          });
-        }
-        if (door.open && characterRange <= 5) {
-          actions.push({
-            name: "Close Door",
-            type: "close",
-            color: "red",
-          });
-        }
-        if (!door.open && !door.locked && characterRange <= 5) {
-          actions.push({
-            name: "Open Door",
-            type: "open",
-            color: "green",
-          });
-        }
-        if (!door.open && door.locked && characterRange <= 5) {
-          actions.push({
-            name: "Unlock Door",
-            type: "unlock",
-            color: "yellow",
-          });
-        }
-        board[specificDoor.location.y].props.children[
-          specificDoor.location.x
-        ] = (
-          <div key={hashLocation(specificDoor.location)} className="flex-item">
-            <Tile
-              door={tileTypes[specificDoor.doorClass].class || ""}
-              lock={(tileTypes[specificDoor.lockClass] || {}).class || ""}
-              tileClass={""}
-              clickHandler={() => {
-                setSelectedTile({
-                  character: character.name,
-                  location: specificDoor.location,
-                  type: "DOOR",
-                  characterAtTile: null,
-                  actions,
-                });
-              }}
-              revealed={character.revealed.has(hashLocation(tileLoc))}
-              visible={dm || character.visible.has(hashLocation(tileLoc))}
-              move={canMove({ character, tileLoc, renderable })}
-            ></Tile>
-          </div>
-        );
-      });
-      renderable.forEach((renderItem) => {
-        const tileLoc = renderItem.location;
-        board[renderItem.location.y].props.children[renderItem.location.x] = (
-          <div key={hashLocation(renderItem.location)} className="flex-item">
-            <Tile
-              tileClass={renderItem.class}
-              clickHandler={() => {
-                setSelectedTile({
-                  character: character.name,
-                  location: renderItem.location,
-                  type: renderItem.name,
-                  characterAtTile: null,
-                  actions: renderItem.actions,
-                  description: renderItem.description,
-                });
-              }}
-              revealed={character.revealed.has(hashLocation(tileLoc))}
-              visible={dm || character.visible.has(hashLocation(tileLoc))}
-              move={canMove({ character, tileLoc, renderable })}
-            ></Tile>
-          </div>
-        );
-      });
+      const actions: Action[] = [];
+      if (door.open && canMove({ character, tileLoc, renderable })) {
+        actions.push({
+          name: "Move",
+          type: "move",
+          color: "green",
+        });
+      }
+      if (door.open && characterRange <= 5) {
+        actions.push({
+          name: "Close Door",
+          type: "close",
+          color: "red",
+        });
+      }
+      if (!door.open && !door.locked && characterRange <= 5) {
+        actions.push({
+          name: "Open Door",
+          type: "open",
+          color: "green",
+        });
+      }
+      if (!door.open && door.locked && characterRange <= 5) {
+        actions.push({
+          name: "Unlock Door",
+          type: "unlock",
+          color: "yellow",
+        });
+      }
+      board[specificDoor.location.y].props.children[specificDoor.location.x] = (
+        <div key={hashLocation(specificDoor.location)} className="flex-item">
+          <Tile
+            door={tileTypes[specificDoor.doorClass].class || ""}
+            lock={(tileTypes[specificDoor.lockClass] || {}).class || ""}
+            tileClass={""}
+            clickHandler={() => {
+              setSelectedTile({
+                character: character.name,
+                location: specificDoor.location,
+                type: "DOOR",
+                characterAtTile: null,
+                actions,
+              });
+            }}
+            revealed={
+              character ? character.revealed.has(hashLocation(tileLoc)) : true
+            }
+            visible={dm || character.visible.has(hashLocation(tileLoc))}
+            move={canMove({ character, tileLoc, renderable })}
+          ></Tile>
+        </div>
+      );
+    });
+    renderable.forEach((renderItem) => {
+      const tileLoc = renderItem.location;
+      board[renderItem.location.y].props.children[renderItem.location.x] = (
+        <div key={hashLocation(renderItem.location)} className="flex-item">
+          <Tile
+            tileClass={renderItem.class}
+            clickHandler={() => {
+              setSelectedTile({
+                character: character.name,
+                location: renderItem.location,
+                type: renderItem.name,
+                characterAtTile: null,
+                actions: renderItem.actions,
+                description: renderItem.description,
+              });
+            }}
+            revealed={
+              character ? character.revealed.has(hashLocation(tileLoc)) : true
+            }
+            visible={dm || character.visible.has(hashLocation(tileLoc))}
+            move={canMove({ character, tileLoc, renderable })}
+          ></Tile>
+        </div>
+      );
+    });
+    if (character) {
       board[character.location.y].props.children[character.location.x] = (
         <div key={hashLocation(character.location)} className="flex-item">
           <Tile
@@ -207,44 +208,9 @@ function InteractionLayer({
           ></Tile>
         </div>
       );
-    });
-  }
+    }
+  });
   return <>{board}</>;
-  // return (
-  //   <>
-  //     {Array(height).fill('').map((row, y) => (
-  //       <div key={y} className="flex-container">
-  //         {Array(width).fill('').map((cell, x) => {
-  //           const tileLoc = { x, y };
-  //           const tileHash = hashLocation(tileLoc);
-  //           return (
-  //             <div key={hashLocation(tileLoc)} className={`flex-item`}>
-  // <Tile
-  //   door={door}
-  //   lock={lock}
-  //   tileClass={className}
-  //   clickHandler={() => {
-  //     setSelectedTile({
-  //       character: tracker.active,
-  //       location: tileLoc,
-  //       type: cell,
-  //       characterAtTile: characterTileName
-  //         ? tracker.characters[characterTileName].getStats()
-  //         : null,
-  //       actions,
-  //     });
-  //   }}
-  //   fog={cell.startsWith("W") && revealed ? false : fog}
-  //   visible={visible}
-  //   move={move}
-  // ></Tile>
-  //             </div>
-  //           );
-  //         })}
-  //       </div>
-  //     ))}
-  //   </>
-  // );
 }
 
 export default InteractionLayer;

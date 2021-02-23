@@ -1,12 +1,13 @@
 import { Action } from "./models/Action";
 import { Location } from "./models/Location";
-import { getTileSpeed, tileTypes } from "./Tile";
 import { hashLocation, unhashLocation } from "./utils/hashLocation";
 
 export interface CharacterProps {
-  id: string;
+  id?: string;
   name: string;
+  email: string;
   color: string;
+  perception: number;
   speed: Speed;
   hp: HP;
   vision: number;
@@ -36,7 +37,9 @@ export interface Movement {
 export class Character implements CharacterProps {
   id: string = '';
   name: string = '';
+  email: string = '';
   color: string = 'bg-purple-600';
+  perception: number = 0;
   location: Location = {
     x: 0,
     y: 0,
@@ -115,7 +118,7 @@ export class Character implements CharacterProps {
         y: loc.y + move.y,
       };
       const hashedLoc = hashLocation(nextLoc);
-      if (nextLoc.x < 0 || nextLoc.y < 0) {
+      if (!moveMap.length || nextLoc.x < 0 || nextLoc.y < 0 || nextLoc.y >= moveMap.length || nextLoc.x >= moveMap[0].length) {
         return Promise.resolve();
       }
       const tileSpeed = moveMap[nextLoc.y][nextLoc.x];
@@ -176,7 +179,7 @@ export class Character implements CharacterProps {
           break;
         }
         const nextLoc = unhashLocation(cell);
-        if (nextLoc.x < 0 || nextLoc.y < 0) {
+        if (!sightMap.length || nextLoc.x < 0 || nextLoc.y < 0 || nextLoc.y >= sightMap.length || nextLoc.x >= sightMap[0].length) {
           // voids.add(cell);
           obscuredInd = cellInd;
           break;

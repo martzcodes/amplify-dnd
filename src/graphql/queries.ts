@@ -67,20 +67,12 @@ export const getGame = `query GetGame($id: ID!) {
       }
       nextToken
     }
-    requests {
-      items {
-        id
-        gameID
-        character
-        owner
-      }
-      nextToken
-    }
     characters {
       items {
         id
         gameID
         name
+        email
         color
         perception
         speed {
@@ -205,20 +197,12 @@ export const listGames = `query ListGames(
         }
         nextToken
       }
-      requests {
-        items {
-          id
-          gameID
-          character
-          owner
-        }
-        nextToken
-      }
       characters {
         items {
           id
           gameID
           name
+          email
           color
           perception
           speed {
@@ -331,31 +315,6 @@ export const listGameRooms = `query ListGameRooms(
   }
 }
 `;
-export const getGameJoinRequest = `query GetGameJoinRequest($id: ID!) {
-  getGameJoinRequest(id: $id) {
-    id
-    gameID
-    character
-    owner
-  }
-}
-`;
-export const listGameJoinRequests = `query ListGameJoinRequests(
-  $filter: ModelGameJoinRequestFilterInput
-  $limit: Int
-  $nextToken: String
-) {
-  listGameJoinRequests(filter: $filter, limit: $limit, nextToken: $nextToken) {
-    items {
-      id
-      gameID
-      character
-      owner
-    }
-    nextToken
-  }
-}
-`;
 export const getGameDoor = `query GetGameDoor($id: ID!) {
   getGameDoor(id: $id) {
     id
@@ -435,6 +394,7 @@ export const getGameCharacter = `query GetGameCharacter($id: ID!) {
     id
     gameID
     name
+    email
     color
     perception
     speed {
@@ -465,6 +425,7 @@ export const listGameCharacters = `query ListGameCharacters(
       id
       gameID
       name
+      email
       color
       perception
       speed {

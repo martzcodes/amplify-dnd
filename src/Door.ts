@@ -1,5 +1,6 @@
 import { Location } from "./models/Location";
 export interface DoorProps {
+  id?: string;
   origin: Location;
   open: boolean;
   locked: boolean;
@@ -7,6 +8,7 @@ export interface DoorProps {
 }
 
 export class Door {
+  id: string = '';
   origin: Location = { x: 0, y: 0 };
   northSouth: boolean = true;
   open: boolean = true;

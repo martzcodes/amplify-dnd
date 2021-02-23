@@ -182,30 +182,6 @@ export type DeleteGameRoomInput = {
   id?: string | null,
 };
 
-export type CreateGameJoinRequestInput = {
-  id?: string | null,
-  gameID: string,
-  character: string,
-};
-
-export type ModelGameJoinRequestConditionInput = {
-  gameID?: ModelIDInput | null,
-  character?: ModelStringInput | null,
-  and?: Array< ModelGameJoinRequestConditionInput | null > | null,
-  or?: Array< ModelGameJoinRequestConditionInput | null > | null,
-  not?: ModelGameJoinRequestConditionInput | null,
-};
-
-export type UpdateGameJoinRequestInput = {
-  id: string,
-  gameID?: string | null,
-  character?: string | null,
-};
-
-export type DeleteGameJoinRequestInput = {
-  id?: string | null,
-};
-
 export type CreateGameDoorInput = {
   id?: string | null,
   gameID: string,
@@ -274,6 +250,7 @@ export type CreateGameCharacterInput = {
   id?: string | null,
   gameID: string,
   name: string,
+  email: string,
   color: string,
   perception: number,
   speed: CurrentMaxInput,
@@ -291,6 +268,7 @@ export type CurrentMaxInput = {
 export type ModelGameCharacterConditionInput = {
   gameID?: ModelIDInput | null,
   name?: ModelStringInput | null,
+  email?: ModelStringInput | null,
   color?: ModelStringInput | null,
   perception?: ModelIntInput | null,
   vision?: ModelIntInput | null,
@@ -304,6 +282,7 @@ export type UpdateGameCharacterInput = {
   id: string,
   gameID?: string | null,
   name?: string | null,
+  email?: string | null,
   color?: string | null,
   perception?: number | null,
   speed?: CurrentMaxInput | null,
@@ -407,15 +386,6 @@ export type ModelGameRoomFilterInput = {
   not?: ModelGameRoomFilterInput | null,
 };
 
-export type ModelGameJoinRequestFilterInput = {
-  id?: ModelIDInput | null,
-  gameID?: ModelIDInput | null,
-  character?: ModelStringInput | null,
-  and?: Array< ModelGameJoinRequestFilterInput | null > | null,
-  or?: Array< ModelGameJoinRequestFilterInput | null > | null,
-  not?: ModelGameJoinRequestFilterInput | null,
-};
-
 export type ModelGameDoorFilterInput = {
   id?: ModelIDInput | null,
   gameID?: ModelIDInput | null,
@@ -442,6 +412,7 @@ export type ModelGameCharacterFilterInput = {
   id?: ModelIDInput | null,
   gameID?: ModelIDInput | null,
   name?: ModelStringInput | null,
+  email?: ModelStringInput | null,
   color?: ModelStringInput | null,
   perception?: ModelIntInput | null,
   vision?: ModelIntInput | null,
@@ -556,17 +527,6 @@ export type CreateGameMutation = {
       } | null > | null,
       nextToken: string | null,
     } | null,
-    requests:  {
-      __typename: "ModelGameJoinRequestConnection",
-      items:  Array< {
-        __typename: "GameJoinRequest",
-        id: string,
-        gameID: string,
-        character: string,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
     characters:  {
       __typename: "ModelGameCharacterConnection",
       items:  Array< {
@@ -574,6 +534,7 @@ export type CreateGameMutation = {
         id: string,
         gameID: string,
         name: string,
+        email: string,
         color: string,
         perception: number,
         speed:  {
@@ -719,17 +680,6 @@ export type UpdateGameMutation = {
       } | null > | null,
       nextToken: string | null,
     } | null,
-    requests:  {
-      __typename: "ModelGameJoinRequestConnection",
-      items:  Array< {
-        __typename: "GameJoinRequest",
-        id: string,
-        gameID: string,
-        character: string,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
     characters:  {
       __typename: "ModelGameCharacterConnection",
       items:  Array< {
@@ -737,6 +687,7 @@ export type UpdateGameMutation = {
         id: string,
         gameID: string,
         name: string,
+        email: string,
         color: string,
         perception: number,
         speed:  {
@@ -882,17 +833,6 @@ export type DeleteGameMutation = {
       } | null > | null,
       nextToken: string | null,
     } | null,
-    requests:  {
-      __typename: "ModelGameJoinRequestConnection",
-      items:  Array< {
-        __typename: "GameJoinRequest",
-        id: string,
-        gameID: string,
-        character: string,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
     characters:  {
       __typename: "ModelGameCharacterConnection",
       items:  Array< {
@@ -900,6 +840,7 @@ export type DeleteGameMutation = {
         id: string,
         gameID: string,
         name: string,
+        email: string,
         color: string,
         perception: number,
         speed:  {
@@ -1064,51 +1005,6 @@ export type DeleteGameRoomMutation = {
   } | null,
 };
 
-export type CreateGameJoinRequestMutationVariables = {
-  input: CreateGameJoinRequestInput,
-  condition?: ModelGameJoinRequestConditionInput | null,
-};
-
-export type CreateGameJoinRequestMutation = {
-  createGameJoinRequest:  {
-    __typename: "GameJoinRequest",
-    id: string,
-    gameID: string,
-    character: string,
-    owner: string | null,
-  } | null,
-};
-
-export type UpdateGameJoinRequestMutationVariables = {
-  input: UpdateGameJoinRequestInput,
-  condition?: ModelGameJoinRequestConditionInput | null,
-};
-
-export type UpdateGameJoinRequestMutation = {
-  updateGameJoinRequest:  {
-    __typename: "GameJoinRequest",
-    id: string,
-    gameID: string,
-    character: string,
-    owner: string | null,
-  } | null,
-};
-
-export type DeleteGameJoinRequestMutationVariables = {
-  input: DeleteGameJoinRequestInput,
-  condition?: ModelGameJoinRequestConditionInput | null,
-};
-
-export type DeleteGameJoinRequestMutation = {
-  deleteGameJoinRequest:  {
-    __typename: "GameJoinRequest",
-    id: string,
-    gameID: string,
-    character: string,
-    owner: string | null,
-  } | null,
-};
-
 export type CreateGameDoorMutationVariables = {
   input: CreateGameDoorInput,
   condition?: ModelGameDoorConditionInput | null,
@@ -1252,6 +1148,7 @@ export type CreateGameCharacterMutation = {
     id: string,
     gameID: string,
     name: string,
+    email: string,
     color: string,
     perception: number,
     speed:  {
@@ -1286,6 +1183,7 @@ export type UpdateGameCharacterMutation = {
     id: string,
     gameID: string,
     name: string,
+    email: string,
     color: string,
     perception: number,
     speed:  {
@@ -1320,6 +1218,7 @@ export type DeleteGameCharacterMutation = {
     id: string,
     gameID: string,
     name: string,
+    email: string,
     color: string,
     perception: number,
     speed:  {
@@ -1557,17 +1456,6 @@ export type GetGameQuery = {
       } | null > | null,
       nextToken: string | null,
     } | null,
-    requests:  {
-      __typename: "ModelGameJoinRequestConnection",
-      items:  Array< {
-        __typename: "GameJoinRequest",
-        id: string,
-        gameID: string,
-        character: string,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
     characters:  {
       __typename: "ModelGameCharacterConnection",
       items:  Array< {
@@ -1575,6 +1463,7 @@ export type GetGameQuery = {
         id: string,
         gameID: string,
         name: string,
+        email: string,
         color: string,
         perception: number,
         speed:  {
@@ -1723,17 +1612,6 @@ export type ListGamesQuery = {
         } | null > | null,
         nextToken: string | null,
       } | null,
-      requests:  {
-        __typename: "ModelGameJoinRequestConnection",
-        items:  Array< {
-          __typename: "GameJoinRequest",
-          id: string,
-          gameID: string,
-          character: string,
-          owner: string | null,
-        } | null > | null,
-        nextToken: string | null,
-      } | null,
       characters:  {
         __typename: "ModelGameCharacterConnection",
         items:  Array< {
@@ -1741,6 +1619,7 @@ export type ListGamesQuery = {
           id: string,
           gameID: string,
           name: string,
+          email: string,
           color: string,
           perception: number,
           speed:  {
@@ -1877,40 +1756,6 @@ export type ListGameRoomsQuery = {
   } | null,
 };
 
-export type GetGameJoinRequestQueryVariables = {
-  id: string,
-};
-
-export type GetGameJoinRequestQuery = {
-  getGameJoinRequest:  {
-    __typename: "GameJoinRequest",
-    id: string,
-    gameID: string,
-    character: string,
-    owner: string | null,
-  } | null,
-};
-
-export type ListGameJoinRequestsQueryVariables = {
-  filter?: ModelGameJoinRequestFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListGameJoinRequestsQuery = {
-  listGameJoinRequests:  {
-    __typename: "ModelGameJoinRequestConnection",
-    items:  Array< {
-      __typename: "GameJoinRequest",
-      id: string,
-      gameID: string,
-      character: string,
-      owner: string | null,
-    } | null > | null,
-    nextToken: string | null,
-  } | null,
-};
-
 export type GetGameDoorQueryVariables = {
   id: string,
 };
@@ -2017,6 +1862,7 @@ export type GetGameCharacterQuery = {
     id: string,
     gameID: string,
     name: string,
+    email: string,
     color: string,
     perception: number,
     speed:  {
@@ -2054,6 +1900,7 @@ export type ListGameCharactersQuery = {
       id: string,
       gameID: string,
       name: string,
+      email: string,
       color: string,
       perception: number,
       speed:  {
@@ -2257,17 +2104,6 @@ export type OnCreateGameSubscription = {
       } | null > | null,
       nextToken: string | null,
     } | null,
-    requests:  {
-      __typename: "ModelGameJoinRequestConnection",
-      items:  Array< {
-        __typename: "GameJoinRequest",
-        id: string,
-        gameID: string,
-        character: string,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
     characters:  {
       __typename: "ModelGameCharacterConnection",
       items:  Array< {
@@ -2275,6 +2111,7 @@ export type OnCreateGameSubscription = {
         id: string,
         gameID: string,
         name: string,
+        email: string,
         color: string,
         perception: number,
         speed:  {
@@ -2419,17 +2256,6 @@ export type OnUpdateGameSubscription = {
       } | null > | null,
       nextToken: string | null,
     } | null,
-    requests:  {
-      __typename: "ModelGameJoinRequestConnection",
-      items:  Array< {
-        __typename: "GameJoinRequest",
-        id: string,
-        gameID: string,
-        character: string,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
     characters:  {
       __typename: "ModelGameCharacterConnection",
       items:  Array< {
@@ -2437,6 +2263,7 @@ export type OnUpdateGameSubscription = {
         id: string,
         gameID: string,
         name: string,
+        email: string,
         color: string,
         perception: number,
         speed:  {
@@ -2581,17 +2408,6 @@ export type OnDeleteGameSubscription = {
       } | null > | null,
       nextToken: string | null,
     } | null,
-    requests:  {
-      __typename: "ModelGameJoinRequestConnection",
-      items:  Array< {
-        __typename: "GameJoinRequest",
-        id: string,
-        gameID: string,
-        character: string,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
     characters:  {
       __typename: "ModelGameCharacterConnection",
       items:  Array< {
@@ -2599,6 +2415,7 @@ export type OnDeleteGameSubscription = {
         id: string,
         gameID: string,
         name: string,
+        email: string,
         color: string,
         perception: number,
         speed:  {
@@ -2760,48 +2577,6 @@ export type OnDeleteGameRoomSubscription = {
   } | null,
 };
 
-export type OnCreateGameJoinRequestSubscriptionVariables = {
-  owner: string,
-};
-
-export type OnCreateGameJoinRequestSubscription = {
-  onCreateGameJoinRequest:  {
-    __typename: "GameJoinRequest",
-    id: string,
-    gameID: string,
-    character: string,
-    owner: string | null,
-  } | null,
-};
-
-export type OnUpdateGameJoinRequestSubscriptionVariables = {
-  owner: string,
-};
-
-export type OnUpdateGameJoinRequestSubscription = {
-  onUpdateGameJoinRequest:  {
-    __typename: "GameJoinRequest",
-    id: string,
-    gameID: string,
-    character: string,
-    owner: string | null,
-  } | null,
-};
-
-export type OnDeleteGameJoinRequestSubscriptionVariables = {
-  owner: string,
-};
-
-export type OnDeleteGameJoinRequestSubscription = {
-  onDeleteGameJoinRequest:  {
-    __typename: "GameJoinRequest",
-    id: string,
-    gameID: string,
-    character: string,
-    owner: string | null,
-  } | null,
-};
-
 export type OnCreateGameDoorSubscriptionVariables = {
   owner: string,
 };
@@ -2938,6 +2713,7 @@ export type OnCreateGameCharacterSubscription = {
     id: string,
     gameID: string,
     name: string,
+    email: string,
     color: string,
     perception: number,
     speed:  {
@@ -2971,6 +2747,7 @@ export type OnUpdateGameCharacterSubscription = {
     id: string,
     gameID: string,
     name: string,
+    email: string,
     color: string,
     perception: number,
     speed:  {
@@ -3004,6 +2781,7 @@ export type OnDeleteGameCharacterSubscription = {
     id: string,
     gameID: string,
     name: string,
+    email: string,
     color: string,
     perception: number,
     speed:  {

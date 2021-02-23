@@ -1,26 +1,15 @@
 import { useParams } from "react-router-dom";
-import Game from "./Game";
+import Game, { CharacterTracker } from "./Game";
 import { API } from "aws-amplify";
 import { getGame } from "./graphql/queries";
 import { useEffect, useState } from "react";
 import { Character, CharacterProps } from "./Character";
-import { Room, RoomProps } from "./Room";
+import { Room } from "./Room";
 import { Door } from "./Door";
-import {
-  createGameRoom as createGameRoomMutation,
-  updateGameRoom as updateGameRoomMutation,
-  deleteGameRoom as deleteGameRoomMutation,
-} from "./graphql/mutations";
-import RoomForm from "./DM/RoomForm";
-
-const initialRoomFormState: RoomProps = {
-  name: "",
-  origin: { x: 0, y: 0 },
-  height: 0,
-  width: 0,
-  defaultGroundType: "GRND",
-  specialGrounds: [],
-};
+import RoomEditor from "./DM/RoomEditor";
+import DoorEditor from "./DM/DoorEditor";
+import CharacterEditor from "./DM/CharacterEditor";
+import GameEditor from "./DM/GameEditor";
 
 function DM({ user }: { user: any }) {
   const { gameId } = useParams<{
@@ -30,12 +19,36 @@ function DM({ user }: { user: any }) {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [doors, setDoors] = useState<Door[]>([]);
+  const [options, setOptions] = useState<{
+    debug: boolean;
+    create: boolean;
+    showPoints: boolean;
+  }>({
+    debug: false,
+    create: false,
+    showPoints: false,
+  });
+  const [tracker, setTracker] = useState<CharacterTracker>({
+    active: "",
+    initiative: [],
+    characters: characters,
+  });
 
   useEffect(() => {
     if (user) {
       fetchGame(user.username);
     }
   }, [user]);
+
+  useEffect(() => {
+    if (game.active && characters.length) {
+      setTracker({
+        active: game.active || "",
+        initiative: game.initiative || [],
+        characters: characters,
+      });
+    }
+  }, [game, characters]);
 
   async function fetchGame(owner: string) {
     console.log(gameId);
@@ -57,85 +70,82 @@ function DM({ user }: { user: any }) {
     }
   }
 
-  async function upsertRoom(room: RoomProps) {
-    console.log(room);
-    if (room.id) {
-      updateRoom(room);
-    } else {
-      createRoom(room);
-    }
-  }
-
-  async function createRoom(room: RoomProps) {
-    const res = await API.graphql({
-      query: createGameRoomMutation,
-      variables: { input: {...room, gameID: gameId} },
-    });
-    console.log(res);
-    setRooms([...rooms, new Room(room)]);
-  }
-
-  async function updateRoom(updatedRoom: RoomProps) {
-    const res = await API.graphql({
-      query: createGameRoomMutation,
-      variables: { input: { ...updatedRoom, gameID: gameId } },
-    });
-    console.log(res);
-    const newRoomsArray = rooms.filter(
-      (room: any) => room.id !== updatedRoom.id
-    );
-    setRooms(newRoomsArray);
-    setRooms([...newRoomsArray, new Room(updatedRoom)]);
-  }
-
-    async function deleteRoom({ id }: { id: string }) {
-      const newRoomsArray = rooms.filter((room: any) => room.id !== id);
-      setRooms(newRoomsArray);
-      await API.graphql({
-        query: deleteGameRoomMutation,
-        variables: { input: { id } },
-      });
-    }
-
   return (
     <div>
       <div className="flex">
         <div className="flex-1">
-          <h1>Game</h1>
-          <pre>{JSON.stringify(game, null, 2)}</pre>
+          <h1>Options</h1>
+          <div>
+            <label className="inline-flex items-center mt-3">
+              <input
+                type="checkbox"
+                className="form-checkbox h-5 w-5 text-gray-600"
+                checked={options.debug}
+                onChange={(e) =>
+                  setOptions({ ...options, debug: !options.debug })
+                }
+              />
+              <span className="ml-2 text-gray-700">Debug?</span>
+            </label>
+          </div>
+          <div>
+            <label className="inline-flex items-center mt-3">
+              <input
+                type="checkbox"
+                className="form-checkbox h-5 w-5 text-gray-600"
+                checked={options.create}
+                onChange={(e) =>
+                  setOptions({ ...options, create: !options.create })
+                }
+              />
+              <span className="ml-2 text-gray-700">Create?</span>
+            </label>
+          </div>
+          <div>
+            <label className="inline-flex items-center mt-3">
+              <input
+                type="checkbox"
+                className="form-checkbox h-5 w-5 text-gray-600"
+                checked={options.showPoints}
+                onChange={(e) =>
+                  setOptions({ ...options, showPoints: !options.showPoints })
+                }
+              />
+              <span className="ml-2 text-gray-700">Show Points?</span>
+            </label>
+          </div>
+          <div>
+            <GameEditor game={game}></GameEditor>
+            {options.debug ? <pre>{JSON.stringify(game, null, 2)}</pre> : <></>}
+          </div>
         </div>
         <div className="flex-1">
-          <h1>Rooms</h1>
-          <RoomForm
-            room={initialRoomFormState}
-            upsertRoom={(room: RoomProps) => {
-              upsertRoom(room);
-            }}
-            deleteRoom={() => {}}
-          ></RoomForm>
-          {rooms.map((room) => (
-            <RoomForm key={room.name}
-              room={room}
-              upsertRoom={(roomToUpsert: RoomProps) => {
-                upsertRoom(roomToUpsert);
-              }}
-              deleteRoom={(id: string) => {
-                deleteRoom({id});
-              }}
-            ></RoomForm>
-          ))}
-          <pre>{JSON.stringify(rooms, null, 2)}</pre>
+          <RoomEditor rooms={rooms} create={options.create}></RoomEditor>
+          {options.debug ? <pre>{JSON.stringify(rooms, null, 2)}</pre> : <></>}
         </div>
         <div className="flex-1">
-          <h1>Doors</h1>
-          <pre>{JSON.stringify(doors, null, 2)}</pre>
+          <DoorEditor doors={doors} create={options.create}></DoorEditor>
+          {options.debug ? <pre>{JSON.stringify(doors, null, 2)}</pre> : <></>}
         </div>
         <div className="flex-1">
-          <h1>Characters</h1>
-          <pre>{JSON.stringify(characters, null, 2)}</pre>
+          <CharacterEditor
+            characters={characters}
+            create={options.create}
+          ></CharacterEditor>
+          {options.debug ? (
+            <pre>{JSON.stringify(characters, null, 2)}</pre>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
-      <Game dm={true} rooms={rooms}></Game>
+      <Game
+        dm={true}
+        rooms={rooms}
+        doors={doors}
+        showPoints={options.showPoints}
+        tracker={tracker}
+      ></Game>
     </div>
   );
 }

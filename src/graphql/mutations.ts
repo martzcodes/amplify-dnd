@@ -70,20 +70,12 @@ export const createGame = `mutation CreateGame(
       }
       nextToken
     }
-    requests {
-      items {
-        id
-        gameID
-        character
-        owner
-      }
-      nextToken
-    }
     characters {
       items {
         id
         gameID
         name
+        email
         color
         perception
         speed {
@@ -206,20 +198,12 @@ export const updateGame = `mutation UpdateGame(
       }
       nextToken
     }
-    requests {
-      items {
-        id
-        gameID
-        character
-        owner
-      }
-      nextToken
-    }
     characters {
       items {
         id
         gameID
         name
+        email
         color
         perception
         speed {
@@ -342,20 +326,12 @@ export const deleteGame = `mutation DeleteGame(
       }
       nextToken
     }
-    requests {
-      items {
-        id
-        gameID
-        character
-        owner
-      }
-      nextToken
-    }
     characters {
       items {
         id
         gameID
         name
+        email
         color
         perception
         speed {
@@ -493,42 +469,6 @@ export const deleteGameRoom = `mutation DeleteGameRoom(
   }
 }
 `;
-export const createGameJoinRequest = `mutation CreateGameJoinRequest(
-  $input: CreateGameJoinRequestInput!
-  $condition: ModelGameJoinRequestConditionInput
-) {
-  createGameJoinRequest(input: $input, condition: $condition) {
-    id
-    gameID
-    character
-    owner
-  }
-}
-`;
-export const updateGameJoinRequest = `mutation UpdateGameJoinRequest(
-  $input: UpdateGameJoinRequestInput!
-  $condition: ModelGameJoinRequestConditionInput
-) {
-  updateGameJoinRequest(input: $input, condition: $condition) {
-    id
-    gameID
-    character
-    owner
-  }
-}
-`;
-export const deleteGameJoinRequest = `mutation DeleteGameJoinRequest(
-  $input: DeleteGameJoinRequestInput!
-  $condition: ModelGameJoinRequestConditionInput
-) {
-  deleteGameJoinRequest(input: $input, condition: $condition) {
-    id
-    gameID
-    character
-    owner
-  }
-}
-`;
 export const createGameDoor = `mutation CreateGameDoor(
   $input: CreateGameDoorInput!
   $condition: ModelGameDoorConditionInput
@@ -645,6 +585,7 @@ export const createGameCharacter = `mutation CreateGameCharacter(
     id
     gameID
     name
+    email
     color
     perception
     speed {
@@ -673,6 +614,7 @@ export const updateGameCharacter = `mutation UpdateGameCharacter(
     id
     gameID
     name
+    email
     color
     perception
     speed {
@@ -701,6 +643,7 @@ export const deleteGameCharacter = `mutation DeleteGameCharacter(
     id
     gameID
     name
+    email
     color
     perception
     speed {

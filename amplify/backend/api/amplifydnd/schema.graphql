@@ -17,7 +17,6 @@ type Game
   rooms: [GameRoom!] @connection(keyName: "byGame", fields: ["id"])
   doors: [GameDoor!] @connection(keyName: "byGame", fields: ["id"])
   areas: [GameArea!] @connection(keyName: "byGame", fields: ["id"])
-  requests: [GameJoinRequest!] @connection(keyName: "byGame", fields: ["id"])
   characters: [GameCharacter!] @connection(keyName: "byGame", fields: ["id"])
   items: [GameItem!] @connection(keyName: "byGame", fields: ["id"])
   history: [GameHistory!] @connection(keyName: "byGame", fields: ["id"])
@@ -53,15 +52,6 @@ type GameRoom
   width: Int!
   defaultGroundType: String!
   specialGrounds: [GameRoomGround!]!
-}
-
-type GameJoinRequest
-  @model
-  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
-  @key(name: "byGame", fields: ["gameID"]) {
-  id: ID!
-  gameID: ID!
-  character: String!
 }
 
 type CurrentMax {
@@ -100,6 +90,7 @@ type GameCharacter
   id: ID!
   gameID: ID!
   name: String!
+  email: String!
   color: String!
   perception: Int!
   speed: CurrentMax!

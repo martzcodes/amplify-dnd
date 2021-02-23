@@ -50,7 +50,7 @@ function UserLayer({
     }
   }, [selectedTile]);
 
-  return character ? (
+  return board.length ? (
     <InteractionLayer
       selectedTile={selectedTile}
       setSelectedTile={setSelectedTile}

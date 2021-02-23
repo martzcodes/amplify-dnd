@@ -67,20 +67,12 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
       }
       nextToken
     }
-    requests {
-      items {
-        id
-        gameID
-        character
-        owner
-      }
-      nextToken
-    }
     characters {
       items {
         id
         gameID
         name
+        email
         color
         perception
         speed {
@@ -200,20 +192,12 @@ export const onUpdateGame = `subscription OnUpdateGame($owner: String!) {
       }
       nextToken
     }
-    requests {
-      items {
-        id
-        gameID
-        character
-        owner
-      }
-      nextToken
-    }
     characters {
       items {
         id
         gameID
         name
+        email
         color
         perception
         speed {
@@ -333,20 +317,12 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
       }
       nextToken
     }
-    requests {
-      items {
-        id
-        gameID
-        character
-        owner
-      }
-      nextToken
-    }
     characters {
       items {
         id
         gameID
         name
+        email
         color
         perception
         speed {
@@ -475,33 +451,6 @@ export const onDeleteGameRoom = `subscription OnDeleteGameRoom($owner: String!) 
   }
 }
 `;
-export const onCreateGameJoinRequest = `subscription OnCreateGameJoinRequest($owner: String!) {
-  onCreateGameJoinRequest(owner: $owner) {
-    id
-    gameID
-    character
-    owner
-  }
-}
-`;
-export const onUpdateGameJoinRequest = `subscription OnUpdateGameJoinRequest($owner: String!) {
-  onUpdateGameJoinRequest(owner: $owner) {
-    id
-    gameID
-    character
-    owner
-  }
-}
-`;
-export const onDeleteGameJoinRequest = `subscription OnDeleteGameJoinRequest($owner: String!) {
-  onDeleteGameJoinRequest(owner: $owner) {
-    id
-    gameID
-    character
-    owner
-  }
-}
-`;
 export const onCreateGameDoor = `subscription OnCreateGameDoor($owner: String!) {
   onCreateGameDoor(owner: $owner) {
     id
@@ -597,6 +546,7 @@ export const onCreateGameCharacter = `subscription OnCreateGameCharacter($owner:
     id
     gameID
     name
+    email
     color
     perception
     speed {
@@ -622,6 +572,7 @@ export const onUpdateGameCharacter = `subscription OnUpdateGameCharacter($owner:
     id
     gameID
     name
+    email
     color
     perception
     speed {
@@ -647,6 +598,7 @@ export const onDeleteGameCharacter = `subscription OnDeleteGameCharacter($owner:
     id
     gameID
     name
+    email
     color
     perception
     speed {
