@@ -10,6 +10,11 @@ import { hashLocation } from "./utils/hashLocation";
 import { Door } from "./Door";
 import UserLayer from "./UserLayer";
 import { useParams } from "react-router-dom";
+import {
+  updateGame as updateGameMutation,
+  updateGameCharacter as updateGameCharacterMutation,
+} from "./graphql/mutations";
+import { API } from "aws-amplify";
 
 export interface CharacterTracker {
   active: string;
@@ -94,7 +99,7 @@ const calculateMoveMap = (board: string[][], doors: Door[]) => {
 
 const getActiveCharacter = (tracker: CharacterTracker) => {
   return tracker.characters.find(
-    (character) => character.name === tracker.active
+    (character) => character.id === tracker.active
   );
 };
 
@@ -199,7 +204,7 @@ function Game({
       }
       console.log(`Next Active: ${tracker.initiative[nextActiveInd]}`);
       const characterInd = characters.findIndex(
-        (character) => character.name === tracker.initiative[nextActiveInd]
+        (character) => character.id === tracker.initiative[nextActiveInd]
       );
       const character = characters[characterInd];
       const refreshedCharacter = new Character({
@@ -220,6 +225,26 @@ function Game({
       );
       characters[characterInd] = refreshedCharacter;
       setCharacterAction({ ...emptyAction });
+      await API.graphql({
+        query: updateGameMutation,
+        variables: {
+          input: {
+            id: gameId,
+            paused: true,
+            active: refreshedCharacter.id,
+          },
+        },
+      });
+      await API.graphql({
+        query: updateGameCharacterMutation,
+        variables: {
+          input: {
+            id: refreshedCharacter.id,
+            actionUsed: refreshedCharacter.actionUsed,
+            speed: refreshedCharacter.speed,
+          },
+        },
+      });
       setTracker({
         ...tracker,
         characters,
@@ -230,7 +255,7 @@ function Game({
       const character = getActiveCharacter(tracker);
       if (
         character &&
-        characterAction.character === character.name &&
+        characterAction.character === character.id &&
         (character.location.x !== location.x ||
           character.location.y !== location.y) &&
         character.movement.tiles.has(hashLocation(location))
@@ -245,6 +270,17 @@ function Game({
         );
         refreshedCharacter.selectedTile = null;
         tracker.characters[characterInd] = refreshedCharacter;
+        await API.graphql({
+          query: updateGameCharacterMutation,
+          variables: {
+            input: {
+              id: refreshedCharacter.id,
+              location: refreshedCharacter.location,
+              actionUsed: refreshedCharacter.actionUsed,
+              speed: refreshedCharacter.speed,
+            },
+          },
+        });
         if (
           refreshedCharacter.speed.current > 0 ||
           !refreshedCharacter.actionUsed
@@ -415,7 +451,6 @@ function Game({
     <>
       {rooms.length && tracker ? (
         <div className="flex py-5">
-          {dm ? <div className="flex-none w-full md:max-w-xs"></div> : <></>}
           <div className="flex-1">
             <div className="LayerMap">
               <div className={`Layered bg-black`}>

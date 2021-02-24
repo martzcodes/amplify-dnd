@@ -8,6 +8,7 @@ import {
   deleteGameRoom as deleteGameRoomMutation,
 } from "../graphql/mutations";
 import RoomForm from "./RoomForm";
+import RoomList from "./RoomList";
 
 const initialRoomFormState: RoomProps = {
   name: "",
@@ -29,6 +30,7 @@ function RoomEditor({
     gameId: string;
   }>();
   const [rooms, setRooms] = useState<Room[]>(initialRooms);
+  const [roomForm, setRoomForm] = useState<RoomProps>(initialRoomFormState);
 
   useEffect(() => {
     setRooms(initialRooms);
@@ -37,9 +39,12 @@ function RoomEditor({
   async function upsertRoom(room: RoomProps) {
     if (room.id) {
       updateRoom(
-        Object.keys(initialRoomFormState).reduce((p, c) => {
-          return { ...p, [c]: (room as any)[c] };
-        }, {} as RoomProps)
+        Object.keys(initialRoomFormState).reduce(
+          (p, c) => {
+            return { ...p, [c]: (room as any)[c] };
+          },
+          { id: room.id } as RoomProps
+        )
       );
     } else {
       createRoom(room);
@@ -64,8 +69,8 @@ function RoomEditor({
     const newRoomsArray = rooms.filter(
       (room: any) => room.id !== updatedRoom.id
     );
-    setRooms(newRoomsArray);
     setRooms([...newRoomsArray, new Room(updatedRoom)]);
+    setRoomForm(initialRoomFormState);
   }
 
   async function deleteRoom({ id }: { id: string }) {
@@ -79,26 +84,19 @@ function RoomEditor({
 
   return (
     <>
-      <h1>Rooms</h1>
-      {rooms.map((room) => (
+      <RoomList
+        rooms={rooms}
+        editRoom={(room: Room) => {
+          setRoomForm({...room});
+        }}
+        deleteRoom={(id: string) => deleteRoom({ id })}
+      ></RoomList>
+      {create || roomForm.id ? (
         <RoomForm
-          key={`room-${room.id}`}
-          room={room}
-          upsertRoom={(roomToUpsert: RoomProps) => {
-            upsertRoom(roomToUpsert);
-          }}
-          deleteRoom={(id: string) => {
-            deleteRoom({ id });
-          }}
-        ></RoomForm>
-      ))}
-      {create ? (
-        <RoomForm
-          room={initialRoomFormState}
+          room={roomForm}
           upsertRoom={(room: RoomProps) => {
             upsertRoom(room);
           }}
-          deleteRoom={() => {}}
         ></RoomForm>
       ) : (
         <></>

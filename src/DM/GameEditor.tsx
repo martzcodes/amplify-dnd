@@ -2,8 +2,10 @@ import { useParams } from "react-router-dom";
 import { API } from "aws-amplify";
 import { useEffect, useState } from "react";
 import { updateGame as updateGameMutation } from "../graphql/mutations";
+import { Character } from "../Character";
+import GameInitiativeEditor from "./GameInitiativeEditor";
 
-interface GameProps {
+export interface GameProps {
   id: string;
   name: string;
   type: "PUBLIC" | "PRIVATE";
@@ -13,12 +15,32 @@ interface GameProps {
   initiative: string[];
 }
 
-function GameEditor({ game: serverGame }: { game: GameProps }) {
+const characterInitiative = (
+  characters: Character[],
+  initiative: string[] = []
+): Character[] => {
+  return initiative
+    .reduce((init, id) => {
+      const character = characters.find((character) => character.id === id);
+      if (character) {
+        return [...init, character];
+      }
+      console.log(init);
+      return init;
+    }, [] as Character[]);
+};
+
+function GameEditor({
+  game: serverGame,
+  characters,
+}: {
+  game: GameProps;
+  characters: Character[];
+}) {
   const { gameId } = useParams<{
     gameId: string;
   }>();
   const [gameFormData, setGameFormData] = useState(serverGame);
-  const [nextInitiative, setNextInitiative] = useState("");
 
   useEffect(() => {
     setGameFormData(serverGame);
@@ -87,48 +109,32 @@ function GameEditor({ game: serverGame }: { game: GameProps }) {
           >
             Active Player
           </label>
-          <input
-            type="text"
-            name="active_player"
-            onChange={(e) =>
-              setGameFormData({ ...gameFormData, active: e.target.value })
-            }
+          <select
+            name="color"
+            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            onChange={(e) => {
+              setGameFormData({
+                ...gameFormData,
+                active: e.target.value,
+              });
+            }}
             value={gameFormData.active}
-            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-          />
+          >
+            {characterInitiative(characters, gameFormData.initiative).map(
+              (character) => (
+                <option value={character.id}>{character.name}</option>
+              )
+            )}
+          </select>
         </div>
         <div className="col-span-6">
-          <label
-            htmlFor="next_initiative"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Add Player to End of Initiative
-          </label>
-          <input
-            type="text"
-            name="next_initiative"
-            onChange={(e) => setNextInitiative(e.target.value)}
-            value={nextInitiative}
-            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-          />
-          <button
-            onClick={() => {
-              const updatedGame = { ...gameFormData };
-              if (!updatedGame.initiative) {
-                updatedGame.initiative = [];
-              }
-              updatedGame.initiative.push(nextInitiative);
-              setGameFormData(updatedGame);
-              setNextInitiative("");
+          <GameInitiativeEditor
+            characters={characterInitiative(characters, gameFormData.initiative)}
+            updateInitiative={(characters: Character[]) => {
+              setGameFormData({ ...gameFormData, initiative: characters.map(character => character.id) });
             }}
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            Add
-          </button>
+          ></GameInitiativeEditor>
         </div>
-        <div className="col-span-6">{`${(gameFormData.initiative || [])
-          .map((init) => `"${init}"`)
-          .join(" ,")}`}</div>
       </div>
       <button
         onClick={() => {

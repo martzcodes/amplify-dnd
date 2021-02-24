@@ -8,6 +8,8 @@ import {
   deleteGameCharacter as deleteGameCharacterMutation,
 } from "../graphql/mutations";
 import CharacterForm from "./CharacterForm";
+import { GameProps } from "./GameEditor";
+import DetailedCharacterList from "./DetailedCharacterList";
 
 const initialCharacterFormState: CharacterProps = {
   name: "",
@@ -33,14 +35,20 @@ const initialCharacterFormState: CharacterProps = {
 function CharacterEditor({
   characters: serverCharacters,
   create,
+  addToInitiative,
 }: {
   characters: Character[];
   create: boolean;
+  game: GameProps;
+  addToInitiative: any;
 }) {
   const { gameId } = useParams<{
     gameId: string;
   }>();
   const [characters, setCharacters] = useState<Character[]>([]);
+  const [characterForm, setCharacterForm] = useState<CharacterProps>(
+    initialCharacterFormState
+  );
 
   useEffect(() => {
     setCharacters(serverCharacters);
@@ -51,7 +59,7 @@ function CharacterEditor({
       updateCharacter(
         Object.keys(initialCharacterFormState).reduce((p, c) => {
           return { ...p, [c]: (character as any)[c] };
-        }, {} as CharacterProps)
+        }, { id: character.id } as CharacterProps)
       );
     } else {
       createCharacter(character);
@@ -72,12 +80,12 @@ function CharacterEditor({
       query: updateGameCharacterMutation,
       variables: { input: { ...updatedCharacter, gameID: gameId } },
     });
-    console.log(res);
     const newCharactersArray = characters.filter(
       (character: any) => character.id !== updatedCharacter.id
     );
     setCharacters(newCharactersArray);
     setCharacters([...newCharactersArray, new Character(updatedCharacter)]);
+    setCharacterForm(initialCharacterFormState);
   }
 
   async function deleteCharacter({ id }: { id: string }) {
@@ -91,26 +99,25 @@ function CharacterEditor({
 
   return (
     <>
-      <h1>Characters</h1>
-      {characters.map((character) => (
-        <CharacterForm
-          key={`character-${character.id}`}
-          character={character}
-          upsertCharacter={(characterToUpsert: CharacterProps) => {
-            upsertCharacter(characterToUpsert);
-          }}
-          deleteCharacter={(id: string) => {
-            deleteCharacter({ id });
-          }}
-        ></CharacterForm>
-      ))}
+      <DetailedCharacterList
+        characters={characters}
+        addToInitiative={(id: string) => {
+          addToInitiative(id);
+        }}
+        editCharacter={(character: Character) => {
+          setCharacterForm({ ...character });
+          create = true;
+        }}
+        deleteCharacter={(id: string) => {
+          deleteCharacter({ id });
+        }}
+      ></DetailedCharacterList>
       {create ? (
         <CharacterForm
-          character={initialCharacterFormState}
+          character={characterForm}
           upsertCharacter={(character: CharacterProps) => {
             upsertCharacter(character);
           }}
-          deleteCharacter={() => {}}
         ></CharacterForm>
       ) : (
         <></>

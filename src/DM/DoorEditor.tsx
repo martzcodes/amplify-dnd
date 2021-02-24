@@ -8,6 +8,7 @@ import {
   deleteGameDoor as deleteGameDoorMutation,
 } from "../graphql/mutations";
 import DoorForm from "./DoorForm";
+import DoorList from "./DoorList";
 
 const initialDoorFormState: DoorProps = {
   origin: {
@@ -30,6 +31,7 @@ function DoorEditor({
     gameId: string;
   }>();
   const [doors, setDoors] = useState<Door[]>([]);
+  const [doorForm, setDoorForm] = useState<DoorProps>(initialDoorFormState);
 
   useEffect(() => {
     setDoors(serverDoors);
@@ -40,7 +42,7 @@ function DoorEditor({
       updateDoor(
         Object.keys(initialDoorFormState).reduce((p, c) => {
           return { ...p, [c]: (door as any)[c] };
-        }, {} as DoorProps)
+        }, { id: door.id } as DoorProps)
       );
     } else {
       createDoor(door);
@@ -80,26 +82,20 @@ function DoorEditor({
 
   return (
     <>
-      <h1>Doors</h1>
-      {doors.map((door) => (
-        <DoorForm
-          key={`door-${door.id}`}
-          door={door}
-          upsertDoor={(doorToUpsert: DoorProps) => {
-            upsertDoor(doorToUpsert);
-          }}
-          deleteDoor={(id: string) => {
-            deleteDoor({ id });
-          }}
-        ></DoorForm>
-      ))}
+      <DoorList
+        doors={doors}
+        editDoor={(door: Door) => {
+          setDoorForm({ ...door });
+          create = true;
+        }}
+        deleteDoor={(id: string) => deleteDoor({ id })}
+      ></DoorList>
       {create ? (
         <DoorForm
-          door={initialDoorFormState}
+          door={doorForm}
           upsertDoor={(door: DoorProps) => {
             upsertDoor(door);
           }}
-          deleteDoor={() => {}}
         ></DoorForm>
       ) : (
         <></>
