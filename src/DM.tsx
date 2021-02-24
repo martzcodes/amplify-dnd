@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import Game, { CharacterTracker } from "./Game";
-import { API } from "aws-amplify";
+import { API, graphqlOperation } from "aws-amplify";
 import { getGame } from "./graphql/queries";
 import { useEffect, useState } from "react";
 import { Character, CharacterProps } from "./Character";
@@ -8,6 +8,8 @@ import { Room } from "./Room";
 import { Door } from "./Door";
 import DMSection from "./DM/DMSection";
 import { updateGame as updateGameMutation } from "./graphql/mutations";
+import { onUpdateGame } from "./graphql/subscriptions";
+import Observable from "zen-observable";
 
 export interface DMOptions {
   columnOne: string;
@@ -41,6 +43,29 @@ function DM({ user }: { user: any }) {
   });
 
   useEffect(() => {
+    onPageRendered();
+  }, []);
+
+  const onPageRendered = async () => {
+    subscribeGame();
+  };
+
+  const subscribeGame = async () => {
+    const subscription = await (API.graphql(graphqlOperation(onUpdateGame, { input: { id: gameId }})));
+    if (subscription instanceof Observable) {
+      subscription.subscribe({
+        next: (apiData) => {
+          console.log('===========HERE============')
+          const apiGame = (apiData as any).value.data.onUpdateGame;
+          if (apiGame.id === gameId) {
+            restoreGame(apiGame);
+          }
+        },
+      });
+    }
+  };
+
+  useEffect(() => {
     if (user) {
       fetchGame(user.username);
     }
@@ -56,8 +81,7 @@ function DM({ user }: { user: any }) {
     }
   }, [game, characters]);
 
-  const restoreGame = (apiData: any) => {
-    const apiGame = (apiData as any).data.getGame;
+  const restoreGame = (apiGame: any) => {
     if (apiGame) {
       setGame(apiGame);
       setCharacters(
@@ -79,7 +103,8 @@ function DM({ user }: { user: any }) {
       query: getGame,
       variables: { id: gameId, owner },
     });
-    restoreGame(apiData);
+    const apiGame = (apiData as any).data.getGame;
+    restoreGame(apiGame);
   }
 
   const addToInitiative = async (characterId: string) => {
@@ -97,7 +122,8 @@ function DM({ user }: { user: any }) {
           },
         },
       });
-      restoreGame(apiData);
+      const apiGame = (apiData as any).data.getGame;
+      restoreGame(apiGame);
     }
   };
 

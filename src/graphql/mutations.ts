@@ -35,7 +35,6 @@ export const createGame = `mutation CreateGame(
           height
           width
         }
-        owner
       }
       nextToken
     }
@@ -50,7 +49,6 @@ export const createGame = `mutation CreateGame(
         open
         locked
         northSouth
-        owner
       }
       nextToken
     }
@@ -66,7 +64,6 @@ export const createGame = `mutation CreateGame(
         }
         height
         width
-        owner
       }
       nextToken
     }
@@ -92,7 +89,6 @@ export const createGame = `mutation CreateGame(
         }
         vision
         actionUsed
-        owner
       }
       nextToken
     }
@@ -106,7 +102,6 @@ export const createGame = `mutation CreateGame(
           x
           y
         }
-        owner
       }
       nextToken
     }
@@ -121,11 +116,9 @@ export const createGame = `mutation CreateGame(
           x
           y
         }
-        owner
       }
       nextToken
     }
-    owner
   }
 }
 `;
@@ -163,7 +156,6 @@ export const updateGame = `mutation UpdateGame(
           height
           width
         }
-        owner
       }
       nextToken
     }
@@ -178,7 +170,6 @@ export const updateGame = `mutation UpdateGame(
         open
         locked
         northSouth
-        owner
       }
       nextToken
     }
@@ -194,7 +185,6 @@ export const updateGame = `mutation UpdateGame(
         }
         height
         width
-        owner
       }
       nextToken
     }
@@ -220,7 +210,6 @@ export const updateGame = `mutation UpdateGame(
         }
         vision
         actionUsed
-        owner
       }
       nextToken
     }
@@ -234,7 +223,6 @@ export const updateGame = `mutation UpdateGame(
           x
           y
         }
-        owner
       }
       nextToken
     }
@@ -249,11 +237,9 @@ export const updateGame = `mutation UpdateGame(
           x
           y
         }
-        owner
       }
       nextToken
     }
-    owner
   }
 }
 `;
@@ -291,7 +277,6 @@ export const deleteGame = `mutation DeleteGame(
           height
           width
         }
-        owner
       }
       nextToken
     }
@@ -306,7 +291,6 @@ export const deleteGame = `mutation DeleteGame(
         open
         locked
         northSouth
-        owner
       }
       nextToken
     }
@@ -322,7 +306,6 @@ export const deleteGame = `mutation DeleteGame(
         }
         height
         width
-        owner
       }
       nextToken
     }
@@ -348,7 +331,6 @@ export const deleteGame = `mutation DeleteGame(
         }
         vision
         actionUsed
-        owner
       }
       nextToken
     }
@@ -362,7 +344,6 @@ export const deleteGame = `mutation DeleteGame(
           x
           y
         }
-        owner
       }
       nextToken
     }
@@ -377,11 +358,9 @@ export const deleteGame = `mutation DeleteGame(
           x
           y
         }
-        owner
       }
       nextToken
     }
-    owner
   }
 }
 `;
@@ -409,7 +388,6 @@ export const createGameRoom = `mutation CreateGameRoom(
       height
       width
     }
-    owner
   }
 }
 `;
@@ -437,7 +415,6 @@ export const updateGameRoom = `mutation UpdateGameRoom(
       height
       width
     }
-    owner
   }
 }
 `;
@@ -465,7 +442,6 @@ export const deleteGameRoom = `mutation DeleteGameRoom(
       height
       width
     }
-    owner
   }
 }
 `;
@@ -483,7 +459,6 @@ export const createGameDoor = `mutation CreateGameDoor(
     open
     locked
     northSouth
-    owner
   }
 }
 `;
@@ -501,7 +476,6 @@ export const updateGameDoor = `mutation UpdateGameDoor(
     open
     locked
     northSouth
-    owner
   }
 }
 `;
@@ -519,7 +493,6 @@ export const deleteGameDoor = `mutation DeleteGameDoor(
     open
     locked
     northSouth
-    owner
   }
 }
 `;
@@ -537,7 +510,6 @@ export const createGameHistory = `mutation CreateGameHistory(
       x
       y
     }
-    owner
   }
 }
 `;
@@ -555,7 +527,6 @@ export const updateGameHistory = `mutation UpdateGameHistory(
       x
       y
     }
-    owner
   }
 }
 `;
@@ -573,7 +544,6 @@ export const deleteGameHistory = `mutation DeleteGameHistory(
       x
       y
     }
-    owner
   }
 }
 `;
@@ -602,7 +572,6 @@ export const createGameCharacter = `mutation CreateGameCharacter(
     }
     vision
     actionUsed
-    owner
   }
 }
 `;
@@ -631,7 +600,6 @@ export const updateGameCharacter = `mutation UpdateGameCharacter(
     }
     vision
     actionUsed
-    owner
   }
 }
 `;
@@ -660,7 +628,6 @@ export const deleteGameCharacter = `mutation DeleteGameCharacter(
     }
     vision
     actionUsed
-    owner
   }
 }
 `;
@@ -677,7 +644,6 @@ export const createGameItem = `mutation CreateGameItem(
       x
       y
     }
-    owner
   }
 }
 `;
@@ -694,7 +660,6 @@ export const updateGameItem = `mutation UpdateGameItem(
       x
       y
     }
-    owner
   }
 }
 `;
@@ -711,7 +676,6 @@ export const deleteGameItem = `mutation DeleteGameItem(
       x
       y
     }
-    owner
   }
 }
 `;
@@ -730,7 +694,6 @@ export const createGameArea = `mutation CreateGameArea(
     }
     height
     width
-    owner
   }
 }
 `;
@@ -749,7 +712,6 @@ export const updateGameArea = `mutation UpdateGameArea(
     }
     height
     width
-    owner
   }
 }
 `;
@@ -768,7 +730,6 @@ export const deleteGameArea = `mutation DeleteGameArea(
     }
     height
     width
-    owner
   }
 }
 `;

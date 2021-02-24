@@ -32,7 +32,6 @@ export const getGame = `query GetGame($id: ID!) {
           height
           width
         }
-        owner
       }
       nextToken
     }
@@ -47,7 +46,6 @@ export const getGame = `query GetGame($id: ID!) {
         open
         locked
         northSouth
-        owner
       }
       nextToken
     }
@@ -63,7 +61,6 @@ export const getGame = `query GetGame($id: ID!) {
         }
         height
         width
-        owner
       }
       nextToken
     }
@@ -89,7 +86,6 @@ export const getGame = `query GetGame($id: ID!) {
         }
         vision
         actionUsed
-        owner
       }
       nextToken
     }
@@ -103,7 +99,6 @@ export const getGame = `query GetGame($id: ID!) {
           x
           y
         }
-        owner
       }
       nextToken
     }
@@ -118,11 +113,9 @@ export const getGame = `query GetGame($id: ID!) {
           x
           y
         }
-        owner
       }
       nextToken
     }
-    owner
   }
 }
 `;
@@ -162,7 +155,6 @@ export const listGames = `query ListGames(
             height
             width
           }
-          owner
         }
         nextToken
       }
@@ -177,7 +169,6 @@ export const listGames = `query ListGames(
           open
           locked
           northSouth
-          owner
         }
         nextToken
       }
@@ -193,7 +184,6 @@ export const listGames = `query ListGames(
           }
           height
           width
-          owner
         }
         nextToken
       }
@@ -219,7 +209,6 @@ export const listGames = `query ListGames(
           }
           vision
           actionUsed
-          owner
         }
         nextToken
       }
@@ -233,7 +222,6 @@ export const listGames = `query ListGames(
             x
             y
           }
-          owner
         }
         nextToken
       }
@@ -248,11 +236,9 @@ export const listGames = `query ListGames(
             x
             y
           }
-          owner
         }
         nextToken
       }
-      owner
     }
     nextToken
   }
@@ -279,7 +265,6 @@ export const getGameRoom = `query GetGameRoom($id: ID!) {
       height
       width
     }
-    owner
   }
 }
 `;
@@ -309,7 +294,6 @@ export const listGameRooms = `query ListGameRooms(
         height
         width
       }
-      owner
     }
     nextToken
   }
@@ -326,7 +310,6 @@ export const getGameDoor = `query GetGameDoor($id: ID!) {
     open
     locked
     northSouth
-    owner
   }
 }
 `;
@@ -346,7 +329,6 @@ export const listGameDoors = `query ListGameDoors(
       open
       locked
       northSouth
-      owner
     }
     nextToken
   }
@@ -363,7 +345,6 @@ export const getGameHistory = `query GetGameHistory($id: ID!) {
       x
       y
     }
-    owner
   }
 }
 `;
@@ -383,7 +364,6 @@ export const listGameHistorys = `query ListGameHistorys(
         x
         y
       }
-      owner
     }
     nextToken
   }
@@ -411,7 +391,6 @@ export const getGameCharacter = `query GetGameCharacter($id: ID!) {
     }
     vision
     actionUsed
-    owner
   }
 }
 `;
@@ -442,7 +421,6 @@ export const listGameCharacters = `query ListGameCharacters(
       }
       vision
       actionUsed
-      owner
     }
     nextToken
   }
@@ -458,7 +436,6 @@ export const getGameItem = `query GetGameItem($id: ID!) {
       x
       y
     }
-    owner
   }
 }
 `;
@@ -477,7 +454,6 @@ export const listGameItems = `query ListGameItems(
         x
         y
       }
-      owner
     }
     nextToken
   }
@@ -495,7 +471,6 @@ export const getGameArea = `query GetGameArea($id: ID!) {
     }
     height
     width
-    owner
   }
 }
 `;
@@ -516,7 +491,6 @@ export const listGameAreas = `query ListGameAreas(
       }
       height
       width
-      owner
     }
     nextToken
   }

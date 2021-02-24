@@ -4,8 +4,7 @@ enum GameType {
 }
 
 type Game
-  @model
-  @auth(rules: [{ allow: owner, operations: [create, update, delete] }]) {
+  @model {
   id: ID!
   name: String!
   type: GameType!
@@ -42,7 +41,6 @@ type GameRoomGround {
 
 type GameRoom
   @model
-  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
@@ -61,7 +59,6 @@ type CurrentMax {
 
 type GameDoor
   @model
-  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
@@ -73,7 +70,6 @@ type GameDoor
 
 type GameHistory
   @model
-  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
@@ -85,7 +81,6 @@ type GameHistory
 
 type GameCharacter
   @model
-  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
@@ -102,7 +97,6 @@ type GameCharacter
 
 type GameItem
   @model
-  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
@@ -113,7 +107,6 @@ type GameItem
 
 type GameArea
   @model
-  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!

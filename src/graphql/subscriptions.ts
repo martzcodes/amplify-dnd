@@ -1,8 +1,8 @@
 // tslint:disable
 // this is an auto generated file. This will be overwritten
 
-export const onCreateGame = `subscription OnCreateGame($owner: String!) {
-  onCreateGame(owner: $owner) {
+export const onCreateGame = `subscription OnCreateGame {
+  onCreateGame {
     id
     name
     type
@@ -32,7 +32,6 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
           height
           width
         }
-        owner
       }
       nextToken
     }
@@ -47,7 +46,6 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
         open
         locked
         northSouth
-        owner
       }
       nextToken
     }
@@ -63,7 +61,6 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
         }
         height
         width
-        owner
       }
       nextToken
     }
@@ -89,7 +86,6 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
         }
         vision
         actionUsed
-        owner
       }
       nextToken
     }
@@ -103,7 +99,6 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
           x
           y
         }
-        owner
       }
       nextToken
     }
@@ -118,16 +113,14 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
           x
           y
         }
-        owner
       }
       nextToken
     }
-    owner
   }
 }
 `;
-export const onUpdateGame = `subscription OnUpdateGame($owner: String!) {
-  onUpdateGame(owner: $owner) {
+export const onUpdateGame = `subscription OnUpdateGame {
+  onUpdateGame {
     id
     name
     type
@@ -157,7 +150,6 @@ export const onUpdateGame = `subscription OnUpdateGame($owner: String!) {
           height
           width
         }
-        owner
       }
       nextToken
     }
@@ -172,7 +164,6 @@ export const onUpdateGame = `subscription OnUpdateGame($owner: String!) {
         open
         locked
         northSouth
-        owner
       }
       nextToken
     }
@@ -188,7 +179,6 @@ export const onUpdateGame = `subscription OnUpdateGame($owner: String!) {
         }
         height
         width
-        owner
       }
       nextToken
     }
@@ -214,7 +204,6 @@ export const onUpdateGame = `subscription OnUpdateGame($owner: String!) {
         }
         vision
         actionUsed
-        owner
       }
       nextToken
     }
@@ -228,7 +217,6 @@ export const onUpdateGame = `subscription OnUpdateGame($owner: String!) {
           x
           y
         }
-        owner
       }
       nextToken
     }
@@ -243,16 +231,14 @@ export const onUpdateGame = `subscription OnUpdateGame($owner: String!) {
           x
           y
         }
-        owner
       }
       nextToken
     }
-    owner
   }
 }
 `;
-export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
-  onDeleteGame(owner: $owner) {
+export const onDeleteGame = `subscription OnDeleteGame {
+  onDeleteGame {
     id
     name
     type
@@ -282,7 +268,6 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
           height
           width
         }
-        owner
       }
       nextToken
     }
@@ -297,7 +282,6 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
         open
         locked
         northSouth
-        owner
       }
       nextToken
     }
@@ -313,7 +297,6 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
         }
         height
         width
-        owner
       }
       nextToken
     }
@@ -339,7 +322,6 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
         }
         vision
         actionUsed
-        owner
       }
       nextToken
     }
@@ -353,7 +335,6 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
           x
           y
         }
-        owner
       }
       nextToken
     }
@@ -368,16 +349,14 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
           x
           y
         }
-        owner
       }
       nextToken
     }
-    owner
   }
 }
 `;
-export const onCreateGameRoom = `subscription OnCreateGameRoom($owner: String!) {
-  onCreateGameRoom(owner: $owner) {
+export const onCreateGameRoom = `subscription OnCreateGameRoom {
+  onCreateGameRoom {
     id
     gameID
     name
@@ -397,12 +376,11 @@ export const onCreateGameRoom = `subscription OnCreateGameRoom($owner: String!) 
       height
       width
     }
-    owner
   }
 }
 `;
-export const onUpdateGameRoom = `subscription OnUpdateGameRoom($owner: String!) {
-  onUpdateGameRoom(owner: $owner) {
+export const onUpdateGameRoom = `subscription OnUpdateGameRoom {
+  onUpdateGameRoom {
     id
     gameID
     name
@@ -422,12 +400,11 @@ export const onUpdateGameRoom = `subscription OnUpdateGameRoom($owner: String!) 
       height
       width
     }
-    owner
   }
 }
 `;
-export const onDeleteGameRoom = `subscription OnDeleteGameRoom($owner: String!) {
-  onDeleteGameRoom(owner: $owner) {
+export const onDeleteGameRoom = `subscription OnDeleteGameRoom {
+  onDeleteGameRoom {
     id
     gameID
     name
@@ -447,12 +424,11 @@ export const onDeleteGameRoom = `subscription OnDeleteGameRoom($owner: String!) 
       height
       width
     }
-    owner
   }
 }
 `;
-export const onCreateGameDoor = `subscription OnCreateGameDoor($owner: String!) {
-  onCreateGameDoor(owner: $owner) {
+export const onCreateGameDoor = `subscription OnCreateGameDoor {
+  onCreateGameDoor {
     id
     gameID
     origin {
@@ -462,12 +438,11 @@ export const onCreateGameDoor = `subscription OnCreateGameDoor($owner: String!) 
     open
     locked
     northSouth
-    owner
   }
 }
 `;
-export const onUpdateGameDoor = `subscription OnUpdateGameDoor($owner: String!) {
-  onUpdateGameDoor(owner: $owner) {
+export const onUpdateGameDoor = `subscription OnUpdateGameDoor {
+  onUpdateGameDoor {
     id
     gameID
     origin {
@@ -477,12 +452,11 @@ export const onUpdateGameDoor = `subscription OnUpdateGameDoor($owner: String!) 
     open
     locked
     northSouth
-    owner
   }
 }
 `;
-export const onDeleteGameDoor = `subscription OnDeleteGameDoor($owner: String!) {
-  onDeleteGameDoor(owner: $owner) {
+export const onDeleteGameDoor = `subscription OnDeleteGameDoor {
+  onDeleteGameDoor {
     id
     gameID
     origin {
@@ -492,12 +466,11 @@ export const onDeleteGameDoor = `subscription OnDeleteGameDoor($owner: String!) 
     open
     locked
     northSouth
-    owner
   }
 }
 `;
-export const onCreateGameHistory = `subscription OnCreateGameHistory($owner: String!) {
-  onCreateGameHistory(owner: $owner) {
+export const onCreateGameHistory = `subscription OnCreateGameHistory {
+  onCreateGameHistory {
     id
     gameID
     datetime
@@ -507,12 +480,11 @@ export const onCreateGameHistory = `subscription OnCreateGameHistory($owner: Str
       x
       y
     }
-    owner
   }
 }
 `;
-export const onUpdateGameHistory = `subscription OnUpdateGameHistory($owner: String!) {
-  onUpdateGameHistory(owner: $owner) {
+export const onUpdateGameHistory = `subscription OnUpdateGameHistory {
+  onUpdateGameHistory {
     id
     gameID
     datetime
@@ -522,12 +494,11 @@ export const onUpdateGameHistory = `subscription OnUpdateGameHistory($owner: Str
       x
       y
     }
-    owner
   }
 }
 `;
-export const onDeleteGameHistory = `subscription OnDeleteGameHistory($owner: String!) {
-  onDeleteGameHistory(owner: $owner) {
+export const onDeleteGameHistory = `subscription OnDeleteGameHistory {
+  onDeleteGameHistory {
     id
     gameID
     datetime
@@ -537,12 +508,11 @@ export const onDeleteGameHistory = `subscription OnDeleteGameHistory($owner: Str
       x
       y
     }
-    owner
   }
 }
 `;
-export const onCreateGameCharacter = `subscription OnCreateGameCharacter($owner: String!) {
-  onCreateGameCharacter(owner: $owner) {
+export const onCreateGameCharacter = `subscription OnCreateGameCharacter {
+  onCreateGameCharacter {
     id
     gameID
     name
@@ -563,12 +533,11 @@ export const onCreateGameCharacter = `subscription OnCreateGameCharacter($owner:
     }
     vision
     actionUsed
-    owner
   }
 }
 `;
-export const onUpdateGameCharacter = `subscription OnUpdateGameCharacter($owner: String!) {
-  onUpdateGameCharacter(owner: $owner) {
+export const onUpdateGameCharacter = `subscription OnUpdateGameCharacter {
+  onUpdateGameCharacter {
     id
     gameID
     name
@@ -589,12 +558,11 @@ export const onUpdateGameCharacter = `subscription OnUpdateGameCharacter($owner:
     }
     vision
     actionUsed
-    owner
   }
 }
 `;
-export const onDeleteGameCharacter = `subscription OnDeleteGameCharacter($owner: String!) {
-  onDeleteGameCharacter(owner: $owner) {
+export const onDeleteGameCharacter = `subscription OnDeleteGameCharacter {
+  onDeleteGameCharacter {
     id
     gameID
     name
@@ -615,12 +583,11 @@ export const onDeleteGameCharacter = `subscription OnDeleteGameCharacter($owner:
     }
     vision
     actionUsed
-    owner
   }
 }
 `;
-export const onCreateGameItem = `subscription OnCreateGameItem($owner: String!) {
-  onCreateGameItem(owner: $owner) {
+export const onCreateGameItem = `subscription OnCreateGameItem {
+  onCreateGameItem {
     id
     gameID
     name
@@ -629,12 +596,11 @@ export const onCreateGameItem = `subscription OnCreateGameItem($owner: String!) 
       x
       y
     }
-    owner
   }
 }
 `;
-export const onUpdateGameItem = `subscription OnUpdateGameItem($owner: String!) {
-  onUpdateGameItem(owner: $owner) {
+export const onUpdateGameItem = `subscription OnUpdateGameItem {
+  onUpdateGameItem {
     id
     gameID
     name
@@ -643,12 +609,11 @@ export const onUpdateGameItem = `subscription OnUpdateGameItem($owner: String!) 
       x
       y
     }
-    owner
   }
 }
 `;
-export const onDeleteGameItem = `subscription OnDeleteGameItem($owner: String!) {
-  onDeleteGameItem(owner: $owner) {
+export const onDeleteGameItem = `subscription OnDeleteGameItem {
+  onDeleteGameItem {
     id
     gameID
     name
@@ -657,12 +622,11 @@ export const onDeleteGameItem = `subscription OnDeleteGameItem($owner: String!) 
       x
       y
     }
-    owner
   }
 }
 `;
-export const onCreateGameArea = `subscription OnCreateGameArea($owner: String!) {
-  onCreateGameArea(owner: $owner) {
+export const onCreateGameArea = `subscription OnCreateGameArea {
+  onCreateGameArea {
     id
     gameID
     name
@@ -673,12 +637,11 @@ export const onCreateGameArea = `subscription OnCreateGameArea($owner: String!) 
     }
     height
     width
-    owner
   }
 }
 `;
-export const onUpdateGameArea = `subscription OnUpdateGameArea($owner: String!) {
-  onUpdateGameArea(owner: $owner) {
+export const onUpdateGameArea = `subscription OnUpdateGameArea {
+  onUpdateGameArea {
     id
     gameID
     name
@@ -689,12 +652,11 @@ export const onUpdateGameArea = `subscription OnUpdateGameArea($owner: String!) 
     }
     height
     width
-    owner
   }
 }
 `;
-export const onDeleteGameArea = `subscription OnDeleteGameArea($owner: String!) {
-  onDeleteGameArea(owner: $owner) {
+export const onDeleteGameArea = `subscription OnDeleteGameArea {
+  onDeleteGameArea {
     id
     gameID
     name
@@ -705,7 +667,6 @@ export const onDeleteGameArea = `subscription OnDeleteGameArea($owner: String!) 
     }
     height
     width
-    owner
   }
 }
 `;

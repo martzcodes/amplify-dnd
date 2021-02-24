@@ -486,7 +486,6 @@ export type CreateGameMutation = {
           height: number,
           width: number,
         } >,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -504,7 +503,6 @@ export type CreateGameMutation = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -523,7 +521,6 @@ export type CreateGameMutation = {
         },
         height: number,
         width: number,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -554,7 +551,6 @@ export type CreateGameMutation = {
         },
         vision: number,
         actionUsed: boolean,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -571,7 +567,6 @@ export type CreateGameMutation = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -589,11 +584,9 @@ export type CreateGameMutation = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    owner: string | null,
   } | null,
 };
 
@@ -639,7 +632,6 @@ export type UpdateGameMutation = {
           height: number,
           width: number,
         } >,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -657,7 +649,6 @@ export type UpdateGameMutation = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -676,7 +667,6 @@ export type UpdateGameMutation = {
         },
         height: number,
         width: number,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -707,7 +697,6 @@ export type UpdateGameMutation = {
         },
         vision: number,
         actionUsed: boolean,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -724,7 +713,6 @@ export type UpdateGameMutation = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -742,11 +730,9 @@ export type UpdateGameMutation = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    owner: string | null,
   } | null,
 };
 
@@ -792,7 +778,6 @@ export type DeleteGameMutation = {
           height: number,
           width: number,
         } >,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -810,7 +795,6 @@ export type DeleteGameMutation = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -829,7 +813,6 @@ export type DeleteGameMutation = {
         },
         height: number,
         width: number,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -860,7 +843,6 @@ export type DeleteGameMutation = {
         },
         vision: number,
         actionUsed: boolean,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -877,7 +859,6 @@ export type DeleteGameMutation = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -895,11 +876,9 @@ export type DeleteGameMutation = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    owner: string | null,
   } | null,
 };
 
@@ -933,7 +912,6 @@ export type CreateGameRoomMutation = {
       height: number,
       width: number,
     } >,
-    owner: string | null,
   } | null,
 };
 
@@ -967,7 +945,6 @@ export type UpdateGameRoomMutation = {
       height: number,
       width: number,
     } >,
-    owner: string | null,
   } | null,
 };
 
@@ -1001,7 +978,6 @@ export type DeleteGameRoomMutation = {
       height: number,
       width: number,
     } >,
-    owner: string | null,
   } | null,
 };
 
@@ -1023,7 +999,6 @@ export type CreateGameDoorMutation = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
-    owner: string | null,
   } | null,
 };
 
@@ -1045,7 +1020,6 @@ export type UpdateGameDoorMutation = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
-    owner: string | null,
   } | null,
 };
 
@@ -1067,7 +1041,6 @@ export type DeleteGameDoorMutation = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
-    owner: string | null,
   } | null,
 };
 
@@ -1089,7 +1062,6 @@ export type CreateGameHistoryMutation = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
 };
 
@@ -1111,7 +1083,6 @@ export type UpdateGameHistoryMutation = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
 };
 
@@ -1133,7 +1104,6 @@ export type DeleteGameHistoryMutation = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
 };
 
@@ -1168,7 +1138,6 @@ export type CreateGameCharacterMutation = {
     },
     vision: number,
     actionUsed: boolean,
-    owner: string | null,
   } | null,
 };
 
@@ -1203,7 +1172,6 @@ export type UpdateGameCharacterMutation = {
     },
     vision: number,
     actionUsed: boolean,
-    owner: string | null,
   } | null,
 };
 
@@ -1238,7 +1206,6 @@ export type DeleteGameCharacterMutation = {
     },
     vision: number,
     actionUsed: boolean,
-    owner: string | null,
   } | null,
 };
 
@@ -1259,7 +1226,6 @@ export type CreateGameItemMutation = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
 };
 
@@ -1280,7 +1246,6 @@ export type UpdateGameItemMutation = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
 };
 
@@ -1301,7 +1266,6 @@ export type DeleteGameItemMutation = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
 };
 
@@ -1324,7 +1288,6 @@ export type CreateGameAreaMutation = {
     },
     height: number,
     width: number,
-    owner: string | null,
   } | null,
 };
 
@@ -1347,7 +1310,6 @@ export type UpdateGameAreaMutation = {
     },
     height: number,
     width: number,
-    owner: string | null,
   } | null,
 };
 
@@ -1370,7 +1332,6 @@ export type DeleteGameAreaMutation = {
     },
     height: number,
     width: number,
-    owner: string | null,
   } | null,
 };
 
@@ -1415,7 +1376,6 @@ export type GetGameQuery = {
           height: number,
           width: number,
         } >,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -1433,7 +1393,6 @@ export type GetGameQuery = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -1452,7 +1411,6 @@ export type GetGameQuery = {
         },
         height: number,
         width: number,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -1483,7 +1441,6 @@ export type GetGameQuery = {
         },
         vision: number,
         actionUsed: boolean,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -1500,7 +1457,6 @@ export type GetGameQuery = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -1518,11 +1474,9 @@ export type GetGameQuery = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    owner: string | null,
   } | null,
 };
 
@@ -1571,7 +1525,6 @@ export type ListGamesQuery = {
             height: number,
             width: number,
           } >,
-          owner: string | null,
         } | null > | null,
         nextToken: string | null,
       } | null,
@@ -1589,7 +1542,6 @@ export type ListGamesQuery = {
           open: boolean | null,
           locked: boolean | null,
           northSouth: boolean | null,
-          owner: string | null,
         } | null > | null,
         nextToken: string | null,
       } | null,
@@ -1608,7 +1560,6 @@ export type ListGamesQuery = {
           },
           height: number,
           width: number,
-          owner: string | null,
         } | null > | null,
         nextToken: string | null,
       } | null,
@@ -1639,7 +1590,6 @@ export type ListGamesQuery = {
           },
           vision: number,
           actionUsed: boolean,
-          owner: string | null,
         } | null > | null,
         nextToken: string | null,
       } | null,
@@ -1656,7 +1606,6 @@ export type ListGamesQuery = {
             x: number,
             y: number,
           },
-          owner: string | null,
         } | null > | null,
         nextToken: string | null,
       } | null,
@@ -1674,11 +1623,9 @@ export type ListGamesQuery = {
             x: number,
             y: number,
           },
-          owner: string | null,
         } | null > | null,
         nextToken: string | null,
       } | null,
-      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -1713,7 +1660,6 @@ export type GetGameRoomQuery = {
       height: number,
       width: number,
     } >,
-    owner: string | null,
   } | null,
 };
 
@@ -1750,7 +1696,6 @@ export type ListGameRoomsQuery = {
         height: number,
         width: number,
       } >,
-      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -1773,7 +1718,6 @@ export type GetGameDoorQuery = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
-    owner: string | null,
   } | null,
 };
 
@@ -1798,7 +1742,6 @@ export type ListGameDoorsQuery = {
       open: boolean | null,
       locked: boolean | null,
       northSouth: boolean | null,
-      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -1821,7 +1764,6 @@ export type GetGameHistoryQuery = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
 };
 
@@ -1846,7 +1788,6 @@ export type ListGameHistorysQuery = {
         x: number,
         y: number,
       },
-      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -1882,7 +1823,6 @@ export type GetGameCharacterQuery = {
     },
     vision: number,
     actionUsed: boolean,
-    owner: string | null,
   } | null,
 };
 
@@ -1920,7 +1860,6 @@ export type ListGameCharactersQuery = {
       },
       vision: number,
       actionUsed: boolean,
-      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -1942,7 +1881,6 @@ export type GetGameItemQuery = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
 };
 
@@ -1966,7 +1904,6 @@ export type ListGameItemsQuery = {
         x: number,
         y: number,
       },
-      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -1990,7 +1927,6 @@ export type GetGameAreaQuery = {
     },
     height: number,
     width: number,
-    owner: string | null,
   } | null,
 };
 
@@ -2016,14 +1952,9 @@ export type ListGameAreasQuery = {
       },
       height: number,
       width: number,
-      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
-};
-
-export type OnCreateGameSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnCreateGameSubscription = {
@@ -2063,7 +1994,6 @@ export type OnCreateGameSubscription = {
           height: number,
           width: number,
         } >,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2081,7 +2011,6 @@ export type OnCreateGameSubscription = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2100,7 +2029,6 @@ export type OnCreateGameSubscription = {
         },
         height: number,
         width: number,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2131,7 +2059,6 @@ export type OnCreateGameSubscription = {
         },
         vision: number,
         actionUsed: boolean,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2148,7 +2075,6 @@ export type OnCreateGameSubscription = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2166,16 +2092,10 @@ export type OnCreateGameSubscription = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    owner: string | null,
   } | null,
-};
-
-export type OnUpdateGameSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnUpdateGameSubscription = {
@@ -2215,7 +2135,6 @@ export type OnUpdateGameSubscription = {
           height: number,
           width: number,
         } >,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2233,7 +2152,6 @@ export type OnUpdateGameSubscription = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2252,7 +2170,6 @@ export type OnUpdateGameSubscription = {
         },
         height: number,
         width: number,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2283,7 +2200,6 @@ export type OnUpdateGameSubscription = {
         },
         vision: number,
         actionUsed: boolean,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2300,7 +2216,6 @@ export type OnUpdateGameSubscription = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2318,16 +2233,10 @@ export type OnUpdateGameSubscription = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    owner: string | null,
   } | null,
-};
-
-export type OnDeleteGameSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnDeleteGameSubscription = {
@@ -2367,7 +2276,6 @@ export type OnDeleteGameSubscription = {
           height: number,
           width: number,
         } >,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2385,7 +2293,6 @@ export type OnDeleteGameSubscription = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2404,7 +2311,6 @@ export type OnDeleteGameSubscription = {
         },
         height: number,
         width: number,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2435,7 +2341,6 @@ export type OnDeleteGameSubscription = {
         },
         vision: number,
         actionUsed: boolean,
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2452,7 +2357,6 @@ export type OnDeleteGameSubscription = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2470,16 +2374,10 @@ export type OnDeleteGameSubscription = {
           x: number,
           y: number,
         },
-        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    owner: string | null,
   } | null,
-};
-
-export type OnCreateGameRoomSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnCreateGameRoomSubscription = {
@@ -2507,12 +2405,7 @@ export type OnCreateGameRoomSubscription = {
       height: number,
       width: number,
     } >,
-    owner: string | null,
   } | null,
-};
-
-export type OnUpdateGameRoomSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnUpdateGameRoomSubscription = {
@@ -2540,12 +2433,7 @@ export type OnUpdateGameRoomSubscription = {
       height: number,
       width: number,
     } >,
-    owner: string | null,
   } | null,
-};
-
-export type OnDeleteGameRoomSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnDeleteGameRoomSubscription = {
@@ -2573,12 +2461,7 @@ export type OnDeleteGameRoomSubscription = {
       height: number,
       width: number,
     } >,
-    owner: string | null,
   } | null,
-};
-
-export type OnCreateGameDoorSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnCreateGameDoorSubscription = {
@@ -2594,12 +2477,7 @@ export type OnCreateGameDoorSubscription = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
-    owner: string | null,
   } | null,
-};
-
-export type OnUpdateGameDoorSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnUpdateGameDoorSubscription = {
@@ -2615,12 +2493,7 @@ export type OnUpdateGameDoorSubscription = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
-    owner: string | null,
   } | null,
-};
-
-export type OnDeleteGameDoorSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnDeleteGameDoorSubscription = {
@@ -2636,12 +2509,7 @@ export type OnDeleteGameDoorSubscription = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
-    owner: string | null,
   } | null,
-};
-
-export type OnCreateGameHistorySubscriptionVariables = {
-  owner: string,
 };
 
 export type OnCreateGameHistorySubscription = {
@@ -2657,12 +2525,7 @@ export type OnCreateGameHistorySubscription = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
-};
-
-export type OnUpdateGameHistorySubscriptionVariables = {
-  owner: string,
 };
 
 export type OnUpdateGameHistorySubscription = {
@@ -2678,12 +2541,7 @@ export type OnUpdateGameHistorySubscription = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
-};
-
-export type OnDeleteGameHistorySubscriptionVariables = {
-  owner: string,
 };
 
 export type OnDeleteGameHistorySubscription = {
@@ -2699,12 +2557,7 @@ export type OnDeleteGameHistorySubscription = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
-};
-
-export type OnCreateGameCharacterSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnCreateGameCharacterSubscription = {
@@ -2733,12 +2586,7 @@ export type OnCreateGameCharacterSubscription = {
     },
     vision: number,
     actionUsed: boolean,
-    owner: string | null,
   } | null,
-};
-
-export type OnUpdateGameCharacterSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnUpdateGameCharacterSubscription = {
@@ -2767,12 +2615,7 @@ export type OnUpdateGameCharacterSubscription = {
     },
     vision: number,
     actionUsed: boolean,
-    owner: string | null,
   } | null,
-};
-
-export type OnDeleteGameCharacterSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnDeleteGameCharacterSubscription = {
@@ -2801,12 +2644,7 @@ export type OnDeleteGameCharacterSubscription = {
     },
     vision: number,
     actionUsed: boolean,
-    owner: string | null,
   } | null,
-};
-
-export type OnCreateGameItemSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnCreateGameItemSubscription = {
@@ -2821,12 +2659,7 @@ export type OnCreateGameItemSubscription = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
-};
-
-export type OnUpdateGameItemSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnUpdateGameItemSubscription = {
@@ -2841,12 +2674,7 @@ export type OnUpdateGameItemSubscription = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
-};
-
-export type OnDeleteGameItemSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnDeleteGameItemSubscription = {
@@ -2861,12 +2689,7 @@ export type OnDeleteGameItemSubscription = {
       x: number,
       y: number,
     },
-    owner: string | null,
   } | null,
-};
-
-export type OnCreateGameAreaSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnCreateGameAreaSubscription = {
@@ -2883,12 +2706,7 @@ export type OnCreateGameAreaSubscription = {
     },
     height: number,
     width: number,
-    owner: string | null,
   } | null,
-};
-
-export type OnUpdateGameAreaSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnUpdateGameAreaSubscription = {
@@ -2905,12 +2723,7 @@ export type OnUpdateGameAreaSubscription = {
     },
     height: number,
     width: number,
-    owner: string | null,
   } | null,
-};
-
-export type OnDeleteGameAreaSubscriptionVariables = {
-  owner: string,
 };
 
 export type OnDeleteGameAreaSubscription = {
@@ -2927,6 +2740,5 @@ export type OnDeleteGameAreaSubscription = {
     },
     height: number,
     width: number,
-    owner: string | null,
   } | null,
 };
