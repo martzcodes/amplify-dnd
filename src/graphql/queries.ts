@@ -10,6 +10,7 @@ export const getGame = `query GetGame($id: ID!) {
     dm
     paused
     active
+    lastAction
     initiative
     rooms {
       items {
@@ -32,6 +33,7 @@ export const getGame = `query GetGame($id: ID!) {
           height
           width
         }
+        owner
       }
       nextToken
     }
@@ -46,6 +48,7 @@ export const getGame = `query GetGame($id: ID!) {
         open
         locked
         northSouth
+        owner
       }
       nextToken
     }
@@ -61,6 +64,7 @@ export const getGame = `query GetGame($id: ID!) {
         }
         height
         width
+        owner
       }
       nextToken
     }
@@ -86,6 +90,8 @@ export const getGame = `query GetGame($id: ID!) {
         }
         vision
         actionUsed
+        revealed
+        owner
       }
       nextToken
     }
@@ -99,23 +105,11 @@ export const getGame = `query GetGame($id: ID!) {
           x
           y
         }
+        owner
       }
       nextToken
     }
-    history {
-      items {
-        id
-        gameID
-        datetime
-        character
-        action
-        location {
-          x
-          y
-        }
-      }
-      nextToken
-    }
+    owner
   }
 }
 `;
@@ -133,6 +127,7 @@ export const listGames = `query ListGames(
       dm
       paused
       active
+      lastAction
       initiative
       rooms {
         items {
@@ -155,6 +150,7 @@ export const listGames = `query ListGames(
             height
             width
           }
+          owner
         }
         nextToken
       }
@@ -169,6 +165,7 @@ export const listGames = `query ListGames(
           open
           locked
           northSouth
+          owner
         }
         nextToken
       }
@@ -184,6 +181,7 @@ export const listGames = `query ListGames(
           }
           height
           width
+          owner
         }
         nextToken
       }
@@ -209,6 +207,8 @@ export const listGames = `query ListGames(
           }
           vision
           actionUsed
+          revealed
+          owner
         }
         nextToken
       }
@@ -222,23 +222,11 @@ export const listGames = `query ListGames(
             x
             y
           }
+          owner
         }
         nextToken
       }
-      history {
-        items {
-          id
-          gameID
-          datetime
-          character
-          action
-          location {
-            x
-            y
-          }
-        }
-        nextToken
-      }
+      owner
     }
     nextToken
   }
@@ -265,6 +253,7 @@ export const getGameRoom = `query GetGameRoom($id: ID!) {
       height
       width
     }
+    owner
   }
 }
 `;
@@ -294,6 +283,7 @@ export const listGameRooms = `query ListGameRooms(
         height
         width
       }
+      owner
     }
     nextToken
   }
@@ -310,6 +300,7 @@ export const getGameDoor = `query GetGameDoor($id: ID!) {
     open
     locked
     northSouth
+    owner
   }
 }
 `;
@@ -329,41 +320,7 @@ export const listGameDoors = `query ListGameDoors(
       open
       locked
       northSouth
-    }
-    nextToken
-  }
-}
-`;
-export const getGameHistory = `query GetGameHistory($id: ID!) {
-  getGameHistory(id: $id) {
-    id
-    gameID
-    datetime
-    character
-    action
-    location {
-      x
-      y
-    }
-  }
-}
-`;
-export const listGameHistorys = `query ListGameHistorys(
-  $filter: ModelGameHistoryFilterInput
-  $limit: Int
-  $nextToken: String
-) {
-  listGameHistorys(filter: $filter, limit: $limit, nextToken: $nextToken) {
-    items {
-      id
-      gameID
-      datetime
-      character
-      action
-      location {
-        x
-        y
-      }
+      owner
     }
     nextToken
   }
@@ -391,6 +348,8 @@ export const getGameCharacter = `query GetGameCharacter($id: ID!) {
     }
     vision
     actionUsed
+    revealed
+    owner
   }
 }
 `;
@@ -421,6 +380,8 @@ export const listGameCharacters = `query ListGameCharacters(
       }
       vision
       actionUsed
+      revealed
+      owner
     }
     nextToken
   }
@@ -436,6 +397,7 @@ export const getGameItem = `query GetGameItem($id: ID!) {
       x
       y
     }
+    owner
   }
 }
 `;
@@ -454,6 +416,7 @@ export const listGameItems = `query ListGameItems(
         x
         y
       }
+      owner
     }
     nextToken
   }
@@ -471,6 +434,7 @@ export const getGameArea = `query GetGameArea($id: ID!) {
     }
     height
     width
+    owner
   }
 }
 `;
@@ -491,6 +455,7 @@ export const listGameAreas = `query ListGameAreas(
       }
       height
       width
+      owner
     }
     nextToken
   }

@@ -13,6 +13,8 @@ export interface GameProps {
   paused: boolean;
   active: string;
   initiative: string[];
+  characters?: Character[];
+  owner?: string;
 }
 
 const characterInitiative = (
@@ -46,8 +48,8 @@ function GameEditor({
     setGameFormData(serverGame);
   }, [serverGame]);
 
-  async function updateGame(updatedGame: GameProps) {
-    const res = await API.graphql({
+  const updateGame = async (updatedGame: GameProps) => {
+    await API.graphql({
       query: updateGameMutation,
       variables: {
         input: {
@@ -61,8 +63,6 @@ function GameEditor({
         },
       },
     });
-    console.log(res);
-    setGameFormData(updatedGame);
   }
 
   return (
@@ -85,6 +85,22 @@ function GameEditor({
             value={gameFormData.name}
             className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
           />
+        </div>
+        <div className="col-span-6">
+          <label className="inline-flex items-center mt-3">
+            <input
+              type="checkbox"
+              className="form-checkbox h-5 w-5 text-gray-600"
+              checked={gameFormData.type === "PUBLIC"}
+              onChange={(e) => {
+                setGameFormData({
+                  ...gameFormData,
+                  type: gameFormData.type === "PUBLIC" ? "PRIVATE" : "PUBLIC",
+                });
+              }}
+            />
+            <span className="ml-2 text-gray-700">Public?</span>
+          </label>
         </div>
         <div className="col-span-6">
           <label className="inline-flex items-center mt-3">
@@ -122,16 +138,24 @@ function GameEditor({
           >
             {characterInitiative(characters, gameFormData.initiative).map(
               (character) => (
-                <option value={character.id}>{character.name}</option>
+                <option value={character.id} key={character.id}>
+                  {character.name}
+                </option>
               )
             )}
           </select>
         </div>
         <div className="col-span-6">
           <GameInitiativeEditor
-            characters={characterInitiative(characters, gameFormData.initiative)}
+            characters={characterInitiative(
+              characters,
+              gameFormData.initiative
+            )}
             updateInitiative={(characters: Character[]) => {
-              setGameFormData({ ...gameFormData, initiative: characters.map(character => character.id) });
+              setGameFormData({
+                ...gameFormData,
+                initiative: characters.map((character) => character.id),
+              });
             }}
           ></GameInitiativeEditor>
         </div>

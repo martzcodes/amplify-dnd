@@ -4,7 +4,7 @@ enum GameType {
 }
 
 type Game
-  @model {
+  @model @auth(rules: [{ allow: owner, operations: [create, delete] }]) {
   id: ID!
   name: String!
   type: GameType!
@@ -12,13 +12,13 @@ type Game
   dm: String!
   paused: Boolean
   active: String
+  lastAction: String
   initiative: [String!]
   rooms: [GameRoom!] @connection(keyName: "byGame", fields: ["id"])
   doors: [GameDoor!] @connection(keyName: "byGame", fields: ["id"])
   areas: [GameArea!] @connection(keyName: "byGame", fields: ["id"])
   characters: [GameCharacter!] @connection(keyName: "byGame", fields: ["id"])
   items: [GameItem!] @connection(keyName: "byGame", fields: ["id"])
-  history: [GameHistory!] @connection(keyName: "byGame", fields: ["id"])
 }
 
 type Location {
@@ -40,7 +40,7 @@ type GameRoomGround {
 }
 
 type GameRoom
-  @model
+  @model @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
@@ -58,7 +58,7 @@ type CurrentMax {
 }
 
 type GameDoor
-  @model
+  @model @auth(rules: [{ allow: owner, operations: [create, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
@@ -68,19 +68,8 @@ type GameDoor
   northSouth: Boolean
 }
 
-type GameHistory
-  @model
-  @key(name: "byGame", fields: ["gameID"]) {
-  id: ID!
-  gameID: ID!
-  datetime: String!
-  character: String!
-  action: String!
-  location: Location!
-}
-
 type GameCharacter
-  @model
+  @model @auth(rules: [{ allow: owner, operations: [create, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
@@ -93,10 +82,11 @@ type GameCharacter
   location: Location!
   vision: Int!
   actionUsed: Boolean!
+  revealed: [String!]
 }
 
 type GameItem
-  @model
+  @model @auth(rules: [{ allow: owner, operations: [create, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
@@ -106,7 +96,7 @@ type GameItem
 }
 
 type GameArea
-  @model
+  @model @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!

@@ -20,6 +20,12 @@ function Header({ authState, email }: {authState: AuthState, email?: string}) {
                 <Link to="/" className={inactive}>
                   Home
                 </Link>
+                <Link to="/public" className={inactive}>
+                  Public Games
+                </Link>
+                <Link to="/games" className={inactive}>
+                  My Games
+                </Link>
                 <Link to="/tile" className={inactive}>
                   Tile Set
                 </Link>
@@ -27,11 +33,7 @@ function Header({ authState, email }: {authState: AuthState, email?: string}) {
             </div>
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-            {email ? (
-              <div className={inactive}>Hello, {email}</div>
-            ) : (
-              <></>
-            )}
+            {email ? <div className={inactive}>Hello, {email}</div> : <></>}
             <AmplifySignOut></AmplifySignOut>
           </div>
         </div>

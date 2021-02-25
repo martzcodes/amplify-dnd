@@ -262,7 +262,7 @@ function CharacterForm({
                 "bg-green-500",
                 "bg-pink-500",
               ].map((color) => (
-                <option value={color}>{color}</option>
+                <option value={color} key={color}>{color}</option>
               ))}
             </select>
           </div>

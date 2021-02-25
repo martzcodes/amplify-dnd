@@ -23,9 +23,11 @@ const initialDoorFormState: DoorProps = {
 function DoorEditor({
   doors: serverDoors,
   create,
+  fetchGame
 }: {
   doors: Door[];
   create: boolean;
+  fetchGame: () => {};
 }) {
   const { gameId } = useParams<{
     gameId: string;
@@ -37,47 +39,43 @@ function DoorEditor({
     setDoors(serverDoors);
   }, [serverDoors]);
 
-  async function upsertDoor(door: DoorProps) {
+  const upsertDoor = async (door: DoorProps) => {
     if (door.id) {
       updateDoor(
-        Object.keys(initialDoorFormState).reduce((p, c) => {
-          return { ...p, [c]: (door as any)[c] };
-        }, { id: door.id } as DoorProps)
+        Object.keys(initialDoorFormState).reduce(
+          (p, c) => {
+            return { ...p, [c]: (door as any)[c] };
+          },
+          { id: door.id } as DoorProps
+        )
       );
     } else {
       createDoor(door);
     }
   }
 
-  async function createDoor(door: DoorProps) {
-    const res = await API.graphql({
+  const createDoor = async (door: DoorProps) => {
+    await API.graphql({
       query: createGameDoorMutation,
       variables: { input: { ...door, gameID: gameId } },
     });
-    console.log(res);
-    setDoors([...doors, new Door(door)]);
+    fetchGame();
   }
 
-  async function updateDoor(updatedDoor: DoorProps) {
-    const res = await API.graphql({
+  const updateDoor = async (updatedDoor: DoorProps) => {
+    await API.graphql({
       query: updateGameDoorMutation,
       variables: { input: { ...updatedDoor, gameID: gameId } },
     });
-    console.log(res);
-    const newDoorsArray = doors.filter(
-      (door: any) => door.id !== updatedDoor.id
-    );
-    setDoors(newDoorsArray);
-    setDoors([...newDoorsArray, new Door(updatedDoor)]);
+    fetchGame();
   }
 
-  async function deleteDoor({ id }: { id: string }) {
-    const newDoorsArray = doors.filter((room: any) => room.id !== id);
-    setDoors(newDoorsArray);
+  const deleteDoor = async ({ id }: { id: string }) => {
     await API.graphql({
       query: deleteGameDoorMutation,
       variables: { input: { id } },
     });
+    fetchGame();
   }
 
   return (

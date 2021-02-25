@@ -1,6 +1,14 @@
-import { Door } from "../Door";
+import { useHistory } from "react-router-dom";
+import { GameProps } from "./DM/GameEditor";
 
-function DoorList({ doors, editDoor, deleteDoor }: { doors: Door[]; editDoor: any, deleteDoor: any }) {
+function GameCharacterList({
+  game,
+}: {
+  game: GameProps;
+
+}) {
+  const { push } = useHistory();
+
   return (
     <div>
       <div className="shadow overflow-hidden border border-gray-200 sm:rounded-lg m-6">
@@ -10,16 +18,16 @@ function DoorList({ doors, editDoor, deleteDoor }: { doors: Door[]; editDoor: an
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
 
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Origin
+                Character
               </th>
 
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Direction
+                HP
               </th>
 
-              <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
-
-              <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
+              <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Active
+              </th>
 
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
@@ -27,21 +35,20 @@ function DoorList({ doors, editDoor, deleteDoor }: { doors: Door[]; editDoor: an
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {doors.map((door) => (
-              <tr key={door.id}>
-                <td className={`px-2 py-4 whitespace-nowrap`}></td>
+            {(game.characters || []).map((character) => (
+              <tr key={character.id}>
+                <td
+                  className={`px-2 py-4 whitespace-nowrap ${character.color}`}
+                ></td>
 
                 <td className="px-2 py-4 whitespace-nowrap">
-                  ({door.origin.x}, {door.origin.y})
+                  {character.name}
                 </td>
                 <td className="px-2 py-4 whitespace-nowrap">
-                  {door.northSouth ? "North-South" : "East-West"}
+                  {character.hp.current} / {character.hp.max}
                 </td>
                 <td className="px-2 py-4 whitespace-nowrap">
-                  {door.locked ? "LOCKED" : "Unlocked"}
-                </td>
-                <td className="px-2 py-4 whitespace-nowrap">
-                  {door.open ? "Open" : "Closed"}
+                  {game.active === character.id ? "ACTIVE" : ""}
                 </td>
 
                 <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -49,7 +56,7 @@ function DoorList({ doors, editDoor, deleteDoor }: { doors: Door[]; editDoor: an
                     <button
                       className="border-2 border-indigo-200 rounded-md p-1"
                       onClick={() => {
-                        editDoor(door);
+                        push(`/games/${game.id}/characters/${character.id}`);
                       }}
                     >
                       <svg
@@ -63,28 +70,7 @@ function DoorList({ doors, editDoor, deleteDoor }: { doors: Door[]; editDoor: an
                           strokeLinecap="round"
                           strokeLinejoin="round"
                           strokeWidth="2"
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                        />
-                      </svg>
-                    </button>
-                    <button
-                      className="border-2 border-red-200 rounded-md p-1"
-                      onClick={() => {
-                        deleteDoor(door.id);
-                      }}
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        className="h-4 w-4 text-red-500"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
                         />
                       </svg>
                     </button>
@@ -99,4 +85,4 @@ function DoorList({ doors, editDoor, deleteDoor }: { doors: Door[]; editDoor: an
   );
 }
 
-export default DoorList;
+export default GameCharacterList;

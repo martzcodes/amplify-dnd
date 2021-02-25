@@ -30,17 +30,20 @@ const initialCharacterFormState: CharacterProps = {
     x: 0,
     y: 0,
   },
+  revealed: [],
 };
 
 function CharacterEditor({
   characters: serverCharacters,
   create,
   addToInitiative,
+  fetchGame
 }: {
   characters: Character[];
   create: boolean;
   game: GameProps;
-  addToInitiative: any;
+  addToInitiative: (id: string) => {};
+  fetchGame: () => {};
 }) {
   const { gameId } = useParams<{
     gameId: string;
@@ -54,47 +57,52 @@ function CharacterEditor({
     setCharacters(serverCharacters);
   }, [serverCharacters]);
 
-  async function upsertCharacter(character: CharacterProps) {
+  const upsertCharacter = async (character: CharacterProps) => {
     if (character.id) {
       updateCharacter(
-        Object.keys(initialCharacterFormState).reduce((p, c) => {
-          return { ...p, [c]: (character as any)[c] };
-        }, { id: character.id } as CharacterProps)
+        Object.keys(initialCharacterFormState).reduce(
+          (p, c) => {
+            return { ...p, [c]: (character as any)[c] };
+          },
+          { id: character.id } as CharacterProps
+        )
       );
     } else {
       createCharacter(character);
     }
   }
 
-  async function createCharacter(character: CharacterProps) {
-    const res = await API.graphql({
+  const createCharacter = async (character: CharacterProps) => {
+    await API.graphql({
       query: createGameCharacterMutation,
       variables: { input: { ...character, gameID: gameId } },
     });
-    console.log(res);
-    setCharacters([...characters, new Character(character)]);
+    fetchGame();
   }
 
-  async function updateCharacter(updatedCharacter: CharacterProps) {
-    const res = await API.graphql({
+  const updateCharacter = async (updatedCharacter: CharacterProps) => {
+    await API.graphql({
       query: updateGameCharacterMutation,
       variables: { input: { ...updatedCharacter, gameID: gameId } },
     });
-    const newCharactersArray = characters.filter(
-      (character: any) => character.id !== updatedCharacter.id
-    );
-    setCharacters(newCharactersArray);
-    setCharacters([...newCharactersArray, new Character(updatedCharacter)]);
-    setCharacterForm(initialCharacterFormState);
+    fetchGame();
   }
 
-  async function deleteCharacter({ id }: { id: string }) {
+  const resetVision = async ({ id }: {id: string}) => {
+    await API.graphql({
+      query: updateGameCharacterMutation,
+      variables: { input: { id, gameID: gameId, revealed: [] } },
+    });
+  }
+
+  const deleteCharacter = async ({ id }: { id: string }) => {
     const newCharactersArray = characters.filter((room: any) => room.id !== id);
     setCharacters(newCharactersArray);
     await API.graphql({
       query: deleteGameCharacterMutation,
       variables: { input: { id } },
     });
+    fetchGame();
   }
 
   return (
@@ -110,6 +118,9 @@ function CharacterEditor({
         }}
         deleteCharacter={(id: string) => {
           deleteCharacter({ id });
+        }}
+        resetVision={(id: string) => {
+          resetVision({ id });
         }}
       ></DetailedCharacterList>
       {create ? (

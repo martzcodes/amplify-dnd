@@ -17,6 +17,7 @@ export interface CharacterProps {
     location: Location;
     actions: Action[];
   }
+  revealed: Set<string> | string[];
 }
 
 export interface Speed {
@@ -67,6 +68,7 @@ export class Character implements CharacterProps {
 
   constructor(playerProps: CharacterProps) {
     Object.assign(this, playerProps);
+    this.revealed = new Set(playerProps.revealed || []);
   }
 
   get damage() {

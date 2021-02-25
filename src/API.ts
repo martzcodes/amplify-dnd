@@ -9,6 +9,7 @@ export type CreateGameInput = {
   dm: string,
   paused?: boolean | null,
   active?: string | null,
+  lastAction?: string | null,
   initiative?: Array< string > | null,
 };
 
@@ -25,6 +26,7 @@ export type ModelGameConditionInput = {
   dm?: ModelStringInput | null,
   paused?: ModelBooleanInput | null,
   active?: ModelStringInput | null,
+  lastAction?: ModelStringInput | null,
   initiative?: ModelStringInput | null,
   and?: Array< ModelGameConditionInput | null > | null,
   or?: Array< ModelGameConditionInput | null > | null,
@@ -98,6 +100,7 @@ export type UpdateGameInput = {
   dm?: string | null,
   paused?: boolean | null,
   active?: string | null,
+  lastAction?: string | null,
   initiative?: Array< string > | null,
 };
 
@@ -214,38 +217,6 @@ export type DeleteGameDoorInput = {
   id?: string | null,
 };
 
-export type CreateGameHistoryInput = {
-  id?: string | null,
-  gameID: string,
-  datetime: string,
-  character: string,
-  action: string,
-  location: LocationInput,
-};
-
-export type ModelGameHistoryConditionInput = {
-  gameID?: ModelIDInput | null,
-  datetime?: ModelStringInput | null,
-  character?: ModelStringInput | null,
-  action?: ModelStringInput | null,
-  and?: Array< ModelGameHistoryConditionInput | null > | null,
-  or?: Array< ModelGameHistoryConditionInput | null > | null,
-  not?: ModelGameHistoryConditionInput | null,
-};
-
-export type UpdateGameHistoryInput = {
-  id: string,
-  gameID?: string | null,
-  datetime?: string | null,
-  character?: string | null,
-  action?: string | null,
-  location?: LocationInput | null,
-};
-
-export type DeleteGameHistoryInput = {
-  id?: string | null,
-};
-
 export type CreateGameCharacterInput = {
   id?: string | null,
   gameID: string,
@@ -258,6 +229,7 @@ export type CreateGameCharacterInput = {
   location: LocationInput,
   vision: number,
   actionUsed: boolean,
+  revealed?: Array< string > | null,
 };
 
 export type CurrentMaxInput = {
@@ -273,6 +245,7 @@ export type ModelGameCharacterConditionInput = {
   perception?: ModelIntInput | null,
   vision?: ModelIntInput | null,
   actionUsed?: ModelBooleanInput | null,
+  revealed?: ModelStringInput | null,
   and?: Array< ModelGameCharacterConditionInput | null > | null,
   or?: Array< ModelGameCharacterConditionInput | null > | null,
   not?: ModelGameCharacterConditionInput | null,
@@ -290,6 +263,7 @@ export type UpdateGameCharacterInput = {
   location?: LocationInput | null,
   vision?: number | null,
   actionUsed?: boolean | null,
+  revealed?: Array< string > | null,
 };
 
 export type DeleteGameCharacterInput = {
@@ -368,6 +342,7 @@ export type ModelGameFilterInput = {
   dm?: ModelStringInput | null,
   paused?: ModelBooleanInput | null,
   active?: ModelStringInput | null,
+  lastAction?: ModelStringInput | null,
   initiative?: ModelStringInput | null,
   and?: Array< ModelGameFilterInput | null > | null,
   or?: Array< ModelGameFilterInput | null > | null,
@@ -397,17 +372,6 @@ export type ModelGameDoorFilterInput = {
   not?: ModelGameDoorFilterInput | null,
 };
 
-export type ModelGameHistoryFilterInput = {
-  id?: ModelIDInput | null,
-  gameID?: ModelIDInput | null,
-  datetime?: ModelStringInput | null,
-  character?: ModelStringInput | null,
-  action?: ModelStringInput | null,
-  and?: Array< ModelGameHistoryFilterInput | null > | null,
-  or?: Array< ModelGameHistoryFilterInput | null > | null,
-  not?: ModelGameHistoryFilterInput | null,
-};
-
 export type ModelGameCharacterFilterInput = {
   id?: ModelIDInput | null,
   gameID?: ModelIDInput | null,
@@ -417,6 +381,7 @@ export type ModelGameCharacterFilterInput = {
   perception?: ModelIntInput | null,
   vision?: ModelIntInput | null,
   actionUsed?: ModelBooleanInput | null,
+  revealed?: ModelStringInput | null,
   and?: Array< ModelGameCharacterFilterInput | null > | null,
   or?: Array< ModelGameCharacterFilterInput | null > | null,
   not?: ModelGameCharacterFilterInput | null,
@@ -459,6 +424,7 @@ export type CreateGameMutation = {
     dm: string,
     paused: boolean | null,
     active: string | null,
+    lastAction: string | null,
     initiative: Array< string > | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
@@ -486,6 +452,7 @@ export type CreateGameMutation = {
           height: number,
           width: number,
         } >,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -503,6 +470,7 @@ export type CreateGameMutation = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -521,6 +489,7 @@ export type CreateGameMutation = {
         },
         height: number,
         width: number,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -551,6 +520,8 @@ export type CreateGameMutation = {
         },
         vision: number,
         actionUsed: boolean,
+        revealed: Array< string > | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -567,26 +538,11 @@ export type CreateGameMutation = {
           x: number,
           y: number,
         },
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    history:  {
-      __typename: "ModelGameHistoryConnection",
-      items:  Array< {
-        __typename: "GameHistory",
-        id: string,
-        gameID: string,
-        datetime: string,
-        character: string,
-        action: string,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
+    owner: string | null,
   } | null,
 };
 
@@ -605,6 +561,7 @@ export type UpdateGameMutation = {
     dm: string,
     paused: boolean | null,
     active: string | null,
+    lastAction: string | null,
     initiative: Array< string > | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
@@ -632,6 +589,7 @@ export type UpdateGameMutation = {
           height: number,
           width: number,
         } >,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -649,6 +607,7 @@ export type UpdateGameMutation = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -667,6 +626,7 @@ export type UpdateGameMutation = {
         },
         height: number,
         width: number,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -697,6 +657,8 @@ export type UpdateGameMutation = {
         },
         vision: number,
         actionUsed: boolean,
+        revealed: Array< string > | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -713,26 +675,11 @@ export type UpdateGameMutation = {
           x: number,
           y: number,
         },
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    history:  {
-      __typename: "ModelGameHistoryConnection",
-      items:  Array< {
-        __typename: "GameHistory",
-        id: string,
-        gameID: string,
-        datetime: string,
-        character: string,
-        action: string,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
+    owner: string | null,
   } | null,
 };
 
@@ -751,6 +698,7 @@ export type DeleteGameMutation = {
     dm: string,
     paused: boolean | null,
     active: string | null,
+    lastAction: string | null,
     initiative: Array< string > | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
@@ -778,6 +726,7 @@ export type DeleteGameMutation = {
           height: number,
           width: number,
         } >,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -795,6 +744,7 @@ export type DeleteGameMutation = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -813,6 +763,7 @@ export type DeleteGameMutation = {
         },
         height: number,
         width: number,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -843,6 +794,8 @@ export type DeleteGameMutation = {
         },
         vision: number,
         actionUsed: boolean,
+        revealed: Array< string > | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -859,26 +812,11 @@ export type DeleteGameMutation = {
           x: number,
           y: number,
         },
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    history:  {
-      __typename: "ModelGameHistoryConnection",
-      items:  Array< {
-        __typename: "GameHistory",
-        id: string,
-        gameID: string,
-        datetime: string,
-        character: string,
-        action: string,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
+    owner: string | null,
   } | null,
 };
 
@@ -912,6 +850,7 @@ export type CreateGameRoomMutation = {
       height: number,
       width: number,
     } >,
+    owner: string | null,
   } | null,
 };
 
@@ -945,6 +884,7 @@ export type UpdateGameRoomMutation = {
       height: number,
       width: number,
     } >,
+    owner: string | null,
   } | null,
 };
 
@@ -978,6 +918,7 @@ export type DeleteGameRoomMutation = {
       height: number,
       width: number,
     } >,
+    owner: string | null,
   } | null,
 };
 
@@ -999,6 +940,7 @@ export type CreateGameDoorMutation = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    owner: string | null,
   } | null,
 };
 
@@ -1020,6 +962,7 @@ export type UpdateGameDoorMutation = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    owner: string | null,
   } | null,
 };
 
@@ -1041,69 +984,7 @@ export type DeleteGameDoorMutation = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
-  } | null,
-};
-
-export type CreateGameHistoryMutationVariables = {
-  input: CreateGameHistoryInput,
-  condition?: ModelGameHistoryConditionInput | null,
-};
-
-export type CreateGameHistoryMutation = {
-  createGameHistory:  {
-    __typename: "GameHistory",
-    id: string,
-    gameID: string,
-    datetime: string,
-    character: string,
-    action: string,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-  } | null,
-};
-
-export type UpdateGameHistoryMutationVariables = {
-  input: UpdateGameHistoryInput,
-  condition?: ModelGameHistoryConditionInput | null,
-};
-
-export type UpdateGameHistoryMutation = {
-  updateGameHistory:  {
-    __typename: "GameHistory",
-    id: string,
-    gameID: string,
-    datetime: string,
-    character: string,
-    action: string,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-  } | null,
-};
-
-export type DeleteGameHistoryMutationVariables = {
-  input: DeleteGameHistoryInput,
-  condition?: ModelGameHistoryConditionInput | null,
-};
-
-export type DeleteGameHistoryMutation = {
-  deleteGameHistory:  {
-    __typename: "GameHistory",
-    id: string,
-    gameID: string,
-    datetime: string,
-    character: string,
-    action: string,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
+    owner: string | null,
   } | null,
 };
 
@@ -1138,6 +1019,8 @@ export type CreateGameCharacterMutation = {
     },
     vision: number,
     actionUsed: boolean,
+    revealed: Array< string > | null,
+    owner: string | null,
   } | null,
 };
 
@@ -1172,6 +1055,8 @@ export type UpdateGameCharacterMutation = {
     },
     vision: number,
     actionUsed: boolean,
+    revealed: Array< string > | null,
+    owner: string | null,
   } | null,
 };
 
@@ -1206,6 +1091,8 @@ export type DeleteGameCharacterMutation = {
     },
     vision: number,
     actionUsed: boolean,
+    revealed: Array< string > | null,
+    owner: string | null,
   } | null,
 };
 
@@ -1226,6 +1113,7 @@ export type CreateGameItemMutation = {
       x: number,
       y: number,
     },
+    owner: string | null,
   } | null,
 };
 
@@ -1246,6 +1134,7 @@ export type UpdateGameItemMutation = {
       x: number,
       y: number,
     },
+    owner: string | null,
   } | null,
 };
 
@@ -1266,6 +1155,7 @@ export type DeleteGameItemMutation = {
       x: number,
       y: number,
     },
+    owner: string | null,
   } | null,
 };
 
@@ -1288,6 +1178,7 @@ export type CreateGameAreaMutation = {
     },
     height: number,
     width: number,
+    owner: string | null,
   } | null,
 };
 
@@ -1310,6 +1201,7 @@ export type UpdateGameAreaMutation = {
     },
     height: number,
     width: number,
+    owner: string | null,
   } | null,
 };
 
@@ -1332,6 +1224,7 @@ export type DeleteGameAreaMutation = {
     },
     height: number,
     width: number,
+    owner: string | null,
   } | null,
 };
 
@@ -1349,6 +1242,7 @@ export type GetGameQuery = {
     dm: string,
     paused: boolean | null,
     active: string | null,
+    lastAction: string | null,
     initiative: Array< string > | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
@@ -1376,6 +1270,7 @@ export type GetGameQuery = {
           height: number,
           width: number,
         } >,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -1393,6 +1288,7 @@ export type GetGameQuery = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -1411,6 +1307,7 @@ export type GetGameQuery = {
         },
         height: number,
         width: number,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -1441,6 +1338,8 @@ export type GetGameQuery = {
         },
         vision: number,
         actionUsed: boolean,
+        revealed: Array< string > | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -1457,26 +1356,11 @@ export type GetGameQuery = {
           x: number,
           y: number,
         },
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    history:  {
-      __typename: "ModelGameHistoryConnection",
-      items:  Array< {
-        __typename: "GameHistory",
-        id: string,
-        gameID: string,
-        datetime: string,
-        character: string,
-        action: string,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
+    owner: string | null,
   } | null,
 };
 
@@ -1498,6 +1382,7 @@ export type ListGamesQuery = {
       dm: string,
       paused: boolean | null,
       active: string | null,
+      lastAction: string | null,
       initiative: Array< string > | null,
       rooms:  {
         __typename: "ModelGameRoomConnection",
@@ -1525,6 +1410,7 @@ export type ListGamesQuery = {
             height: number,
             width: number,
           } >,
+          owner: string | null,
         } | null > | null,
         nextToken: string | null,
       } | null,
@@ -1542,6 +1428,7 @@ export type ListGamesQuery = {
           open: boolean | null,
           locked: boolean | null,
           northSouth: boolean | null,
+          owner: string | null,
         } | null > | null,
         nextToken: string | null,
       } | null,
@@ -1560,6 +1447,7 @@ export type ListGamesQuery = {
           },
           height: number,
           width: number,
+          owner: string | null,
         } | null > | null,
         nextToken: string | null,
       } | null,
@@ -1590,6 +1478,8 @@ export type ListGamesQuery = {
           },
           vision: number,
           actionUsed: boolean,
+          revealed: Array< string > | null,
+          owner: string | null,
         } | null > | null,
         nextToken: string | null,
       } | null,
@@ -1606,26 +1496,11 @@ export type ListGamesQuery = {
             x: number,
             y: number,
           },
+          owner: string | null,
         } | null > | null,
         nextToken: string | null,
       } | null,
-      history:  {
-        __typename: "ModelGameHistoryConnection",
-        items:  Array< {
-          __typename: "GameHistory",
-          id: string,
-          gameID: string,
-          datetime: string,
-          character: string,
-          action: string,
-          location:  {
-            __typename: "Location",
-            x: number,
-            y: number,
-          },
-        } | null > | null,
-        nextToken: string | null,
-      } | null,
+      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -1660,6 +1535,7 @@ export type GetGameRoomQuery = {
       height: number,
       width: number,
     } >,
+    owner: string | null,
   } | null,
 };
 
@@ -1696,6 +1572,7 @@ export type ListGameRoomsQuery = {
         height: number,
         width: number,
       } >,
+      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -1718,6 +1595,7 @@ export type GetGameDoorQuery = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    owner: string | null,
   } | null,
 };
 
@@ -1742,52 +1620,7 @@ export type ListGameDoorsQuery = {
       open: boolean | null,
       locked: boolean | null,
       northSouth: boolean | null,
-    } | null > | null,
-    nextToken: string | null,
-  } | null,
-};
-
-export type GetGameHistoryQueryVariables = {
-  id: string,
-};
-
-export type GetGameHistoryQuery = {
-  getGameHistory:  {
-    __typename: "GameHistory",
-    id: string,
-    gameID: string,
-    datetime: string,
-    character: string,
-    action: string,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-  } | null,
-};
-
-export type ListGameHistorysQueryVariables = {
-  filter?: ModelGameHistoryFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListGameHistorysQuery = {
-  listGameHistorys:  {
-    __typename: "ModelGameHistoryConnection",
-    items:  Array< {
-      __typename: "GameHistory",
-      id: string,
-      gameID: string,
-      datetime: string,
-      character: string,
-      action: string,
-      location:  {
-        __typename: "Location",
-        x: number,
-        y: number,
-      },
+      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -1823,6 +1656,8 @@ export type GetGameCharacterQuery = {
     },
     vision: number,
     actionUsed: boolean,
+    revealed: Array< string > | null,
+    owner: string | null,
   } | null,
 };
 
@@ -1860,6 +1695,8 @@ export type ListGameCharactersQuery = {
       },
       vision: number,
       actionUsed: boolean,
+      revealed: Array< string > | null,
+      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -1881,6 +1718,7 @@ export type GetGameItemQuery = {
       x: number,
       y: number,
     },
+    owner: string | null,
   } | null,
 };
 
@@ -1904,6 +1742,7 @@ export type ListGameItemsQuery = {
         x: number,
         y: number,
       },
+      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
@@ -1927,6 +1766,7 @@ export type GetGameAreaQuery = {
     },
     height: number,
     width: number,
+    owner: string | null,
   } | null,
 };
 
@@ -1952,9 +1792,14 @@ export type ListGameAreasQuery = {
       },
       height: number,
       width: number,
+      owner: string | null,
     } | null > | null,
     nextToken: string | null,
   } | null,
+};
+
+export type OnCreateGameSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnCreateGameSubscription = {
@@ -1967,6 +1812,7 @@ export type OnCreateGameSubscription = {
     dm: string,
     paused: boolean | null,
     active: string | null,
+    lastAction: string | null,
     initiative: Array< string > | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
@@ -1994,6 +1840,7 @@ export type OnCreateGameSubscription = {
           height: number,
           width: number,
         } >,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2011,6 +1858,7 @@ export type OnCreateGameSubscription = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2029,6 +1877,7 @@ export type OnCreateGameSubscription = {
         },
         height: number,
         width: number,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2059,6 +1908,8 @@ export type OnCreateGameSubscription = {
         },
         vision: number,
         actionUsed: boolean,
+        revealed: Array< string > | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2075,26 +1926,11 @@ export type OnCreateGameSubscription = {
           x: number,
           y: number,
         },
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    history:  {
-      __typename: "ModelGameHistoryConnection",
-      items:  Array< {
-        __typename: "GameHistory",
-        id: string,
-        gameID: string,
-        datetime: string,
-        character: string,
-        action: string,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
+    owner: string | null,
   } | null,
 };
 
@@ -2108,6 +1944,7 @@ export type OnUpdateGameSubscription = {
     dm: string,
     paused: boolean | null,
     active: string | null,
+    lastAction: string | null,
     initiative: Array< string > | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
@@ -2135,6 +1972,7 @@ export type OnUpdateGameSubscription = {
           height: number,
           width: number,
         } >,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2152,6 +1990,7 @@ export type OnUpdateGameSubscription = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2170,6 +2009,7 @@ export type OnUpdateGameSubscription = {
         },
         height: number,
         width: number,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2200,6 +2040,8 @@ export type OnUpdateGameSubscription = {
         },
         vision: number,
         actionUsed: boolean,
+        revealed: Array< string > | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2216,27 +2058,16 @@ export type OnUpdateGameSubscription = {
           x: number,
           y: number,
         },
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    history:  {
-      __typename: "ModelGameHistoryConnection",
-      items:  Array< {
-        __typename: "GameHistory",
-        id: string,
-        gameID: string,
-        datetime: string,
-        character: string,
-        action: string,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
+    owner: string | null,
   } | null,
+};
+
+export type OnDeleteGameSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnDeleteGameSubscription = {
@@ -2249,6 +2080,7 @@ export type OnDeleteGameSubscription = {
     dm: string,
     paused: boolean | null,
     active: string | null,
+    lastAction: string | null,
     initiative: Array< string > | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
@@ -2276,6 +2108,7 @@ export type OnDeleteGameSubscription = {
           height: number,
           width: number,
         } >,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2293,6 +2126,7 @@ export type OnDeleteGameSubscription = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2311,6 +2145,7 @@ export type OnDeleteGameSubscription = {
         },
         height: number,
         width: number,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2341,6 +2176,8 @@ export type OnDeleteGameSubscription = {
         },
         vision: number,
         actionUsed: boolean,
+        revealed: Array< string > | null,
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
@@ -2357,27 +2194,16 @@ export type OnDeleteGameSubscription = {
           x: number,
           y: number,
         },
+        owner: string | null,
       } | null > | null,
       nextToken: string | null,
     } | null,
-    history:  {
-      __typename: "ModelGameHistoryConnection",
-      items:  Array< {
-        __typename: "GameHistory",
-        id: string,
-        gameID: string,
-        datetime: string,
-        character: string,
-        action: string,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
+    owner: string | null,
   } | null,
+};
+
+export type OnCreateGameRoomSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnCreateGameRoomSubscription = {
@@ -2405,7 +2231,12 @@ export type OnCreateGameRoomSubscription = {
       height: number,
       width: number,
     } >,
+    owner: string | null,
   } | null,
+};
+
+export type OnUpdateGameRoomSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnUpdateGameRoomSubscription = {
@@ -2433,7 +2264,12 @@ export type OnUpdateGameRoomSubscription = {
       height: number,
       width: number,
     } >,
+    owner: string | null,
   } | null,
+};
+
+export type OnDeleteGameRoomSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnDeleteGameRoomSubscription = {
@@ -2461,7 +2297,12 @@ export type OnDeleteGameRoomSubscription = {
       height: number,
       width: number,
     } >,
+    owner: string | null,
   } | null,
+};
+
+export type OnCreateGameDoorSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnCreateGameDoorSubscription = {
@@ -2477,6 +2318,7 @@ export type OnCreateGameDoorSubscription = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    owner: string | null,
   } | null,
 };
 
@@ -2493,7 +2335,12 @@ export type OnUpdateGameDoorSubscription = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    owner: string | null,
   } | null,
+};
+
+export type OnDeleteGameDoorSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnDeleteGameDoorSubscription = {
@@ -2509,55 +2356,12 @@ export type OnDeleteGameDoorSubscription = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    owner: string | null,
   } | null,
 };
 
-export type OnCreateGameHistorySubscription = {
-  onCreateGameHistory:  {
-    __typename: "GameHistory",
-    id: string,
-    gameID: string,
-    datetime: string,
-    character: string,
-    action: string,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-  } | null,
-};
-
-export type OnUpdateGameHistorySubscription = {
-  onUpdateGameHistory:  {
-    __typename: "GameHistory",
-    id: string,
-    gameID: string,
-    datetime: string,
-    character: string,
-    action: string,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-  } | null,
-};
-
-export type OnDeleteGameHistorySubscription = {
-  onDeleteGameHistory:  {
-    __typename: "GameHistory",
-    id: string,
-    gameID: string,
-    datetime: string,
-    character: string,
-    action: string,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-  } | null,
+export type OnCreateGameCharacterSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnCreateGameCharacterSubscription = {
@@ -2586,6 +2390,8 @@ export type OnCreateGameCharacterSubscription = {
     },
     vision: number,
     actionUsed: boolean,
+    revealed: Array< string > | null,
+    owner: string | null,
   } | null,
 };
 
@@ -2615,7 +2421,13 @@ export type OnUpdateGameCharacterSubscription = {
     },
     vision: number,
     actionUsed: boolean,
+    revealed: Array< string > | null,
+    owner: string | null,
   } | null,
+};
+
+export type OnDeleteGameCharacterSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnDeleteGameCharacterSubscription = {
@@ -2644,7 +2456,13 @@ export type OnDeleteGameCharacterSubscription = {
     },
     vision: number,
     actionUsed: boolean,
+    revealed: Array< string > | null,
+    owner: string | null,
   } | null,
+};
+
+export type OnCreateGameItemSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnCreateGameItemSubscription = {
@@ -2659,6 +2477,7 @@ export type OnCreateGameItemSubscription = {
       x: number,
       y: number,
     },
+    owner: string | null,
   } | null,
 };
 
@@ -2674,7 +2493,12 @@ export type OnUpdateGameItemSubscription = {
       x: number,
       y: number,
     },
+    owner: string | null,
   } | null,
+};
+
+export type OnDeleteGameItemSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnDeleteGameItemSubscription = {
@@ -2689,7 +2513,12 @@ export type OnDeleteGameItemSubscription = {
       x: number,
       y: number,
     },
+    owner: string | null,
   } | null,
+};
+
+export type OnCreateGameAreaSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnCreateGameAreaSubscription = {
@@ -2706,7 +2535,12 @@ export type OnCreateGameAreaSubscription = {
     },
     height: number,
     width: number,
+    owner: string | null,
   } | null,
+};
+
+export type OnUpdateGameAreaSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnUpdateGameAreaSubscription = {
@@ -2723,7 +2557,12 @@ export type OnUpdateGameAreaSubscription = {
     },
     height: number,
     width: number,
+    owner: string | null,
   } | null,
+};
+
+export type OnDeleteGameAreaSubscriptionVariables = {
+  owner: string,
 };
 
 export type OnDeleteGameAreaSubscription = {
@@ -2740,5 +2579,6 @@ export type OnDeleteGameAreaSubscription = {
     },
     height: number,
     width: number,
+    owner: string | null,
   } | null,
 };

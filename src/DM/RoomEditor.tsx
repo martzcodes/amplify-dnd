@@ -22,9 +22,11 @@ const initialRoomFormState: RoomProps = {
 function RoomEditor({
   rooms: initialRooms,
   create,
+  fetchGame,
 }: {
   rooms: Room[];
   create: boolean;
+  fetchGame: () => {};
 }) {
   const { gameId } = useParams<{
     gameId: string;
@@ -36,7 +38,7 @@ function RoomEditor({
     setRooms(initialRooms);
   }, [initialRooms]);
 
-  async function upsertRoom(room: RoomProps) {
+  const upsertRoom = async (room: RoomProps) => {
     if (room.id) {
       updateRoom(
         Object.keys(initialRoomFormState).reduce(
@@ -51,35 +53,31 @@ function RoomEditor({
     }
   }
 
-  async function createRoom(room: RoomProps) {
-    const res = await API.graphql({
+  const createRoom = async (room: RoomProps) => {
+    await API.graphql({
       query: createGameRoomMutation,
       variables: { input: { ...room, gameID: gameId } },
     });
-    console.log(res);
-    setRooms([...rooms, new Room(room)]);
+    fetchGame();
   }
 
-  async function updateRoom(updatedRoom: RoomProps) {
-    const res = await API.graphql({
+  const updateRoom = async (updatedRoom: RoomProps) => {
+    await API.graphql({
       query: updateGameRoomMutation,
       variables: { input: { ...updatedRoom, gameID: gameId } },
     });
-    console.log(res);
-    const newRoomsArray = rooms.filter(
+    rooms.filter(
       (room: any) => room.id !== updatedRoom.id
     );
-    setRooms([...newRoomsArray, new Room(updatedRoom)]);
-    setRoomForm(initialRoomFormState);
+    fetchGame();
   }
 
-  async function deleteRoom({ id }: { id: string }) {
-    const newRoomsArray = rooms.filter((room: any) => room.id !== id);
-    setRooms(newRoomsArray);
+  const deleteRoom = async ({ id }: { id: string }) => {
     await API.graphql({
       query: deleteGameRoomMutation,
       variables: { input: { id } },
     });
+    fetchGame();
   }
 
   return (
@@ -87,7 +85,7 @@ function RoomEditor({
       <RoomList
         rooms={rooms}
         editRoom={(room: Room) => {
-          setRoomForm({...room});
+          setRoomForm({ ...room });
         }}
         deleteRoom={(id: string) => deleteRoom({ id })}
       ></RoomList>

@@ -1,8 +1,8 @@
 // tslint:disable
 // this is an auto generated file. This will be overwritten
 
-export const onCreateGame = `subscription OnCreateGame {
-  onCreateGame {
+export const onCreateGame = `subscription OnCreateGame($owner: String!) {
+  onCreateGame(owner: $owner) {
     id
     name
     type
@@ -10,6 +10,7 @@ export const onCreateGame = `subscription OnCreateGame {
     dm
     paused
     active
+    lastAction
     initiative
     rooms {
       items {
@@ -32,6 +33,7 @@ export const onCreateGame = `subscription OnCreateGame {
           height
           width
         }
+        owner
       }
       nextToken
     }
@@ -46,6 +48,7 @@ export const onCreateGame = `subscription OnCreateGame {
         open
         locked
         northSouth
+        owner
       }
       nextToken
     }
@@ -61,6 +64,7 @@ export const onCreateGame = `subscription OnCreateGame {
         }
         height
         width
+        owner
       }
       nextToken
     }
@@ -86,6 +90,8 @@ export const onCreateGame = `subscription OnCreateGame {
         }
         vision
         actionUsed
+        revealed
+        owner
       }
       nextToken
     }
@@ -99,23 +105,11 @@ export const onCreateGame = `subscription OnCreateGame {
           x
           y
         }
+        owner
       }
       nextToken
     }
-    history {
-      items {
-        id
-        gameID
-        datetime
-        character
-        action
-        location {
-          x
-          y
-        }
-      }
-      nextToken
-    }
+    owner
   }
 }
 `;
@@ -128,6 +122,7 @@ export const onUpdateGame = `subscription OnUpdateGame {
     dm
     paused
     active
+    lastAction
     initiative
     rooms {
       items {
@@ -150,6 +145,7 @@ export const onUpdateGame = `subscription OnUpdateGame {
           height
           width
         }
+        owner
       }
       nextToken
     }
@@ -164,6 +160,7 @@ export const onUpdateGame = `subscription OnUpdateGame {
         open
         locked
         northSouth
+        owner
       }
       nextToken
     }
@@ -179,6 +176,7 @@ export const onUpdateGame = `subscription OnUpdateGame {
         }
         height
         width
+        owner
       }
       nextToken
     }
@@ -204,6 +202,8 @@ export const onUpdateGame = `subscription OnUpdateGame {
         }
         vision
         actionUsed
+        revealed
+        owner
       }
       nextToken
     }
@@ -217,28 +217,16 @@ export const onUpdateGame = `subscription OnUpdateGame {
           x
           y
         }
+        owner
       }
       nextToken
     }
-    history {
-      items {
-        id
-        gameID
-        datetime
-        character
-        action
-        location {
-          x
-          y
-        }
-      }
-      nextToken
-    }
+    owner
   }
 }
 `;
-export const onDeleteGame = `subscription OnDeleteGame {
-  onDeleteGame {
+export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
+  onDeleteGame(owner: $owner) {
     id
     name
     type
@@ -246,6 +234,7 @@ export const onDeleteGame = `subscription OnDeleteGame {
     dm
     paused
     active
+    lastAction
     initiative
     rooms {
       items {
@@ -268,6 +257,7 @@ export const onDeleteGame = `subscription OnDeleteGame {
           height
           width
         }
+        owner
       }
       nextToken
     }
@@ -282,6 +272,7 @@ export const onDeleteGame = `subscription OnDeleteGame {
         open
         locked
         northSouth
+        owner
       }
       nextToken
     }
@@ -297,6 +288,7 @@ export const onDeleteGame = `subscription OnDeleteGame {
         }
         height
         width
+        owner
       }
       nextToken
     }
@@ -322,6 +314,8 @@ export const onDeleteGame = `subscription OnDeleteGame {
         }
         vision
         actionUsed
+        revealed
+        owner
       }
       nextToken
     }
@@ -335,28 +329,16 @@ export const onDeleteGame = `subscription OnDeleteGame {
           x
           y
         }
+        owner
       }
       nextToken
     }
-    history {
-      items {
-        id
-        gameID
-        datetime
-        character
-        action
-        location {
-          x
-          y
-        }
-      }
-      nextToken
-    }
+    owner
   }
 }
 `;
-export const onCreateGameRoom = `subscription OnCreateGameRoom {
-  onCreateGameRoom {
+export const onCreateGameRoom = `subscription OnCreateGameRoom($owner: String!) {
+  onCreateGameRoom(owner: $owner) {
     id
     gameID
     name
@@ -376,11 +358,12 @@ export const onCreateGameRoom = `subscription OnCreateGameRoom {
       height
       width
     }
+    owner
   }
 }
 `;
-export const onUpdateGameRoom = `subscription OnUpdateGameRoom {
-  onUpdateGameRoom {
+export const onUpdateGameRoom = `subscription OnUpdateGameRoom($owner: String!) {
+  onUpdateGameRoom(owner: $owner) {
     id
     gameID
     name
@@ -400,11 +383,12 @@ export const onUpdateGameRoom = `subscription OnUpdateGameRoom {
       height
       width
     }
+    owner
   }
 }
 `;
-export const onDeleteGameRoom = `subscription OnDeleteGameRoom {
-  onDeleteGameRoom {
+export const onDeleteGameRoom = `subscription OnDeleteGameRoom($owner: String!) {
+  onDeleteGameRoom(owner: $owner) {
     id
     gameID
     name
@@ -424,11 +408,12 @@ export const onDeleteGameRoom = `subscription OnDeleteGameRoom {
       height
       width
     }
+    owner
   }
 }
 `;
-export const onCreateGameDoor = `subscription OnCreateGameDoor {
-  onCreateGameDoor {
+export const onCreateGameDoor = `subscription OnCreateGameDoor($owner: String!) {
+  onCreateGameDoor(owner: $owner) {
     id
     gameID
     origin {
@@ -438,6 +423,7 @@ export const onCreateGameDoor = `subscription OnCreateGameDoor {
     open
     locked
     northSouth
+    owner
   }
 }
 `;
@@ -452,11 +438,12 @@ export const onUpdateGameDoor = `subscription OnUpdateGameDoor {
     open
     locked
     northSouth
+    owner
   }
 }
 `;
-export const onDeleteGameDoor = `subscription OnDeleteGameDoor {
-  onDeleteGameDoor {
+export const onDeleteGameDoor = `subscription OnDeleteGameDoor($owner: String!) {
+  onDeleteGameDoor(owner: $owner) {
     id
     gameID
     origin {
@@ -466,53 +453,12 @@ export const onDeleteGameDoor = `subscription OnDeleteGameDoor {
     open
     locked
     northSouth
+    owner
   }
 }
 `;
-export const onCreateGameHistory = `subscription OnCreateGameHistory {
-  onCreateGameHistory {
-    id
-    gameID
-    datetime
-    character
-    action
-    location {
-      x
-      y
-    }
-  }
-}
-`;
-export const onUpdateGameHistory = `subscription OnUpdateGameHistory {
-  onUpdateGameHistory {
-    id
-    gameID
-    datetime
-    character
-    action
-    location {
-      x
-      y
-    }
-  }
-}
-`;
-export const onDeleteGameHistory = `subscription OnDeleteGameHistory {
-  onDeleteGameHistory {
-    id
-    gameID
-    datetime
-    character
-    action
-    location {
-      x
-      y
-    }
-  }
-}
-`;
-export const onCreateGameCharacter = `subscription OnCreateGameCharacter {
-  onCreateGameCharacter {
+export const onCreateGameCharacter = `subscription OnCreateGameCharacter($owner: String!) {
+  onCreateGameCharacter(owner: $owner) {
     id
     gameID
     name
@@ -533,6 +479,8 @@ export const onCreateGameCharacter = `subscription OnCreateGameCharacter {
     }
     vision
     actionUsed
+    revealed
+    owner
   }
 }
 `;
@@ -558,11 +506,13 @@ export const onUpdateGameCharacter = `subscription OnUpdateGameCharacter {
     }
     vision
     actionUsed
+    revealed
+    owner
   }
 }
 `;
-export const onDeleteGameCharacter = `subscription OnDeleteGameCharacter {
-  onDeleteGameCharacter {
+export const onDeleteGameCharacter = `subscription OnDeleteGameCharacter($owner: String!) {
+  onDeleteGameCharacter(owner: $owner) {
     id
     gameID
     name
@@ -583,11 +533,13 @@ export const onDeleteGameCharacter = `subscription OnDeleteGameCharacter {
     }
     vision
     actionUsed
+    revealed
+    owner
   }
 }
 `;
-export const onCreateGameItem = `subscription OnCreateGameItem {
-  onCreateGameItem {
+export const onCreateGameItem = `subscription OnCreateGameItem($owner: String!) {
+  onCreateGameItem(owner: $owner) {
     id
     gameID
     name
@@ -596,6 +548,7 @@ export const onCreateGameItem = `subscription OnCreateGameItem {
       x
       y
     }
+    owner
   }
 }
 `;
@@ -609,11 +562,12 @@ export const onUpdateGameItem = `subscription OnUpdateGameItem {
       x
       y
     }
+    owner
   }
 }
 `;
-export const onDeleteGameItem = `subscription OnDeleteGameItem {
-  onDeleteGameItem {
+export const onDeleteGameItem = `subscription OnDeleteGameItem($owner: String!) {
+  onDeleteGameItem(owner: $owner) {
     id
     gameID
     name
@@ -622,11 +576,12 @@ export const onDeleteGameItem = `subscription OnDeleteGameItem {
       x
       y
     }
+    owner
   }
 }
 `;
-export const onCreateGameArea = `subscription OnCreateGameArea {
-  onCreateGameArea {
+export const onCreateGameArea = `subscription OnCreateGameArea($owner: String!) {
+  onCreateGameArea(owner: $owner) {
     id
     gameID
     name
@@ -637,11 +592,12 @@ export const onCreateGameArea = `subscription OnCreateGameArea {
     }
     height
     width
+    owner
   }
 }
 `;
-export const onUpdateGameArea = `subscription OnUpdateGameArea {
-  onUpdateGameArea {
+export const onUpdateGameArea = `subscription OnUpdateGameArea($owner: String!) {
+  onUpdateGameArea(owner: $owner) {
     id
     gameID
     name
@@ -652,11 +608,12 @@ export const onUpdateGameArea = `subscription OnUpdateGameArea {
     }
     height
     width
+    owner
   }
 }
 `;
-export const onDeleteGameArea = `subscription OnDeleteGameArea {
-  onDeleteGameArea {
+export const onDeleteGameArea = `subscription OnDeleteGameArea($owner: String!) {
+  onDeleteGameArea(owner: $owner) {
     id
     gameID
     name
@@ -667,6 +624,7 @@ export const onDeleteGameArea = `subscription OnDeleteGameArea {
     }
     height
     width
+    owner
   }
 }
 `;

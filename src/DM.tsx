@@ -8,7 +8,9 @@ import { Room } from "./Room";
 import { Door } from "./Door";
 import DMSection from "./DM/DMSection";
 import { updateGame as updateGameMutation } from "./graphql/mutations";
-import { onUpdateGame } from "./graphql/subscriptions";
+import {
+  onUpdateGame,
+} from "./graphql/subscriptions";
 import Observable from "zen-observable";
 
 export interface DMOptions {
@@ -42,21 +44,15 @@ function DM({ user }: { user: any }) {
     characters: characters,
   });
 
-  useEffect(() => {
-    onPageRendered();
-  }, []);
-
-  const onPageRendered = async () => {
-    subscribeGame();
-  };
-
   const subscribeGame = async () => {
-    const subscription = await (API.graphql(graphqlOperation(onUpdateGame, { input: { id: gameId }})));
+    const subscription = await API.graphql(
+      graphqlOperation(onUpdateGame, { input: { id: gameId } })
+    );
     if (subscription instanceof Observable) {
       subscription.subscribe({
         next: (apiData) => {
-          console.log('===========HERE============')
           const apiGame = (apiData as any).value.data.onUpdateGame;
+          console.log(apiGame);
           if (apiGame.id === gameId) {
             restoreGame(apiGame);
           }
@@ -67,7 +63,8 @@ function DM({ user }: { user: any }) {
 
   useEffect(() => {
     if (user) {
-      fetchGame(user.username);
+      fetchGame();
+      subscribeGame();
     }
   }, [user]);
 
@@ -83,6 +80,7 @@ function DM({ user }: { user: any }) {
 
   const restoreGame = (apiGame: any) => {
     if (apiGame) {
+      console.log(apiGame);
       setGame(apiGame);
       setCharacters(
         apiGame.characters.items.map(
@@ -98,13 +96,16 @@ function DM({ user }: { user: any }) {
     }
   };
 
-  async function fetchGame(owner: string) {
-    const apiData = await API.graphql({
-      query: getGame,
-      variables: { id: gameId, owner },
-    });
-    const apiGame = (apiData as any).data.getGame;
-    restoreGame(apiGame);
+  const fetchGame = async () => {
+    const owner = user.username;
+    if (owner) {
+      const apiData = await API.graphql({
+        query: getGame,
+        variables: { id: gameId, owner },
+      });
+      const apiGame = (apiData as any).data.getGame;
+      restoreGame(apiGame);
+    }
   }
 
   const addToInitiative = async (characterId: string) => {
@@ -152,7 +153,9 @@ function DM({ user }: { user: any }) {
               {sections
                 .filter((section) => section !== options.columnTwo)
                 .map((section) => (
-                  <option value={section}>{section}</option>
+                  <option value={section} key={`col-one-${section}`}>
+                    {section}
+                  </option>
                 ))}
             </select>
           </div>
@@ -177,7 +180,9 @@ function DM({ user }: { user: any }) {
               {sections
                 .filter((section) => section !== options.columnOne)
                 .map((section) => (
-                  <option value={section}>{section}</option>
+                  <option value={section} key={`col-two-${section}`}>
+                    {section}
+                  </option>
                 ))}
             </select>
           </div>
@@ -231,6 +236,7 @@ function DM({ user }: { user: any }) {
             doors={doors}
             characters={characters}
             addToInitiative={(id: string) => addToInitiative(id)}
+            fetchGame={fetchGame}
           ></DMSection>
         </div>
         <div className="flex-auto">
@@ -242,6 +248,7 @@ function DM({ user }: { user: any }) {
             doors={doors}
             characters={characters}
             addToInitiative={(id: string) => addToInitiative(id)}
+            fetchGame={fetchGame}
           ></DMSection>
         </div>
       </div>
@@ -251,6 +258,8 @@ function DM({ user }: { user: any }) {
         doors={doors}
         showPoints={options.showPoints}
         tracker={tracker}
+        paused={game.paused}
+        user={user?.username}
       ></Game>
     </div>
   );

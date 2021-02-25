@@ -13,6 +13,7 @@ import { useParams } from "react-router-dom";
 import {
   updateGame as updateGameMutation,
   updateGameCharacter as updateGameCharacterMutation,
+  updateGameDoor as updateGameDoorMutation,
 } from "./graphql/mutations";
 import { API } from "aws-amplify";
 
@@ -57,8 +58,6 @@ const emptyAction = {
   action: "",
   location: { x: -1, y: -1 },
 };
-
-const characterProps: CharacterProps[] = [];
 
 const calculateSightMap = (board: string[][], doors: Door[]) => {
   return board.map((row, y) =>
@@ -109,11 +108,15 @@ function Game({
   doors: serverDoors,
   tracker: serverTracker,
   showPoints,
+  paused,
+  user,
 }: {
   dm?: boolean;
   rooms: Room[];
   doors: Door[];
   tracker: CharacterTracker;
+  paused: boolean;
+  user: string;
   showPoints?: boolean;
 }) {
   const { gameId, characterId } = useParams<{
@@ -123,8 +126,8 @@ function Game({
   const [doors, setDoors] = useState(serverDoors);
 
   const emptyBoard = generateBoard({ rooms });
-  const initialSightMap = calculateSightMap(emptyBoard, doors);
-  const initialMoveMap = calculateMoveMap(emptyBoard, doors);
+  const initialSightMap = calculateSightMap(emptyBoard, []);
+  const initialMoveMap = calculateMoveMap(emptyBoard, []);
   const initialMaps = {
     board: emptyBoard,
     sight: initialSightMap,
@@ -135,7 +138,7 @@ function Game({
   const [tracker, setTracker] = useState<CharacterTracker>(serverTracker);
 
   const updateSpeedAndVision = async () => {
-    console.log('updating speed and vision');
+    console.log("updating speed and vision");
     const updatedTracker: CharacterTracker = {
       ...tracker,
       characters: [],
@@ -146,7 +149,22 @@ function Game({
       characterInd++
     ) {
       const character = tracker.characters[characterInd];
+      const oldRevealed = [...Array.from(character.revealed)];
       await character.processVision(maps.sight);
+      if (character.id === characterId) {
+        const newRevealed = [...Array.from(character.revealed)];
+        if (newRevealed.filter((rev) => !oldRevealed.includes(rev)).length > 0) {
+          await API.graphql({
+            query: updateGameCharacterMutation,
+            variables: {
+              input: {
+                id: characterId,
+                revealed: newRevealed
+              },
+            },
+          });
+        }
+      }
       await character.recursiveMovement(maps.move, character.location, 0);
       updatedTracker.characters.push(character);
     }
@@ -154,7 +172,7 @@ function Game({
   };
 
   useEffect(() => {
-    console.log('maps');
+    console.log("maps");
     const updatedMaps = {
       board: generateBoard({ rooms }),
       sight: [],
@@ -164,9 +182,8 @@ function Game({
   }, [rooms]);
 
   useEffect(() => {
-    console.log('doors');
+    console.log("doors");
     setDoors(serverDoors);
-
   }, [serverDoors]);
 
   useEffect(() => {
@@ -175,6 +192,7 @@ function Game({
   }, [serverTracker]);
 
   useEffect(() => {
+    console.log("speed and vision");
     updateSpeedAndVision();
   }, [maps]);
 
@@ -195,6 +213,18 @@ function Game({
     ...emptyAction,
     action: "init",
   });
+
+  const bumpAction = () => {
+    API.graphql({
+      query: updateGameMutation,
+      variables: {
+        input: {
+          id: gameId,
+          lastAction: `${Date.now()}`,
+        },
+      },
+    });
+  };
 
   useLayoutEffect(() => {
     const nextCharacter = async (characters: Character[]) => {
@@ -226,22 +256,22 @@ function Game({
       characters[characterInd] = refreshedCharacter;
       setCharacterAction({ ...emptyAction });
       await API.graphql({
-        query: updateGameMutation,
-        variables: {
-          input: {
-            id: gameId,
-            paused: true,
-            active: refreshedCharacter.id,
-          },
-        },
-      });
-      await API.graphql({
         query: updateGameCharacterMutation,
         variables: {
           input: {
             id: refreshedCharacter.id,
             actionUsed: refreshedCharacter.actionUsed,
             speed: refreshedCharacter.speed,
+          },
+        },
+      });
+      await API.graphql({
+        query: updateGameMutation,
+        variables: {
+          input: {
+            id: gameId,
+            paused: true,
+            active: refreshedCharacter.id,
           },
         },
       });
@@ -286,17 +316,15 @@ function Game({
           !refreshedCharacter.actionUsed
         ) {
           setCharacterAction({ ...emptyAction });
-          setTracker({
-            ...tracker,
-            characters: [...tracker.characters],
-          });
+          bumpAction();
         } else {
           await nextCharacter(tracker.characters);
         }
       }
     };
 
-    const openDoor = (doorLoc: Location, destroy: boolean) => {
+    const toggleDoor = async (doorLoc: Location, open: boolean) => {
+      const character = getActiveCharacter(tracker);
       const doorInd = doors.findIndex((door) => {
         return (
           door.getDoors().filter((specificDoor) => {
@@ -307,60 +335,27 @@ function Game({
           }).length !== 0
         );
       });
-      const updatedDoors = [...doors];
-      if (doorInd !== -1) {
-        updatedDoors[doorInd] = new Door({
-          ...doors[doorInd],
-          open: true,
-          locked: false,
-        });
-        setDoors(updatedDoors);
-      }
-    };
-
-    const closeDoor = (doorLoc: Location) => {
-      const doorInd = doors.findIndex((door) => {
-        return (
-          door.getDoors().filter((specificDoor) => {
-            return (
-              specificDoor.location.x === doorLoc.x &&
-              specificDoor.location.y === doorLoc.y
-            );
-          }).length !== 0
-        );
-      });
-      const updatedDoors = [...doors];
-      if (doorInd !== -1) {
-        updatedDoors[doorInd] = new Door({
-          ...doors[doorInd],
-          open: false,
-        });
-        setDoors(updatedDoors);
-      }
-    };
-
-    const usedAction = () => {
-      const activeCharacter = getActiveCharacter(tracker);
-      if (activeCharacter) {
-        setCharacterAction(emptyAction);
-        if (activeCharacter.speed.current <= 0) {
-          nextCharacter(tracker.characters);
-        } else {
-          const refreshedCharacter = new Character({
-            ...activeCharacter,
-            actionUsed: true,
-          });
-          const characterInd = tracker.characters.findIndex(
-            (trackerCharacter) => trackerCharacter.id === refreshedCharacter.id
-          );
-          tracker.characters[characterInd] = refreshedCharacter;
-          setTracker({
-            ...tracker,
-            characters: {
-              ...tracker.characters,
+      if (character && doorInd !== -1) {
+        const door = doors[doorInd];
+        await API.graphql({
+          query: updateGameDoorMutation,
+          variables: {
+            input: {
+              id: door.id,
+              open,
             },
-          });
-        }
+          },
+        });
+        await API.graphql({
+          query: updateGameCharacterMutation,
+          variables: {
+            input: {
+              id: character.id,
+              actionUsed: true,
+            },
+          },
+        });
+        bumpAction();
       }
     };
 
@@ -387,9 +382,17 @@ function Game({
           (trackerCharacter) => trackerCharacter.id === refreshedCharacter.id
         );
         updatedTracker.characters[characterInd] = refreshedCharacter;
-
-        setCharacterAction(emptyAction);
-        setTracker(updatedTracker);
+        await API.graphql({
+          query: updateGameCharacterMutation,
+          variables: {
+            input: {
+              id: refreshedCharacter.id,
+              actionUsed: true,
+              speed: refreshedCharacter.speed,
+            },
+          },
+        });
+        bumpAction();
       }
     };
 
@@ -404,20 +407,14 @@ function Game({
           moveCharacter(characterAction.location);
         }
         break;
-      case "unlock":
       case "open":
         if (characterAction.location) {
-          openDoor(characterAction.location, false);
-        }
-        break;
-      case "break":
-        if (characterAction.location) {
-          openDoor(characterAction.location, false);
+          toggleDoor(characterAction.location, true);
         }
         break;
       case "close":
         if (characterAction.location) {
-          closeDoor(characterAction.location);
+          toggleDoor(characterAction.location, false);
         }
         break;
       case "dash":
@@ -490,40 +487,58 @@ function Game({
           </div>
           {characterToView && activeCharacter ? (
             <div className="flex-none w-full md:max-w-xs">
-              {characterToView && characterToView.id === activeCharacter.id ? (
-                [
-                  { name: "End Turn", type: "end", color: "red" },
-                  { name: "Dash", type: "dash", color: "blue" },
-                  ...(activeCharacter.selectedTile?.actions || []),
-                ].map((action: Action) => (
-                  <button
-                    key={action.type}
-                    className={`h-10 px-5 m-2 font-bold text-lg text-${action.color}-100 transition-colors duration-150 bg-${action.color}-700 rounded-lg focus:shadow-outline hover:bg-${action.color}-800`}
-                    onClick={() => {
-                      setCharacterAction({
-                        character: activeCharacter.id,
-                        action: action.type,
-                        location: activeCharacter.selectedTile?.location,
-                      });
-                    }}
-                  >
-                    {action.name}
-                  </button>
-                ))
+              {!paused || dm ? (
+                <div>
+                  {characterToView &&
+                  characterToView.id === activeCharacter.id ? (
+                    [
+                      { name: "End Turn", type: "end", color: "red" },
+                      { name: "Dash", type: "dash", color: "blue" },
+                      ...(activeCharacter.selectedTile?.actions || []),
+                    ].map((action: Action) => (
+                      <button
+                        key={action.type}
+                        className={`h-10 px-5 m-2 font-bold text-lg text-${action.color}-100 transition-colors duration-150 bg-${action.color}-700 rounded-lg focus:shadow-outline hover:bg-${action.color}-800`}
+                        onClick={() => {
+                          setCharacterAction({
+                            character: activeCharacter.id,
+                            action: action.type,
+                            location: activeCharacter.selectedTile?.location,
+                          });
+                        }}
+                      >
+                        {action.name}
+                      </button>
+                    ))
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  Waiting for DM... Next Active Player is{" "}
+                  {(getActiveCharacter(tracker) || {}).id === characterId
+                    ? "YOU!"
+                    : (getActiveCharacter(tracker) || {}).name}.
+                </div>
+              )}
+              {dm ? (
+                <div>
+                  <pre>{`${JSON.stringify(
+                    activeCharacter && activeCharacter.selectedTile,
+                    null,
+                    2
+                  )}`}</pre>
+                  <pre>{`${JSON.stringify(
+                    activeCharacter && activeCharacter.getStats(),
+                    null,
+                    2
+                  )}`}</pre>
+                  <pre>{`${JSON.stringify(tracker, null, 2)}`}</pre>
+                </div>
               ) : (
                 <></>
               )}
-              <pre>{`${JSON.stringify(
-                activeCharacter && activeCharacter.selectedTile,
-                null,
-                2
-              )}`}</pre>
-              <pre>{`${JSON.stringify(
-                activeCharacter && activeCharacter.getStats(),
-                null,
-                2
-              )}`}</pre>
-              <pre>{`${JSON.stringify(tracker, null, 2)}`}</pre>
             </div>
           ) : (
             <></>

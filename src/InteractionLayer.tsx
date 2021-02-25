@@ -132,13 +132,6 @@ function InteractionLayer({
           color: "green",
         });
       }
-      if (!door.open && door.locked && characterRange <= 5) {
-        actions.push({
-          name: "Unlock Door",
-          type: "unlock",
-          color: "yellow",
-        });
-      }
       board[specificDoor.location.y].props.children[specificDoor.location.x] = (
         <div key={hashLocation(specificDoor.location)} className="flex-item">
           <Tile
