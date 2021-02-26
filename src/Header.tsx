@@ -1,8 +1,9 @@
 import { AuthState } from "@aws-amplify/ui-components";
 import { AmplifySignOut } from "@aws-amplify/ui-react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 function Header({ authState, email }: {authState: AuthState, email?: string}) {
+  const { push } = useHistory();
   const active =
     "bg-gray-900 text-white px-3 py-2 rounded-md text-sm font-medium";
   const inactive =
@@ -20,9 +21,6 @@ function Header({ authState, email }: {authState: AuthState, email?: string}) {
                 <Link to="/" className={inactive}>
                   Home
                 </Link>
-                <Link to="/public" className={inactive}>
-                  Public Games
-                </Link>
                 <Link to="/games" className={inactive}>
                   My Games
                 </Link>
@@ -34,7 +32,7 @@ function Header({ authState, email }: {authState: AuthState, email?: string}) {
           </div>
           <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
             {email ? <div className={inactive}>Hello, {email}</div> : <></>}
-            <AmplifySignOut></AmplifySignOut>
+            { authState === 'signin' || authState === 'signedout' ? <button onClick={() => { push('/login'); }}>Login</button> : <AmplifySignOut></AmplifySignOut>}
           </div>
         </div>
       </div>

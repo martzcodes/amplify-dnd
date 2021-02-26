@@ -1,8 +1,8 @@
 {
-    "identityPoolName": "amplifydnd340bc422_identitypool_340bc422",
-    "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "amplif340bc422",
-    "userPoolName": "amplifydnd340bc422_userpool_340bc422",
+    "identityPoolName": "amplify_dnd66d9b288_identitypool_66d9b288",
+    "allowUnauthenticatedIdentities": true,
+    "resourceNameTruncated": "amplif66d9b288",
+    "userPoolName": "amplify_dnd66d9b288_userpool_66d9b288",
     "autoVerifiedAttributes": [
         "email"
     ],
@@ -12,7 +12,7 @@
     ],
     "smsAuthenticationMessage": "Your authentication code is {####}",
     "smsVerificationMessage": "Your verification code is {####}",
-    "emailVerificationSubject": "Your verification code",
+    "emailVerificationSubject": "Amplify-DND Verification Code",
     "emailVerificationMessage": "Your verification code is {####}",
     "defaultPasswordPolicy": false,
     "passwordPolicyMinLength": 8,
@@ -28,10 +28,20 @@
     "userpoolClientReadAttributes": [
         "email"
     ],
-    "userpoolClientLambdaRole": "amplif340bc422_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "amplif66d9b288_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "resourceName": "amplifydnd340bc422",
+    "useDefault": "manual",
     "authSelections": "identityPoolAndUserPool",
+    "resourceName": "amplifydnd66d9b28866d9b288",
+    "thirdPartyAuth": false,
+    "usernameAttributes": [
+        "email"
+    ],
+    "userPoolGroups": false,
+    "adminQueries": false,
+    "triggers": "{}",
+    "hostedUI": false,
+    "userPoolGroupList": [],
     "authRoleArn": {
         "Fn::GetAtt": [
             "AuthRole",
@@ -44,10 +54,9 @@
             "Arn"
         ]
     },
-    "useDefault": "default",
-    "usernameAttributes": [
-        "email"
-    ],
-    "userPoolGroupList": [],
+    "parentStack": {
+        "Ref": "AWS::StackId"
+    },
+    "permissions": [],
     "dependsOn": []
 }

@@ -35,27 +35,7 @@ function CharacterForm({
                 })
               }
               value={characterFormData.name}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-            />
-          </div>
-          <div className="col-span-6">
-            <label
-              htmlFor="player_email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Player Email
-            </label>
-            <input
-              type="text"
-              name="player_email"
-              onChange={(e) =>
-                setCharacterFormData({
-                  ...characterFormData,
-                  email: e.target.value,
-                })
-              }
-              value={characterFormData.email}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
           <div className="col-span-6">
@@ -75,7 +55,7 @@ function CharacterForm({
                 })
               }
               value={characterFormData.perception}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
           <div className="col-span-3">
@@ -98,7 +78,7 @@ function CharacterForm({
                 })
               }
               value={characterFormData.location.x}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
           <div className="col-span-3">
@@ -121,7 +101,7 @@ function CharacterForm({
                 })
               }
               value={characterFormData.location.y}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
           <div className="col-span-3">
@@ -144,7 +124,7 @@ function CharacterForm({
                 })
               }
               value={characterFormData.hp.current}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
           <div className="col-span-3">
@@ -167,7 +147,7 @@ function CharacterForm({
                 })
               }
               value={characterFormData.hp.max}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
           <div className="col-span-3">
@@ -190,7 +170,7 @@ function CharacterForm({
                 })
               }
               value={characterFormData.speed.current}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
           <div className="col-span-3">
@@ -213,7 +193,7 @@ function CharacterForm({
                 })
               }
               value={characterFormData.speed.max}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
           <div className="col-span-6">
@@ -233,7 +213,7 @@ function CharacterForm({
                 })
               }
               value={characterFormData.vision}
-              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
           <div className="col-span-3">
@@ -262,7 +242,9 @@ function CharacterForm({
                 "bg-green-500",
                 "bg-pink-500",
               ].map((color) => (
-                <option value={color} key={color}>{color}</option>
+                <option value={color} key={color}>
+                  {color}
+                </option>
               ))}
             </select>
           </div>

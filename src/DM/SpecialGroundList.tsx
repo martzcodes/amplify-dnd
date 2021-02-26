@@ -41,11 +41,11 @@ function SpecialGroundList({
               </th>
 
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Dimensions
+                Origin
               </th>
 
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Origin
+                Dimensions
               </th>
 
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -75,10 +75,64 @@ function SpecialGroundList({
                   </select>
                 </td>
                 <td className="px-2 py-4 whitespace-nowrap">
-                  {groundType.width} x {groundType.height}
+                  (
+                  <input
+                    type="text"
+                    name="x"
+                    onChange={(e) => {
+                      const updatedGrounds = [...groundTypes];
+                      (updatedGrounds[ind] as any).origin.x = Number(
+                        e.target.value
+                      );
+                      updateRoomGroundTypes(updatedGrounds);
+                    }}
+                    value={groundType.origin.x}
+                    className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-16"
+                  />
+                  ,{" "}
+                  <input
+                    type="text"
+                    name="y"
+                    onChange={(e) => {
+                      const updatedGrounds = [...groundTypes];
+                      (updatedGrounds[ind] as any).origin.y = Number(
+                        e.target.value
+                      );
+                      updateRoomGroundTypes(updatedGrounds);
+                    }}
+                    value={groundType.origin.y}
+                    className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-16"
+                  />
+                  )
                 </td>
                 <td className="px-2 py-4 whitespace-nowrap">
-                  ({groundType.origin.x}, {groundType.origin.y})
+                  <input
+                    type="text"
+                    name="width"
+                    onChange={(e) => {
+                      const updatedGrounds = [...groundTypes];
+                      (updatedGrounds[ind] as any).width = Number(
+                        e.target.value
+                      );
+                      updateRoomGroundTypes(updatedGrounds);
+                    }}
+                    value={groundType.width}
+                    className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-16"
+                  />
+                  x{" "}
+                  <input
+                    type="text"
+                    name="height"
+                    onChange={(e) => {
+                      const updatedGrounds = [...groundTypes];
+                      (updatedGrounds[ind] as any).height = Number(
+                        e.target.value
+                      );
+                      updateRoomGroundTypes(updatedGrounds);
+                    }}
+                    value={groundType.height}
+                    className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-16"
+                  />
                 </td>
 
                 <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">

@@ -8,9 +8,7 @@ import { Room } from "./Room";
 import { Door } from "./Door";
 import DMSection from "./DM/DMSection";
 import { updateGame as updateGameMutation } from "./graphql/mutations";
-import {
-  onUpdateGame,
-} from "./graphql/subscriptions";
+import { onUpdateGame } from "./graphql/subscriptions";
 import Observable from "zen-observable";
 
 export interface DMOptions {
@@ -82,17 +80,23 @@ function DM({ user }: { user: any }) {
     if (apiGame) {
       console.log(apiGame);
       setGame(apiGame);
-      setCharacters(
-        apiGame.characters.items.map(
-          (characterProps: CharacterProps) => new Character(characterProps)
-        )
-      );
-      setRooms(
-        apiGame.rooms.items.map((roomProps: any) => new Room(roomProps))
-      );
-      setDoors(
-        apiGame.doors.items.map((doorProps: any) => new Door(doorProps))
-      );
+      if (apiGame.characters && apiGame.characters.items) {
+        setCharacters(
+          apiGame.characters.items.map(
+            (characterProps: CharacterProps) => new Character(characterProps)
+          )
+        );
+      }
+      if (apiGame.rooms && apiGame.rooms.items) {
+        setRooms(
+          apiGame.rooms.items.map((roomProps: any) => new Room(roomProps))
+        );
+      }
+      if (apiGame.doors && apiGame.doors.items) {
+        setDoors(
+          apiGame.doors.items.map((doorProps: any) => new Door(doorProps))
+        );
+      }
     }
   };
 
@@ -106,9 +110,12 @@ function DM({ user }: { user: any }) {
       const apiGame = (apiData as any).data.getGame;
       restoreGame(apiGame);
     }
-  }
+  };
 
   const addToInitiative = async (characterId: string) => {
+    if (!game.initiative) {
+      game.initiative = [];
+    }
     if (
       (game.initiative || []).findIndex(
         (initId: string) => initId === characterId

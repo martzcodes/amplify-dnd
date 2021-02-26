@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { API } from "aws-amplify";
-import { deleteGame as deleteGameMutation } from "./graphql/mutations";
+import { API, graphqlOperation } from "aws-amplify";
 import { listPublicGames } from "./customQueries";
 import GamesList from "./GamesList";
 import { Character, CharacterProps } from "./Character";
@@ -15,21 +14,26 @@ function PublicGames({ user }: { user: any }) {
     fetchPublicGames();
   }, [user]);
 
-  async function fetchPublicGames() {
-    const apiData = await API.graphql({
-      query: listPublicGames,
-      variables: { type: "PUBLIC" },
-    });
-    const games = (apiData as any).data.listGames.items.map((game: any) => {
-      return {
-        ...game,
-        characters: game.characters.items.map(
-          (character: CharacterProps) => new Character(character)
-        ),
-      };
-    });
-    setGames(games);
-  }
+  const fetchPublicGames = async () => {
+    try {
+      const apiData = await API.graphql(
+        graphqlOperation(listPublicGames, {
+          filter: { type: { eq: "PUBLIC" } },
+        })
+      );
+      const games = (apiData as any).data.listGames.items.map((game: any) => {
+        return {
+          ...game,
+          characters: game.characters.items.map(
+            (character: CharacterProps) => new Character(character)
+          ),
+        };
+      });
+      setGames(games);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const viewCharacters = async (game: GameProps) => {
     setGame(game);
@@ -41,9 +45,7 @@ function PublicGames({ user }: { user: any }) {
         <GamesList
           games={games}
           deleteGame={(id: string) => {}}
-          viewCharacters={(game: GameProps) =>
-            viewCharacters(game)
-          }
+          viewCharacters={(game: GameProps) => viewCharacters(game)}
           user={(user || {}).username}
         ></GamesList>
       </div>

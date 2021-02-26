@@ -21,8 +21,8 @@ const characterInitiative = (
   characters: Character[],
   initiative: string[] = []
 ): Character[] => {
-  return initiative
-    .reduce((init, id) => {
+  if (initiative) {
+    return initiative.reduce((init, id) => {
       const character = characters.find((character) => character.id === id);
       if (character) {
         return [...init, character];
@@ -30,6 +30,8 @@ const characterInitiative = (
       console.log(init);
       return init;
     }, [] as Character[]);
+  }
+  return [];
 };
 
 function GameEditor({
@@ -83,7 +85,7 @@ function GameEditor({
               setGameFormData({ ...gameFormData, name: e.target.value })
             }
             value={gameFormData.name}
-            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
         <div className="col-span-6">
@@ -136,7 +138,7 @@ function GameEditor({
             }}
             value={gameFormData.active}
           >
-            {characterInitiative(characters, gameFormData.initiative).map(
+            {characterInitiative(characters, gameFormData.initiative || []).map(
               (character) => (
                 <option value={character.id} key={character.id}>
                   {character.name}

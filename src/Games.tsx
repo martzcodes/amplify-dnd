@@ -6,6 +6,7 @@ import GamesList from "./GamesList";
 import GameCharacterList from "./GameCharacterList";
 import { Character, CharacterProps } from "./Character";
 import { GameProps } from "./DM/GameEditor";
+import CreateGame from "./CreateGame";
 
 function Games({ user }: { user: any }) {
   const [games, setGames] = useState<any>([]);
@@ -42,20 +43,23 @@ function Games({ user }: { user: any }) {
   }
 
   return (
-    <div className="flex">
-      <div className="flex-auto">
-        <GamesList
-          games={games}
-          deleteGame={(id: string) => {
-            deleteGame({ id });
-          }}
-          viewCharacters={(game: GameProps) => viewCharacters(game)}
-          user={user.username || ""}
-        ></GamesList>
+    <div>
+      <div className="flex">
+        <div className="flex-auto">
+          <GamesList
+            games={games}
+            deleteGame={(id: string) => {
+              deleteGame({ id });
+            }}
+            viewCharacters={(game: GameProps) => viewCharacters(game)}
+            user={user.username || ""}
+          ></GamesList>
+        </div>
+        <div className="flex-auto">
+          {game ? <GameCharacterList game={game}></GameCharacterList> : <></>}
+        </div>
       </div>
-      <div className="flex-auto">
-        {game ? <GameCharacterList game={game}></GameCharacterList> : <></>}
-      </div>
+      <CreateGame user={user}></CreateGame>
     </div>
   );
 }
