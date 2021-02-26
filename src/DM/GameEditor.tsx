@@ -11,6 +11,7 @@ export interface GameProps {
   type: "PUBLIC" | "PRIVATE";
   joinPassword: string;
   paused: boolean;
+  autoPause: boolean;
   active: string;
   initiative: string[];
   characters?: Character[];
@@ -60,6 +61,7 @@ function GameEditor({
           type: updatedGame.type,
           joinPassword: updatedGame.joinPassword,
           paused: updatedGame.paused,
+          autoPause: updatedGame.autoPause,
           active: updatedGame.active,
           initiative: updatedGame.initiative,
         },
@@ -88,7 +90,7 @@ function GameEditor({
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
-        <div className="col-span-6">
+        <div className="col-span-3">
           <label className="inline-flex items-center mt-3">
             <input
               type="checkbox"
@@ -101,23 +103,23 @@ function GameEditor({
                 });
               }}
             />
-            <span className="ml-2 text-gray-700">Public?</span>
+            <span className="ml-2 text-gray-700">Public</span>
           </label>
         </div>
-        <div className="col-span-6">
+        <div className="col-span-3">
           <label className="inline-flex items-center mt-3">
             <input
               type="checkbox"
               className="form-checkbox h-5 w-5 text-gray-600"
-              checked={gameFormData.paused}
+              checked={gameFormData.autoPause}
               onChange={(e) => {
                 setGameFormData({
                   ...gameFormData,
-                  paused: !gameFormData.paused,
+                  autoPause: !gameFormData.autoPause,
                 });
               }}
             />
-            <span className="ml-2 text-gray-700">Paused?</span>
+            <span className="ml-2 text-gray-700">Auto-Pause</span>
           </label>
         </div>
         <div className="col-span-6">
@@ -169,6 +171,14 @@ function GameEditor({
         className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       >
         Save
+      </button>
+      <button
+        onClick={() => {
+          updateGame({...gameFormData, paused: !gameFormData.paused});
+        }}
+        className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        { gameFormData.paused ? 'Unpause' : 'Pause' }
       </button>
     </>
   );

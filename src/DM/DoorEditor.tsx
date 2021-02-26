@@ -9,8 +9,9 @@ import {
 } from "../graphql/mutations";
 import DoorForm from "./DoorForm";
 import DoorList from "./DoorList";
+import { bumpAction } from "../Game";
 
-const initialDoorFormState: DoorProps = {
+export const initialDoorFormState: DoorProps = {
   origin: {
     x: 0,
     y: 0,
@@ -22,18 +23,14 @@ const initialDoorFormState: DoorProps = {
 
 function DoorEditor({
   doors: serverDoors,
-  create,
-  fetchGame
 }: {
   doors: Door[];
-  create: boolean;
-  fetchGame: () => {};
 }) {
   const { gameId } = useParams<{
     gameId: string;
   }>();
   const [doors, setDoors] = useState<Door[]>([]);
-  const [doorForm, setDoorForm] = useState<DoorProps>(initialDoorFormState);
+  const [doorForm, setDoorForm] = useState<DoorProps | null>(initialDoorFormState);
 
   useEffect(() => {
     setDoors(serverDoors);
@@ -52,30 +49,34 @@ function DoorEditor({
     } else {
       createDoor(door);
     }
-  }
+  };
 
   const createDoor = async (door: DoorProps) => {
     await API.graphql({
       query: createGameDoorMutation,
       variables: { input: { ...door, gameID: gameId } },
     });
-    fetchGame();
-  }
+    bumpAction(gameId);
+  };
 
   const updateDoor = async (updatedDoor: DoorProps) => {
     await API.graphql({
       query: updateGameDoorMutation,
       variables: { input: { ...updatedDoor, gameID: gameId } },
     });
-    fetchGame();
-  }
+    bumpAction(gameId);
+  };
 
   const deleteDoor = async ({ id }: { id: string }) => {
     await API.graphql({
       query: deleteGameDoorMutation,
       variables: { input: { id } },
     });
-    fetchGame();
+    bumpAction(gameId);
+  };
+
+  const cancel = () => {
+    setDoorForm(null);
   }
 
   return (
@@ -84,20 +85,16 @@ function DoorEditor({
         doors={doors}
         editDoor={(door: Door) => {
           setDoorForm({ ...door });
-          create = true;
         }}
         deleteDoor={(id: string) => deleteDoor({ id })}
       ></DoorList>
-      {create ? (
-        <DoorForm
-          door={doorForm}
-          upsertDoor={(door: DoorProps) => {
-            upsertDoor(door);
-          }}
-        ></DoorForm>
-      ) : (
-        <></>
-      )}
+      <DoorForm
+        door={doorForm}
+        upsertDoor={(door: DoorProps) => {
+          upsertDoor(door);
+        }}
+        cancel={cancel}
+      ></DoorForm>
     </>
   );
 }

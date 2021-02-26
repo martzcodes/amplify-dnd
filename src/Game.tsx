@@ -16,12 +16,25 @@ import {
   updateGameDoor as updateGameDoorMutation,
 } from "./graphql/mutations";
 import { API } from "aws-amplify";
+import { GameProps } from "./DM/GameEditor";
 
 export interface CharacterTracker {
   active: string;
   initiative: string[];
   characters: Character[];
 }
+
+export const bumpAction = (gameId: string) => {
+  API.graphql({
+    query: updateGameMutation,
+    variables: {
+      input: {
+        id: gameId,
+        lastAction: `${Date.now()}`,
+      },
+    },
+  });
+};
 
 const generateBoard = ({ rooms }: { rooms: Room[] }): string[][] => {
   let height = 0;
@@ -109,14 +122,14 @@ function Game({
   tracker: serverTracker,
   showPoints,
   paused,
-  user,
+  game,
 }: {
   dm?: boolean;
   rooms: Room[];
   doors: Door[];
   tracker: CharacterTracker;
   paused: boolean;
-  user: string;
+  game: GameProps;
   showPoints?: boolean;
 }) {
   const { gameId, characterId } = useParams<{
@@ -153,13 +166,15 @@ function Game({
       await character.processVision(maps.sight);
       if (character.id === characterId) {
         const newRevealed = [...Array.from(character.revealed)];
-        if (newRevealed.filter((rev) => !oldRevealed.includes(rev)).length > 0) {
+        if (
+          newRevealed.filter((rev) => !oldRevealed.includes(rev)).length > 0
+        ) {
           await API.graphql({
             query: updateGameCharacterMutation,
             variables: {
               input: {
                 id: characterId,
-                revealed: newRevealed
+                revealed: newRevealed,
               },
             },
           });
@@ -214,18 +229,6 @@ function Game({
     action: "init",
   });
 
-  const bumpAction = () => {
-    API.graphql({
-      query: updateGameMutation,
-      variables: {
-        input: {
-          id: gameId,
-          lastAction: `${Date.now()}`,
-        },
-      },
-    });
-  };
-
   useLayoutEffect(() => {
     const nextCharacter = async (characters: Character[]) => {
       let nextActiveInd = tracker.initiative.indexOf(tracker.active) + 1;
@@ -270,7 +273,7 @@ function Game({
         variables: {
           input: {
             id: gameId,
-            paused: true,
+            paused: game.autoPause,
             active: refreshedCharacter.id,
           },
         },
@@ -316,7 +319,7 @@ function Game({
           !refreshedCharacter.actionUsed
         ) {
           setCharacterAction({ ...emptyAction });
-          bumpAction();
+          bumpAction(gameId);
         } else {
           await nextCharacter(tracker.characters);
         }
@@ -355,7 +358,7 @@ function Game({
             },
           },
         });
-        bumpAction();
+        bumpAction(gameId);
       }
     };
 
@@ -392,7 +395,7 @@ function Game({
             },
           },
         });
-        bumpAction();
+        bumpAction(gameId);
       }
     };
 
@@ -519,7 +522,8 @@ function Game({
                   Waiting for DM... Next Active Player is{" "}
                   {(getActiveCharacter(tracker) || {}).id === characterId
                     ? "YOU!"
-                    : (getActiveCharacter(tracker) || {}).name}.
+                    : (getActiveCharacter(tracker) || {}).name}
+                  .
                 </div>
               )}
               {dm ? (

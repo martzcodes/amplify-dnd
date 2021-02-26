@@ -15,7 +15,6 @@ export interface DMOptions {
   columnOne: string;
   columnTwo: string;
   debug: boolean;
-  create: boolean;
   showPoints: boolean;
 }
 
@@ -33,7 +32,6 @@ function DM({ user }: { user: any }) {
     columnOne: "game",
     columnTwo: "characters",
     debug: false,
-    create: false,
     showPoints: false,
   });
   const [tracker, setTracker] = useState<CharacterTracker>({
@@ -42,29 +40,26 @@ function DM({ user }: { user: any }) {
     characters: characters,
   });
 
-  const subscribeGame = async () => {
-    const subscription = await API.graphql(
-      graphqlOperation(onUpdateGame, { input: { id: gameId } })
-    );
-    if (subscription instanceof Observable) {
-      subscription.subscribe({
-        next: (apiData) => {
-          const apiGame = (apiData as any).value.data.onUpdateGame;
-          console.log(apiGame);
-          if (apiGame.id === gameId) {
-            restoreGame(apiGame);
-          }
-        },
-      });
-    }
-  };
-
   useEffect(() => {
-    if (user) {
       fetchGame();
-      subscribeGame();
-    }
-  }, [user]);
+      const subscription = API.graphql(
+        graphqlOperation(onUpdateGame, { input: { id: gameId } })
+      );
+      if (subscription instanceof Observable) {
+        const subscribed = subscription.subscribe({
+          next: (apiData) => {
+            const apiGame = (apiData as any).value.data.onUpdateGame;
+            console.log(apiGame);
+            if (apiGame.id === gameId) {
+              restoreGame(apiGame);
+            }
+          },
+        });
+        return () => {
+          subscribed.unsubscribe();
+        }
+      }
+  }, []);
 
   useEffect(() => {
     if (game.active && characters.length) {
@@ -204,20 +199,7 @@ function DM({ user }: { user: any }) {
                   setOptions({ ...options, debug: !options.debug })
                 }
               />
-              <span className="ml-2 text-gray-700">Debug?</span>
-            </label>
-          </div>
-          <div>
-            <label className="inline-flex items-center mt-3">
-              <input
-                type="checkbox"
-                className="form-checkbox h-5 w-5 text-gray-600"
-                checked={options.create}
-                onChange={(e) =>
-                  setOptions({ ...options, create: !options.create })
-                }
-              />
-              <span className="ml-2 text-gray-700">Create?</span>
+              <span className="ml-2 text-gray-700">Debug</span>
             </label>
           </div>
           <div>
@@ -230,7 +212,7 @@ function DM({ user }: { user: any }) {
                   setOptions({ ...options, showPoints: !options.showPoints })
                 }
               />
-              <span className="ml-2 text-gray-700">Show Points?</span>
+              <span className="ml-2 text-gray-700">Show Points</span>
             </label>
           </div>
         </div>
@@ -243,7 +225,6 @@ function DM({ user }: { user: any }) {
             doors={doors}
             characters={characters}
             addToInitiative={(id: string) => addToInitiative(id)}
-            fetchGame={fetchGame}
           ></DMSection>
         </div>
         <div className="flex-auto">
@@ -255,7 +236,6 @@ function DM({ user }: { user: any }) {
             doors={doors}
             characters={characters}
             addToInitiative={(id: string) => addToInitiative(id)}
-            fetchGame={fetchGame}
           ></DMSection>
         </div>
       </div>
@@ -266,7 +246,7 @@ function DM({ user }: { user: any }) {
         showPoints={options.showPoints}
         tracker={tracker}
         paused={game.paused}
-        user={user?.username}
+        game={game}
       ></Game>
     </div>
   );

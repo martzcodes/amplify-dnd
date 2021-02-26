@@ -21,6 +21,7 @@ function App() {
     const getUserInfo = async () => {
       try {
         const userInfo = await Auth.currentUserInfo();
+        console.log(userInfo);
         setUser(userInfo);
       } catch(e) {
         console.log(e);
@@ -45,16 +46,19 @@ function App() {
             </Route>
             <Route
               path="/games/:gameId/dm"
-              children={<DM user={user} />}
+              children={user ? <DM user={user} /> : <></>}
               authState={authState}
             />
             <Route
               path="/games/:gameId/characters/:characterId"
               children={<Player user={user} />}
             />
-            <Route path="/games" children={<Games user={user || {}}></Games>} />
+            <Route
+              path="/games"
+              children={user ? <Games user={user}></Games> : <></>}
+            />
             <Route path="/">
-              <PublicGames user={user || {}}></PublicGames>
+              {user ? <PublicGames user={user}></PublicGames>  : <></>}
             </Route>
           </Switch>
         </main>

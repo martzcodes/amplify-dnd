@@ -9,6 +9,7 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
     joinPassword
     dm
     paused
+    autoPause
     active
     lastAction
     initiative
@@ -73,8 +74,9 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
         id
         gameID
         name
-        email
+        npc
         color
+        icon
         perception
         speed {
           current
@@ -121,6 +123,7 @@ export const onUpdateGame = `subscription OnUpdateGame {
     joinPassword
     dm
     paused
+    autoPause
     active
     lastAction
     initiative
@@ -185,8 +188,9 @@ export const onUpdateGame = `subscription OnUpdateGame {
         id
         gameID
         name
-        email
+        npc
         color
+        icon
         perception
         speed {
           current
@@ -233,6 +237,7 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
     joinPassword
     dm
     paused
+    autoPause
     active
     lastAction
     initiative
@@ -297,8 +302,9 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
         id
         gameID
         name
-        email
+        npc
         color
+        icon
         perception
         speed {
           current
@@ -462,8 +468,9 @@ export const onCreateGameCharacter = `subscription OnCreateGameCharacter($owner:
     id
     gameID
     name
-    email
+    npc
     color
+    icon
     perception
     speed {
       current
@@ -489,8 +496,9 @@ export const onUpdateGameCharacter = `subscription OnUpdateGameCharacter {
     id
     gameID
     name
-    email
+    npc
     color
+    icon
     perception
     speed {
       current
@@ -516,8 +524,9 @@ export const onDeleteGameCharacter = `subscription OnDeleteGameCharacter($owner:
     id
     gameID
     name
-    email
+    npc
     color
+    icon
     perception
     speed {
       current

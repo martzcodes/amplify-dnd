@@ -5,17 +5,19 @@ import SpecialGroundList from "./SpecialGroundList";
 function RoomForm({
   room,
   upsertRoom,
+  cancel,
 }: {
-  room: RoomProps;
+  room: RoomProps | null;
   upsertRoom: any;
+  cancel: () => void;
 }) {
-  const [roomFormData, setRoomFormData] = useState(room);
+  const [roomFormData, setRoomFormData] = useState<RoomProps | null>(null);
 
   useEffect(() => {
     setRoomFormData(room);
   }, [room]);
 
-  return (
+  return roomFormData ? (
     <div className="py-1">
       <div className="px-4 py-5 bg-white sm:p-6">
         <div className="grid grid-cols-6 gap-6">
@@ -143,11 +145,23 @@ function RoomForm({
             }}
             className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            {room.id ? "Save" : "Create"}
+            {room && room.id ? "Save" : "Create"}
+          </button>
+        </div>
+        <div className="flex-1">
+          <button
+            onClick={() => {
+              cancel();
+            }}
+            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Cancel
           </button>
         </div>
       </div>
     </div>
+  ) : (
+    <></>
   );
 }
 

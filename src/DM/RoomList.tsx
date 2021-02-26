@@ -1,9 +1,10 @@
 import { Room } from "../Room";
+import { initialRoomFormState } from "./RoomEditor";
 
 function RoomList({
   rooms,
   editRoom,
-  deleteRoom
+  deleteRoom,
 }: {
   rooms: Room[];
   editRoom: any;
@@ -95,6 +96,27 @@ function RoomList({
                 </td>
               </tr>
             ))}
+            <tr>
+              <td className={`px-2 py-4 whitespace-nowrap`}></td>
+
+              <td className="px-2 py-4 whitespace-nowrap"></td>
+              <td className="px-2 py-4 whitespace-nowrap"></td>
+              <td className="px-2 py-4 whitespace-nowrap"></td>
+              <td className="px-2 py-4 whitespace-nowrap"></td>
+
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
+                <div className="flex justify-start space-x-1">
+                  <button
+                    className="border-2 border-indigo-200 rounded-md p-1"
+                    onClick={() => {
+                      editRoom({ ...initialRoomFormState });
+                    }}
+                  >
+                    Add Room
+                  </button>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>

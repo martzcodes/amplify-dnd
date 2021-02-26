@@ -185,20 +185,7 @@ function SpecialGroundList({
                     className="border-2 border-indigo-200 rounded-md p-1"
                     onClick={() => addGroundType()}
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      className="h-4 w-4 text-indigo-500"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                      />
-                    </svg>
+                    Add Special Ground
                   </button>
                 </div>
               </td>

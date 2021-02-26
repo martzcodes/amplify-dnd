@@ -6,8 +6,6 @@ import { useEffect, useState } from "react";
 import { Character, CharacterProps } from "./Character";
 import { Room } from "./Room";
 import { Door } from "./Door";
-import DMSection from "./DM/DMSection";
-import { updateGame as updateGameMutation } from "./graphql/mutations";
 import { onUpdateGame } from "./graphql/subscriptions";
 import Observable from "zen-observable";
 
@@ -25,12 +23,13 @@ function Player({ user }: { user: any }) {
     characters: characters,
   });
 
-  const subscribeGame = async () => {
-    const subscription = await API.graphql(
+  useEffect(() => {
+    fetchGame();
+    const subscription = API.graphql(
       graphqlOperation(onUpdateGame, { input: { id: gameId } })
     );
     if (subscription instanceof Observable) {
-      subscription.subscribe({
+      const subscribed = subscription.subscribe({
         next: (apiData) => {
           const apiGame = (apiData as any).value.data.onUpdateGame;
           console.log(apiGame);
@@ -39,15 +38,11 @@ function Player({ user }: { user: any }) {
           }
         },
       });
+      return () => {
+        subscribed.unsubscribe();
+      };
     }
-  };
-
-  useEffect(() => {
-    if (user) {
-      fetchGame();
-      subscribeGame();
-    }
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     if (game.active && characters.length) {
@@ -95,7 +90,7 @@ function Player({ user }: { user: any }) {
       doors={doors}
       tracker={tracker}
       paused={game.paused}
-      user={user?.username}
+      game={game}
     ></Game>
   ) : (
     <></>

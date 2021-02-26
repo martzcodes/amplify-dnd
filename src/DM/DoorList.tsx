@@ -1,5 +1,5 @@
 import { Door } from "../Door";
-
+import { initialDoorFormState } from './DoorEditor';
 function DoorList({ doors, editDoor, deleteDoor }: { doors: Door[]; editDoor: any, deleteDoor: any }) {
   return (
     <div>
@@ -92,6 +92,25 @@ function DoorList({ doors, editDoor, deleteDoor }: { doors: Door[]; editDoor: an
                 </td>
               </tr>
             ))}
+            <tr>
+              <td className={`px-2 py-4 whitespace-nowrap`}></td>
+
+              <td className="px-2 py-4 whitespace-nowrap"></td>
+              <td className="px-2 py-4 whitespace-nowrap"></td>
+              <td className="px-2 py-4 whitespace-nowrap"></td>
+              <td className="px-2 py-4 whitespace-nowrap"></td>
+
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
+                <div className="flex justify-start space-x-1">
+                  <button
+                    className="border-2 border-indigo-200 rounded-md p-1"
+                    onClick={() => { editDoor({...initialDoorFormState })}}
+                  >
+                    Add Door
+                  </button>
+                </div>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>

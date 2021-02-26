@@ -12,6 +12,7 @@ export const createGame = `mutation CreateGame(
     joinPassword
     dm
     paused
+    autoPause
     active
     lastAction
     initiative
@@ -76,8 +77,9 @@ export const createGame = `mutation CreateGame(
         id
         gameID
         name
-        email
+        npc
         color
+        icon
         perception
         speed {
           current
@@ -127,6 +129,7 @@ export const updateGame = `mutation UpdateGame(
     joinPassword
     dm
     paused
+    autoPause
     active
     lastAction
     initiative
@@ -191,8 +194,9 @@ export const updateGame = `mutation UpdateGame(
         id
         gameID
         name
-        email
+        npc
         color
+        icon
         perception
         speed {
           current
@@ -242,6 +246,7 @@ export const deleteGame = `mutation DeleteGame(
     joinPassword
     dm
     paused
+    autoPause
     active
     lastAction
     initiative
@@ -306,8 +311,9 @@ export const deleteGame = `mutation DeleteGame(
         id
         gameID
         name
-        email
+        npc
         color
+        icon
         perception
         speed {
           current
@@ -492,8 +498,9 @@ export const createGameCharacter = `mutation CreateGameCharacter(
     id
     gameID
     name
-    email
+    npc
     color
+    icon
     perception
     speed {
       current
@@ -522,8 +529,9 @@ export const updateGameCharacter = `mutation UpdateGameCharacter(
     id
     gameID
     name
-    email
+    npc
     color
+    icon
     perception
     speed {
       current
@@ -552,8 +560,9 @@ export const deleteGameCharacter = `mutation DeleteGameCharacter(
     id
     gameID
     name
-    email
+    npc
     color
+    icon
     perception
     speed {
       current

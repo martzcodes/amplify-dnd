@@ -10,8 +10,9 @@ import {
 import CharacterForm from "./CharacterForm";
 import { GameProps } from "./GameEditor";
 import DetailedCharacterList from "./DetailedCharacterList";
+import { bumpAction } from "../Game";
 
-const initialCharacterFormState: CharacterProps = {
+export const initialCharacterFormState: CharacterProps = {
   name: "",
   email: "",
   color: "bg-blue-500",
@@ -35,22 +36,18 @@ const initialCharacterFormState: CharacterProps = {
 
 function CharacterEditor({
   characters: serverCharacters,
-  create,
   addToInitiative,
-  fetchGame
 }: {
   characters: Character[];
-  create: boolean;
   game: GameProps;
   addToInitiative: (id: string) => {};
-  fetchGame: () => {};
 }) {
   const { gameId } = useParams<{
     gameId: string;
   }>();
   const [characters, setCharacters] = useState<Character[]>([]);
-  const [characterForm, setCharacterForm] = useState<CharacterProps>(
-    initialCharacterFormState
+  const [characterForm, setCharacterForm] = useState<CharacterProps | null>(
+    null
   );
 
   useEffect(() => {
@@ -70,30 +67,35 @@ function CharacterEditor({
     } else {
       createCharacter(character);
     }
-  }
+  };
 
   const createCharacter = async (character: CharacterProps) => {
     await API.graphql({
       query: createGameCharacterMutation,
       variables: { input: { ...character, gameID: gameId } },
     });
-    fetchGame();
-  }
+    bumpAction(gameId);
+  };
 
-  const updateCharacter = async (updatedCharacter: CharacterProps) => {
+  const updateCharacter = async (updatedCharacter: CharacterProps | null) => {
     await API.graphql({
       query: updateGameCharacterMutation,
       variables: { input: { ...updatedCharacter, gameID: gameId } },
     });
-    fetchGame();
+    bumpAction(gameId);
+  };
+
+  const cancel = () => {
+    setCharacterForm(null);
   }
 
-  const resetVision = async ({ id }: {id: string}) => {
+  const resetVision = async ({ id }: { id: string }) => {
     await API.graphql({
       query: updateGameCharacterMutation,
       variables: { input: { id, gameID: gameId, revealed: [] } },
     });
-  }
+    bumpAction(gameId);
+  };
 
   const deleteCharacter = async ({ id }: { id: string }) => {
     const newCharactersArray = characters.filter((room: any) => room.id !== id);
@@ -102,8 +104,8 @@ function CharacterEditor({
       query: deleteGameCharacterMutation,
       variables: { input: { id } },
     });
-    fetchGame();
-  }
+    bumpAction(gameId);
+  };
 
   return (
     <>
@@ -114,7 +116,6 @@ function CharacterEditor({
         }}
         editCharacter={(character: Character) => {
           setCharacterForm({ ...character });
-          create = true;
         }}
         deleteCharacter={(id: string) => {
           deleteCharacter({ id });
@@ -123,16 +124,13 @@ function CharacterEditor({
           resetVision({ id });
         }}
       ></DetailedCharacterList>
-      {create ? (
-        <CharacterForm
-          character={characterForm}
-          upsertCharacter={(character: CharacterProps) => {
-            upsertCharacter(character);
-          }}
-        ></CharacterForm>
-      ) : (
-        <></>
-      )}
+      <CharacterForm
+        character={characterForm}
+        upsertCharacter={(character: CharacterProps) => {
+          upsertCharacter(character);
+        }}
+        cancel={cancel}
+      ></CharacterForm>
     </>
   );
 }

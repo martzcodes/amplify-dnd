@@ -9,8 +9,9 @@ import {
 } from "../graphql/mutations";
 import RoomForm from "./RoomForm";
 import RoomList from "./RoomList";
+import { bumpAction } from "../Game";
 
-const initialRoomFormState: RoomProps = {
+export const initialRoomFormState: RoomProps = {
   name: "",
   origin: { x: 0, y: 0 },
   height: 0,
@@ -19,20 +20,12 @@ const initialRoomFormState: RoomProps = {
   specialGrounds: [],
 };
 
-function RoomEditor({
-  rooms: initialRooms,
-  create,
-  fetchGame,
-}: {
-  rooms: Room[];
-  create: boolean;
-  fetchGame: () => {};
-}) {
+function RoomEditor({ rooms: initialRooms }: { rooms: Room[] }) {
   const { gameId } = useParams<{
     gameId: string;
   }>();
   const [rooms, setRooms] = useState<Room[]>(initialRooms);
-  const [roomForm, setRoomForm] = useState<RoomProps>(initialRoomFormState);
+  const [roomForm, setRoomForm] = useState<RoomProps | null>(null);
 
   useEffect(() => {
     setRooms(initialRooms);
@@ -51,34 +44,36 @@ function RoomEditor({
     } else {
       createRoom(room);
     }
-  }
+  };
 
   const createRoom = async (room: RoomProps) => {
     await API.graphql({
       query: createGameRoomMutation,
       variables: { input: { ...room, gameID: gameId } },
     });
-    fetchGame();
-  }
+    bumpAction(gameId);
+  };
 
   const updateRoom = async (updatedRoom: RoomProps) => {
     await API.graphql({
       query: updateGameRoomMutation,
       variables: { input: { ...updatedRoom, gameID: gameId } },
     });
-    rooms.filter(
-      (room: any) => room.id !== updatedRoom.id
-    );
-    fetchGame();
-  }
+    rooms.filter((room: any) => room.id !== updatedRoom.id);
+    bumpAction(gameId);
+  };
 
   const deleteRoom = async ({ id }: { id: string }) => {
     await API.graphql({
       query: deleteGameRoomMutation,
       variables: { input: { id } },
     });
-    fetchGame();
-  }
+    bumpAction(gameId);
+  };
+
+  const cancel = () => {
+    setRoomForm(null);
+  };
 
   return (
     <>
@@ -89,16 +84,13 @@ function RoomEditor({
         }}
         deleteRoom={(id: string) => deleteRoom({ id })}
       ></RoomList>
-      {create || roomForm.id ? (
-        <RoomForm
-          room={roomForm}
-          upsertRoom={(room: RoomProps) => {
-            upsertRoom(room);
-          }}
-        ></RoomForm>
-      ) : (
-        <></>
-      )}
+      <RoomForm
+        room={roomForm}
+        upsertRoom={(room: RoomProps) => {
+          upsertRoom(room);
+        }}
+        cancel={cancel}
+      ></RoomForm>
     </>
   );
 }

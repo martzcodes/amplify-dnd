@@ -59,7 +59,9 @@ function Games({ user }: { user: any }) {
           {game ? <GameCharacterList game={game}></GameCharacterList> : <></>}
         </div>
       </div>
-      <CreateGame user={user}></CreateGame>
+      <CreateGame addGame={(game: GameProps) => {
+        setGames([...games, game]);
+      }}></CreateGame>
     </div>
   );
 }

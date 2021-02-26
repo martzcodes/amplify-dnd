@@ -4,17 +4,22 @@ import { CharacterProps } from "../Character";
 function CharacterForm({
   character,
   upsertCharacter,
+  cancel,
 }: {
-  character: CharacterProps;
+  character: CharacterProps | null;
   upsertCharacter: any;
+  cancel: () => void;
 }) {
-  const [characterFormData, setCharacterFormData] = useState(character);
+  const [
+    characterFormData,
+    setCharacterFormData,
+  ] = useState<CharacterProps | null>(null);
 
   useEffect(() => {
     setCharacterFormData(character);
-  },[character])
+  }, [character]);
 
-  return (
+  return characterFormData ? (
     <div className="py-1">
       <div className="px-4 py-5 bg-white sm:p-6">
         <div className="grid grid-cols-6 gap-6">
@@ -277,11 +282,23 @@ function CharacterForm({
             }}
             className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
-            {character.id ? "Save" : "Create"}
+            {character && character.id ? "Save" : "Create"}
+          </button>
+        </div>
+        <div className="flex-1">
+          <button
+            onClick={() => {
+              cancel();
+            }}
+            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            Cancel
           </button>
         </div>
       </div>
     </div>
+  ) : (
+    <></>
   );
 }
 

@@ -12,6 +12,7 @@ type Game
   joinPassword: String
   dm: String!
   paused: Boolean
+  autoPause: Boolean
   active: String
   lastAction: String
   initiative: [String!]
@@ -78,8 +79,9 @@ type GameCharacter
   id: ID!
   gameID: ID!
   name: String!
-  email: String!
+  npc: Boolean
   color: String!
+  icon: String
   perception: Int!
   speed: CurrentMax!
   hp: CurrentMax!

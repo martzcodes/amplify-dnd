@@ -9,6 +9,7 @@ export const getGame = `query GetGame($id: ID!) {
     joinPassword
     dm
     paused
+    autoPause
     active
     lastAction
     initiative
@@ -73,8 +74,9 @@ export const getGame = `query GetGame($id: ID!) {
         id
         gameID
         name
-        email
+        npc
         color
+        icon
         perception
         speed {
           current
@@ -126,6 +128,7 @@ export const listGames = `query ListGames(
       joinPassword
       dm
       paused
+      autoPause
       active
       lastAction
       initiative
@@ -190,8 +193,9 @@ export const listGames = `query ListGames(
           id
           gameID
           name
-          email
+          npc
           color
+          icon
           perception
           speed {
             current
@@ -331,8 +335,9 @@ export const getGameCharacter = `query GetGameCharacter($id: ID!) {
     id
     gameID
     name
-    email
+    npc
     color
+    icon
     perception
     speed {
       current
@@ -363,8 +368,9 @@ export const listGameCharacters = `query ListGameCharacters(
       id
       gameID
       name
-      email
+      npc
       color
+      icon
       perception
       speed {
         current

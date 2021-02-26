@@ -15,7 +15,6 @@ function DMSection({
   doors,
   characters,
   addToInitiative,
-  fetchGame,
 }: {
   section: string;
   game: GameProps;
@@ -24,7 +23,6 @@ function DMSection({
   doors: Door[];
   characters: Character[];
   addToInitiative: (id: string) => {};
-  fetchGame: () => {}
 }) {
   return (
     <>
@@ -43,8 +41,6 @@ function DMSection({
         <div>
           <RoomEditor
             rooms={rooms}
-            create={options.create}
-            fetchGame={fetchGame}
           ></RoomEditor>
           {options.debug ? <pre>{JSON.stringify(rooms, null, 2)}</pre> : <></>}
         </div>
@@ -55,8 +51,6 @@ function DMSection({
         <div>
           <DoorEditor
             doors={doors}
-            create={options.create}
-            fetchGame={fetchGame}
           ></DoorEditor>
           {options.debug ? <pre>{JSON.stringify(doors, null, 2)}</pre> : <></>}
         </div>
@@ -67,10 +61,8 @@ function DMSection({
         <div>
           <CharacterEditor
             characters={characters}
-            create={options.create}
             addToInitiative={(id: string) => addToInitiative(id)}
             game={game}
-            fetchGame={fetchGame}
           ></CharacterEditor>
           {options.debug ? (
             <pre>{JSON.stringify(characters, null, 2)}</pre>
