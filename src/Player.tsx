@@ -8,19 +8,26 @@ import { Room } from "./Room";
 import { Door } from "./Door";
 import { onUpdateGame } from "./graphql/subscriptions";
 import Observable from "zen-observable";
+import { AreaProps } from "./Area";
+import { GameProps } from "./DM/GameEditor";
 
 function Player({ user }: { user: any }) {
   const { gameId } = useParams<{
     gameId: string;
   }>();
-  const [game, setGame] = useState<any>([]);
-  const [characters, setCharacters] = useState<Character[]>([]);
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [doors, setDoors] = useState<Door[]>([]);
-  const [tracker, setTracker] = useState<CharacterTracker>({
+  const [game, setGame] = useState<GameProps>({
+    id: "temp",
+    name: "name",
+    type: "PRIVATE",
+    joinPassword: "",
+    paused: true,
+    autoPause: true,
     active: "",
     initiative: [],
-    characters: characters,
+    characters: [],
+    rooms: [],
+    doors: [],
+    areas: [],
   });
 
   useEffect(() => {
@@ -32,7 +39,6 @@ function Player({ user }: { user: any }) {
       const subscribed = subscription.subscribe({
         next: (apiData) => {
           const apiGame = (apiData as any).value.data.onUpdateGame;
-          console.log(apiGame);
           if (apiGame.id === gameId) {
             restoreGame(apiGame);
           }
@@ -44,31 +50,33 @@ function Player({ user }: { user: any }) {
     }
   }, []);
 
-  useEffect(() => {
-    if (game.active && characters.length) {
-      setTracker({
-        active: game.active || "",
-        initiative: game.initiative || [],
-        characters: characters,
-      });
-    }
-  }, [game, characters]);
-
   const restoreGame = (apiGame: any) => {
     if (apiGame) {
-      console.log(apiGame);
-      setGame(apiGame);
-      setCharacters(
-        apiGame.characters.items.map(
-          (characterProps: CharacterProps) => new Character(characterProps)
-        )
-      );
-      setRooms(
-        apiGame.rooms.items.map((roomProps: any) => new Room(roomProps))
-      );
-      setDoors(
-        apiGame.doors.items.map((doorProps: any) => new Door(doorProps))
-      );
+      const updatedGame: GameProps = { ...apiGame };
+
+      updatedGame.characters =
+        apiGame.characters && apiGame.characters.items
+          ? apiGame.characters.items.map(
+              (characterProps: CharacterProps) => new Character(characterProps)
+            )
+          : [];
+      updatedGame.rooms =
+        apiGame.rooms && apiGame.rooms.items
+          ? apiGame.rooms.items.map((roomProps: any) => new Room(roomProps))
+          : [];
+      updatedGame.doors =
+        apiGame.doors && apiGame.doors.items
+          ? apiGame.doors.items
+              .map((doorProps: any) => new Door(doorProps))
+              .filter((door: Door) => !door.hidden)
+          : [];
+      updatedGame.areas =
+        apiGame.areas && apiGame.areas.items
+          ? apiGame.areas.items
+              .map((areaProps: any) => areaProps as AreaProps)
+              .filter((areaProps: AreaProps) => areaProps.enabled)
+          : [];
+      setGame(updatedGame);
     }
   };
 
@@ -84,17 +92,7 @@ function Player({ user }: { user: any }) {
     }
   };
 
-  return user && user.username ? (
-    <Game
-      rooms={rooms}
-      doors={doors}
-      tracker={tracker}
-      paused={game.paused}
-      game={game}
-    ></Game>
-  ) : (
-    <></>
-  );
+  return user && user.username ? <Game game={game}></Game> : <></>;
 }
 
 export default Player;

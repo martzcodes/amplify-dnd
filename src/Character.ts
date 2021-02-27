@@ -18,6 +18,7 @@ export interface CharacterProps {
   }
   revealed: Set<string> | string[];
   icon?: string;
+  npc?: boolean;
 }
 
 export interface Speed {
@@ -41,6 +42,7 @@ export class Character implements CharacterProps {
   color: string = 'bg-purple-600';
   icon?: string;
   perception: number = 0;
+  npc?: boolean = false;
   location: Location = {
     x: 0,
     y: 0,

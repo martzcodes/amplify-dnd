@@ -70,6 +70,7 @@ type GameDoor
   open: Boolean
   locked: Boolean
   northSouth: Boolean
+  hidden: Boolean
 }
 
 type GameCharacter

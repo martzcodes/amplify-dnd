@@ -1,3 +1,4 @@
+import { useHistory, useParams } from "react-router-dom";
 import { Character } from "../Character";
 import { initialCharacterFormState } from './CharacterEditor';
 
@@ -14,6 +15,10 @@ function DetailedCharacterList({
   deleteCharacter: any;
   resetVision: any;
 }) {
+  const { push } = useHistory();
+  const { gameId } = useParams<{
+    gameId: string;
+  }>();
   return (
     <div>
       <div className="shadow overflow-hidden border border-gray-200 sm:rounded-lg m-6">
@@ -27,11 +32,19 @@ function DetailedCharacterList({
               </th>
 
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                NPC
+              </th>
+
+              <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 HP
               </th>
 
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Speed
+              </th>
+
+              <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                P
               </th>
 
               <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -44,16 +57,25 @@ function DetailedCharacterList({
               <tr key={character.id}>
                 <td
                   className={`px-2 py-4 whitespace-nowrap ${character.color} text-center`}
-                >{character.icon}</td>
+                >
+                  {character.icon}
+                </td>
 
                 <td className="px-2 py-4 whitespace-nowrap">
                   {character.name}
+                </td>
+                <td className="px-2 py-4 whitespace-nowrap">
+                  {character.npc ? "NPC" : ""}
                 </td>
                 <td className="px-2 py-4 whitespace-nowrap">
                   {character.hp.current} / {character.hp.max}
                 </td>
                 <td className="px-2 py-4 whitespace-nowrap">
                   {character.speed.current} / {character.speed.max}
+                </td>
+
+                <td className="px-2 py-4 whitespace-nowrap">
+                  {character.perception}
                 </td>
 
                 <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -93,6 +115,27 @@ function DetailedCharacterList({
                           strokeLinejoin="round"
                           strokeWidth="2"
                           d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                        />
+                      </svg>
+                    </button>
+                    <button
+                      className="border-2 border-indigo-200 rounded-md p-1"
+                      onClick={() => {
+                        push(`/games/${gameId}/characters/${character.id}`);
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        className="h-4 w-4 text-indigo-500"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
                         />
                       </svg>
                     </button>
@@ -144,12 +187,16 @@ function DetailedCharacterList({
               <td className="px-2 py-4 whitespace-nowrap"></td>
               <td className="px-2 py-4 whitespace-nowrap"></td>
               <td className="px-2 py-4 whitespace-nowrap"></td>
+              <td className="px-2 py-4 whitespace-nowrap"></td>
+              <td className="px-2 py-4 whitespace-nowrap"></td>
 
               <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
                 <div className="flex justify-start space-x-1">
                   <button
                     className="border-2 border-indigo-200 rounded-md p-1"
-                    onClick={() => { editCharacter({ ...initialCharacterFormState })}}
+                    onClick={() => {
+                      editCharacter({ ...initialCharacterFormState });
+                    }}
                   >
                     New Character
                   </button>

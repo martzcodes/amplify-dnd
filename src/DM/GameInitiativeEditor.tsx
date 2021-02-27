@@ -4,9 +4,11 @@ import { Character } from "../Character";
 function GameInitiativeEditor({
   characters: gameCharacters,
   updateInitiative,
+  active,
 }: {
   characters: Character[];
   updateInitiative: any;
+  active?: string;
 }) {
   const [characters, setCharacters] = useState(gameCharacters);
 
@@ -36,8 +38,17 @@ function GameInitiativeEditor({
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {characters.map((character, ind) => (
-              <tr key={character.id}>
-                <td className={`px-2 py-4 whitespace-nowrap ${character.color} text-center`}>{character.icon}</td>
+              <tr
+                key={character.id}
+                className={
+                  active === character.id ? `${character.color} text-white` : ""
+                }
+              >
+                <td
+                  className={`px-2 py-4 whitespace-nowrap ${character.color} text-center`}
+                >
+                  {character.icon}
+                </td>
 
                 <td className="px-2 py-4 whitespace-nowrap">{ind + 1}</td>
 
@@ -48,7 +59,7 @@ function GameInitiativeEditor({
                 <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
                   <div className="flex justify-start space-x-1">
                     <button
-                      className="border-2 border-indigo-200 rounded-md p-1"
+                      className="border-2 border-indigo-200 rounded-md p-1 bg-white"
                       onClick={() => {
                         if (ind > 0) {
                           let updatedList = [...characters];
@@ -74,7 +85,7 @@ function GameInitiativeEditor({
                       </svg>
                     </button>
                     <button
-                      className="border-2 border-indigo-200 rounded-md p-1"
+                      className="border-2 border-indigo-200 rounded-md p-1 bg-white"
                       onClick={() => {
                         if (ind < characters.length - 1) {
                           let updatedList = [...characters];
@@ -100,7 +111,7 @@ function GameInitiativeEditor({
                       </svg>
                     </button>
                     <button
-                      className="border-2 border-red-200 rounded-md p-1"
+                      className="border-2 border-red-200 rounded-md p-1 bg-white"
                       onClick={() => {
                         let updatedList = [...characters];
                         updatedList.splice(ind, 1);

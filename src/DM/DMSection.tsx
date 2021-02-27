@@ -1,7 +1,5 @@
-import { Character } from "../Character";
 import { DMOptions } from "../DM";
-import { Door } from "../Door";
-import { Room } from "../Room";
+import AreaEditor from "./AreaEditor";
 import CharacterEditor from "./CharacterEditor";
 import DoorEditor from "./DoorEditor";
 import GameEditor, { GameProps } from "./GameEditor";
@@ -11,27 +9,18 @@ function DMSection({
   section,
   game,
   options,
-  rooms,
-  doors,
-  characters,
   addToInitiative,
 }: {
   section: string;
   game: GameProps;
   options: DMOptions;
-  rooms: Room[];
-  doors: Door[];
-  characters: Character[];
   addToInitiative: (id: string) => {};
 }) {
   return (
     <>
       {section === "game" ? (
         <div>
-          <GameEditor
-            game={game}
-            characters={characters}
-          ></GameEditor>
+          <GameEditor game={game} characters={game.characters}></GameEditor>
           {options.debug ? <pre>{JSON.stringify(game, null, 2)}</pre> : <></>}
         </div>
       ) : (
@@ -39,20 +28,14 @@ function DMSection({
       )}
       {section === "rooms" ? (
         <div>
-          <RoomEditor
-            rooms={rooms}
-          ></RoomEditor>
-          {options.debug ? <pre>{JSON.stringify(rooms, null, 2)}</pre> : <></>}
+          <RoomEditor rooms={game.rooms}></RoomEditor>
         </div>
       ) : (
         <></>
       )}
       {section === "doors" ? (
         <div>
-          <DoorEditor
-            doors={doors}
-          ></DoorEditor>
-          {options.debug ? <pre>{JSON.stringify(doors, null, 2)}</pre> : <></>}
+          <DoorEditor doors={game.doors}></DoorEditor>
         </div>
       ) : (
         <></>
@@ -60,15 +43,21 @@ function DMSection({
       {section === "characters" ? (
         <div>
           <CharacterEditor
-            characters={characters}
+            characters={game.characters}
             addToInitiative={(id: string) => addToInitiative(id)}
             game={game}
           ></CharacterEditor>
-          {options.debug ? (
-            <pre>{JSON.stringify(characters, null, 2)}</pre>
-          ) : (
-            <></>
-          )}
+        </div>
+      ) : (
+        <></>
+      )}
+      {section === "areas" ? (
+        <div>
+          <AreaEditor
+            areas={game.areas}
+            addToInitiative={(id: string) => addToInitiative(id)}
+            game={game}
+          ></AreaEditor>
         </div>
       ) : (
         <></>

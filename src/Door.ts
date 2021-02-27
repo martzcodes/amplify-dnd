@@ -5,6 +5,7 @@ export interface DoorProps {
   open: boolean;
   locked: boolean;
   northSouth: boolean;
+  hidden?: boolean;
 }
 
 export class Door {
@@ -13,6 +14,7 @@ export class Door {
   northSouth: boolean = true;
   open: boolean = true;
   locked: boolean = false;
+  hidden?: boolean = false;
 
   constructor(props: DoorProps) {
     Object.assign(this, props);

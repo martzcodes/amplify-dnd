@@ -2,7 +2,6 @@ import { tileTypes } from "./Tile";
 import { hashLocation } from "./utils/hashLocation";
 
 function BaseLayer({ board }: { board: string[][] }) {
-  console.log('BaseLayer');
   return (
     <>
       {board.map((row, y) => (

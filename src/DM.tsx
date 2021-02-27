@@ -10,6 +10,8 @@ import DMSection from "./DM/DMSection";
 import { updateGame as updateGameMutation } from "./graphql/mutations";
 import { onUpdateGame } from "./graphql/subscriptions";
 import Observable from "zen-observable";
+import { AreaProps } from "./Area";
+import { GameProps } from "./DM/GameEditor";
 
 export interface DMOptions {
   columnOne: string;
@@ -18,80 +20,76 @@ export interface DMOptions {
   showPoints: boolean;
 }
 
-const sections = ["game", "rooms", "doors", "areas", "characters", "items"];
+const sections = ["game", "rooms", "doors", "areas", "characters"];
 
 function DM({ user }: { user: any }) {
   const { gameId } = useParams<{
     gameId: string;
   }>();
-  const [game, setGame] = useState<any>([]);
-  const [characters, setCharacters] = useState<Character[]>([]);
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [doors, setDoors] = useState<Door[]>([]);
+  const [game, setGame] = useState<GameProps>({
+    id: "temp",
+    name: "name",
+    type: "PRIVATE",
+    joinPassword: "",
+    paused: true,
+    autoPause: true,
+    active: "",
+    initiative: [],
+    characters: [],
+    rooms: [],
+    doors: [],
+    areas: [],
+  });
   const [options, setOptions] = useState<DMOptions>({
     columnOne: "game",
     columnTwo: "characters",
     debug: false,
     showPoints: false,
   });
-  const [tracker, setTracker] = useState<CharacterTracker>({
-    active: "",
-    initiative: [],
-    characters: characters,
-  });
 
   useEffect(() => {
-      fetchGame();
-      const subscription = API.graphql(
-        graphqlOperation(onUpdateGame, { input: { id: gameId } })
-      );
-      if (subscription instanceof Observable) {
-        const subscribed = subscription.subscribe({
-          next: (apiData) => {
-            const apiGame = (apiData as any).value.data.onUpdateGame;
-            console.log(apiGame);
-            if (apiGame.id === gameId) {
-              restoreGame(apiGame);
-            }
-          },
-        });
-        return () => {
-          subscribed.unsubscribe();
-        }
-      }
-  }, []);
-
-  useEffect(() => {
-    if (game.active && characters.length) {
-      setTracker({
-        active: game.active || "",
-        initiative: game.initiative || [],
-        characters: characters,
+    fetchGame();
+    const subscription = API.graphql(
+      graphqlOperation(onUpdateGame, { input: { id: gameId } })
+    );
+    if (subscription instanceof Observable) {
+      const subscribed = subscription.subscribe({
+        next: (apiData) => {
+          const apiGame = (apiData as any).value.data.onUpdateGame;
+          if (apiGame.id === gameId) {
+            restoreGame(apiGame);
+          }
+        },
       });
+      return () => {
+        subscribed.unsubscribe();
+      };
     }
-  }, [game, characters]);
+  }, []);
 
   const restoreGame = (apiGame: any) => {
     if (apiGame) {
-      console.log(apiGame);
-      setGame(apiGame);
-      if (apiGame.characters && apiGame.characters.items) {
-        setCharacters(
-          apiGame.characters.items.map(
-            (characterProps: CharacterProps) => new Character(characterProps)
-          )
-        );
-      }
-      if (apiGame.rooms && apiGame.rooms.items) {
-        setRooms(
-          apiGame.rooms.items.map((roomProps: any) => new Room(roomProps))
-        );
-      }
-      if (apiGame.doors && apiGame.doors.items) {
-        setDoors(
-          apiGame.doors.items.map((doorProps: any) => new Door(doorProps))
-        );
-      }
+      const updatedGame: GameProps = { ...apiGame };
+
+      updatedGame.characters =
+        apiGame.characters && apiGame.characters.items
+          ? apiGame.characters.items.map(
+              (characterProps: CharacterProps) => new Character(characterProps)
+            )
+          : [];
+      updatedGame.rooms =
+        apiGame.rooms && apiGame.rooms.items
+          ? apiGame.rooms.items.map((roomProps: any) => new Room(roomProps))
+          : [];
+      updatedGame.doors =
+        apiGame.doors && apiGame.doors.items
+          ? apiGame.doors.items.map((doorProps: any) => new Door(doorProps))
+          : [];
+      updatedGame.areas =
+        apiGame.areas && apiGame.areas.items
+          ? apiGame.areas.items.map((areaProps: any) => areaProps as AreaProps)
+          : [];
+      setGame(updatedGame);
     }
   };
 
@@ -221,9 +219,6 @@ function DM({ user }: { user: any }) {
             section={options.columnOne}
             options={options}
             game={game}
-            rooms={rooms}
-            doors={doors}
-            characters={characters}
             addToInitiative={(id: string) => addToInitiative(id)}
           ></DMSection>
         </div>
@@ -232,25 +227,18 @@ function DM({ user }: { user: any }) {
             section={options.columnTwo}
             options={options}
             game={game}
-            rooms={rooms}
-            doors={doors}
-            characters={characters}
             addToInitiative={(id: string) => addToInitiative(id)}
           ></DMSection>
         </div>
       </div>
-      <Game
-        dm={true}
-        rooms={rooms}
-        doors={doors}
-        showPoints={options.showPoints}
-        tracker={tracker}
-        paused={game.paused}
-        game={game}
-      ></Game>
-      <div>
-        <pre>{JSON.stringify(game, null, 2)}</pre>
-      </div>
+      <Game dm={true} showPoints={options.showPoints} game={game}></Game>
+      {options.debug ? (
+        <div>
+          <pre>{JSON.stringify(game, null, 2)}</pre>
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

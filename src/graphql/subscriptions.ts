@@ -50,6 +50,7 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
         open
         locked
         northSouth
+        hidden
         owner
       }
       nextToken
@@ -153,6 +154,7 @@ export const onUpdateGame = `subscription OnUpdateGame {
         open
         locked
         northSouth
+        hidden
         owner
       }
       nextToken
@@ -256,6 +258,7 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
         open
         locked
         northSouth
+        hidden
         owner
       }
       nextToken
@@ -396,6 +399,7 @@ export const onCreateGameDoor = `subscription OnCreateGameDoor($owner: String!) 
     open
     locked
     northSouth
+    hidden
     owner
   }
 }
@@ -411,6 +415,7 @@ export const onUpdateGameDoor = `subscription OnUpdateGameDoor {
     open
     locked
     northSouth
+    hidden
     owner
   }
 }
@@ -426,6 +431,7 @@ export const onDeleteGameDoor = `subscription OnDeleteGameDoor($owner: String!) 
     open
     locked
     northSouth
+    hidden
     owner
   }
 }

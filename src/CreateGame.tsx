@@ -13,11 +13,10 @@ function CreateGame({ addGame }: { addGame: (game: GameProps) => void }) {
 
   async function createGame() {
     if (!formData.name) return;
-    const response = await API.graphql({
+    await API.graphql({
       query: createGameMutation,
       variables: { input: formData },
     });
-    console.log(response);
     setFormData(initialFormState);
   }
 

@@ -50,6 +50,7 @@ export const getGame = `query GetGame($id: ID!) {
         open
         locked
         northSouth
+        hidden
         owner
       }
       nextToken
@@ -158,6 +159,7 @@ export const listGames = `query ListGames(
           open
           locked
           northSouth
+          hidden
           owner
         }
         nextToken
@@ -282,6 +284,7 @@ export const getGameDoor = `query GetGameDoor($id: ID!) {
     open
     locked
     northSouth
+    hidden
     owner
   }
 }
@@ -302,6 +305,7 @@ export const listGameDoors = `query ListGameDoors(
       open
       locked
       northSouth
+      hidden
       owner
     }
     nextToken

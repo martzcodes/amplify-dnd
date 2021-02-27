@@ -9,7 +9,7 @@ import {
 } from "../graphql/mutations";
 import DoorForm from "./DoorForm";
 import DoorList from "./DoorList";
-import { bumpAction } from "../Game";
+import { bumpGame } from "../Game";
 
 export const initialDoorFormState: DoorProps = {
   origin: {
@@ -19,6 +19,7 @@ export const initialDoorFormState: DoorProps = {
   open: true,
   locked: false,
   northSouth: false,
+  hidden: false,
 };
 
 function DoorEditor({
@@ -56,7 +57,7 @@ function DoorEditor({
       query: createGameDoorMutation,
       variables: { input: { ...door, gameID: gameId } },
     });
-    bumpAction(gameId);
+    bumpGame(gameId);
   };
 
   const updateDoor = async (updatedDoor: DoorProps) => {
@@ -64,7 +65,7 @@ function DoorEditor({
       query: updateGameDoorMutation,
       variables: { input: { ...updatedDoor, gameID: gameId } },
     });
-    bumpAction(gameId);
+    bumpGame(gameId);
   };
 
   const deleteDoor = async ({ id }: { id: string }) => {
@@ -72,7 +73,7 @@ function DoorEditor({
       query: deleteGameDoorMutation,
       variables: { input: { id } },
     });
-    bumpAction(gameId);
+    bumpGame(gameId);
   };
 
   const cancel = () => {
@@ -83,10 +84,11 @@ function DoorEditor({
     <>
       <DoorList
         doors={doors}
-        editDoor={(door: Door) => {
+        editDoor={(door: DoorProps) => {
           setDoorForm({ ...door });
         }}
         deleteDoor={(id: string) => deleteDoor({ id })}
+        upsertDoor={(door: DoorProps) => upsertDoor(door)}
       ></DoorList>
       <DoorForm
         door={doorForm}

@@ -9,7 +9,7 @@ import {
 } from "../graphql/mutations";
 import RoomForm from "./RoomForm";
 import RoomList from "./RoomList";
-import { bumpAction } from "../Game";
+import { bumpGame } from "../Game";
 
 export const initialRoomFormState: RoomProps = {
   name: "",
@@ -51,7 +51,7 @@ function RoomEditor({ rooms: initialRooms }: { rooms: Room[] }) {
       query: createGameRoomMutation,
       variables: { input: { ...room, gameID: gameId } },
     });
-    bumpAction(gameId);
+    bumpGame(gameId);
   };
 
   const updateRoom = async (updatedRoom: RoomProps) => {
@@ -60,7 +60,7 @@ function RoomEditor({ rooms: initialRooms }: { rooms: Room[] }) {
       variables: { input: { ...updatedRoom, gameID: gameId } },
     });
     rooms.filter((room: any) => room.id !== updatedRoom.id);
-    bumpAction(gameId);
+    bumpGame(gameId);
   };
 
   const deleteRoom = async ({ id }: { id: string }) => {
@@ -68,7 +68,7 @@ function RoomEditor({ rooms: initialRooms }: { rooms: Room[] }) {
       query: deleteGameRoomMutation,
       variables: { input: { id } },
     });
-    bumpAction(gameId);
+    bumpGame(gameId);
   };
 
   const cancel = () => {

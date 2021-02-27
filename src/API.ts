@@ -198,6 +198,7 @@ export type CreateGameDoorInput = {
   open?: boolean | null,
   locked?: boolean | null,
   northSouth?: boolean | null,
+  hidden?: boolean | null,
 };
 
 export type ModelGameDoorConditionInput = {
@@ -205,6 +206,7 @@ export type ModelGameDoorConditionInput = {
   open?: ModelBooleanInput | null,
   locked?: ModelBooleanInput | null,
   northSouth?: ModelBooleanInput | null,
+  hidden?: ModelBooleanInput | null,
   and?: Array< ModelGameDoorConditionInput | null > | null,
   or?: Array< ModelGameDoorConditionInput | null > | null,
   not?: ModelGameDoorConditionInput | null,
@@ -217,6 +219,7 @@ export type UpdateGameDoorInput = {
   open?: boolean | null,
   locked?: boolean | null,
   northSouth?: boolean | null,
+  hidden?: boolean | null,
 };
 
 export type DeleteGameDoorInput = {
@@ -355,6 +358,7 @@ export type ModelGameDoorFilterInput = {
   open?: ModelBooleanInput | null,
   locked?: ModelBooleanInput | null,
   northSouth?: ModelBooleanInput | null,
+  hidden?: ModelBooleanInput | null,
   and?: Array< ModelGameDoorFilterInput | null > | null,
   or?: Array< ModelGameDoorFilterInput | null > | null,
   not?: ModelGameDoorFilterInput | null,
@@ -453,6 +457,7 @@ export type CreateGameMutation = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        hidden: boolean | null,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -578,6 +583,7 @@ export type UpdateGameMutation = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        hidden: boolean | null,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -703,6 +709,7 @@ export type DeleteGameMutation = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        hidden: boolean | null,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -885,6 +892,7 @@ export type CreateGameDoorMutation = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    hidden: boolean | null,
     owner: string | null,
   } | null,
 };
@@ -907,6 +915,7 @@ export type UpdateGameDoorMutation = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    hidden: boolean | null,
     owner: string | null,
   } | null,
 };
@@ -929,6 +938,7 @@ export type DeleteGameDoorMutation = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    hidden: boolean | null,
     owner: string | null,
   } | null,
 };
@@ -1181,6 +1191,7 @@ export type GetGameQuery = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        hidden: boolean | null,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -1309,6 +1320,7 @@ export type ListGamesQuery = {
           open: boolean | null,
           locked: boolean | null,
           northSouth: boolean | null,
+          hidden: boolean | null,
           owner: string | null,
         } | null > | null,
         nextToken: string | null,
@@ -1462,6 +1474,7 @@ export type GetGameDoorQuery = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    hidden: boolean | null,
     owner: string | null,
   } | null,
 };
@@ -1487,6 +1500,7 @@ export type ListGameDoorsQuery = {
       open: boolean | null,
       locked: boolean | null,
       northSouth: boolean | null,
+      hidden: boolean | null,
       owner: string | null,
     } | null > | null,
     nextToken: string | null,
@@ -1687,6 +1701,7 @@ export type OnCreateGameSubscription = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        hidden: boolean | null,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -1807,6 +1822,7 @@ export type OnUpdateGameSubscription = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        hidden: boolean | null,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -1931,6 +1947,7 @@ export type OnDeleteGameSubscription = {
         open: boolean | null,
         locked: boolean | null,
         northSouth: boolean | null,
+        hidden: boolean | null,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -2109,6 +2126,7 @@ export type OnCreateGameDoorSubscription = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    hidden: boolean | null,
     owner: string | null,
   } | null,
 };
@@ -2126,6 +2144,7 @@ export type OnUpdateGameDoorSubscription = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    hidden: boolean | null,
     owner: string | null,
   } | null,
 };
@@ -2147,6 +2166,7 @@ export type OnDeleteGameDoorSubscription = {
     open: boolean | null,
     locked: boolean | null,
     northSouth: boolean | null,
+    hidden: boolean | null,
     owner: string | null,
   } | null,
 };

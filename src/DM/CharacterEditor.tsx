@@ -10,7 +10,7 @@ import {
 import CharacterForm from "./CharacterForm";
 import { GameProps } from "./GameEditor";
 import DetailedCharacterList from "./DetailedCharacterList";
-import { bumpAction } from "../Game";
+import { bumpGame } from "../Game";
 
 export const initialCharacterFormState: CharacterProps = {
   name: "",
@@ -32,6 +32,7 @@ export const initialCharacterFormState: CharacterProps = {
     y: 0,
   },
   revealed: [],
+  npc: true,
 };
 
 function CharacterEditor({
@@ -75,7 +76,7 @@ function CharacterEditor({
       query: createGameCharacterMutation,
       variables: { input: { ...character, gameID: gameId } },
     });
-    bumpAction(gameId);
+    bumpGame(gameId);
   };
 
   const updateCharacter = async (updatedCharacter: CharacterProps | null) => {
@@ -83,7 +84,7 @@ function CharacterEditor({
       query: updateGameCharacterMutation,
       variables: { input: { ...updatedCharacter, gameID: gameId } },
     });
-    bumpAction(gameId);
+    bumpGame(gameId);
   };
 
   const cancel = () => {
@@ -95,7 +96,7 @@ function CharacterEditor({
       query: updateGameCharacterMutation,
       variables: { input: { id, gameID: gameId, revealed: [] } },
     });
-    bumpAction(gameId);
+    bumpGame(gameId);
   };
 
   const deleteCharacter = async ({ id }: { id: string }) => {
@@ -105,7 +106,7 @@ function CharacterEditor({
       query: deleteGameCharacterMutation,
       variables: { input: { id } },
     });
-    bumpAction(gameId);
+    bumpGame(gameId);
   };
 
   return (

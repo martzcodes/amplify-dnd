@@ -202,7 +202,7 @@ function CharacterForm({
                   ...characterFormData,
                   hp: {
                     max: Number(e.target.value),
-                    current: characterFormData.hp.max,
+                    current: characterFormData.hp.current,
                   },
                 })
               }
@@ -248,7 +248,7 @@ function CharacterForm({
                   ...characterFormData,
                   speed: {
                     max: Number(e.target.value),
-                    current: characterFormData.speed.max,
+                    current: characterFormData.speed.current,
                   },
                 })
               }
@@ -276,7 +276,7 @@ function CharacterForm({
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-          <div className="col-span-6">
+          <div className="col-span-3">
             <label className="inline-flex items-center mt-3">
               <input
                 type="checkbox"
@@ -290,6 +290,22 @@ function CharacterForm({
                 }}
               />
               <span className="ml-2 text-gray-700">Action Used</span>
+            </label>
+          </div>
+          <div className="col-span-3">
+            <label className="inline-flex items-center mt-3">
+              <input
+                type="checkbox"
+                className="form-checkbox h-5 w-5 text-gray-600"
+                checked={characterFormData.npc}
+                onChange={(e) => {
+                  setCharacterFormData({
+                    ...characterFormData,
+                    npc: !characterFormData.npc,
+                  });
+                }}
+              />
+              <span className="ml-2 text-gray-700">NPC</span>
             </label>
           </div>
         </div>

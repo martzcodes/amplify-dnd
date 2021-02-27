@@ -14,8 +14,11 @@ export interface GameProps {
   autoPause: boolean;
   active: string;
   initiative: string[];
-  characters?: Character[];
+  characters: Character[];
   owner?: string;
+  rooms: [];
+  doors: [];
+  areas: [];
 }
 
 const characterInitiative = (
@@ -28,7 +31,6 @@ const characterInitiative = (
       if (character) {
         return [...init, character];
       }
-      console.log(init);
       return init;
     }, [] as Character[]);
   }
@@ -151,12 +153,13 @@ function GameEditor({
         </div>
         <div className="col-span-6">
           <GameInitiativeEditor
+            active={gameFormData.active}
             characters={characterInitiative(
               characters,
               gameFormData.initiative
             )}
             updateInitiative={(characters: Character[]) => {
-              setGameFormData({
+              updateGame({
                 ...gameFormData,
                 initiative: characters.map((character) => character.id),
               });

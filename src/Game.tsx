@@ -17,6 +17,9 @@ import {
 } from "./graphql/mutations";
 import { API } from "aws-amplify";
 import { GameProps } from "./DM/GameEditor";
+import { AreaProps, generateAreaLocations } from "./Area";
+import InitiativeList from "./InitiativeList";
+import AreaList from "./AreaList";
 
 export interface CharacterTracker {
   active: string;
@@ -24,7 +27,13 @@ export interface CharacterTracker {
   characters: Character[];
 }
 
-export const bumpAction = (gameId: string) => {
+interface Maps {
+  board: string[][];
+  sight: boolean[][][];
+  move: number[][];
+}
+
+export const bumpGame = (gameId: string) => {
   API.graphql({
     query: updateGameMutation,
     variables: {
@@ -117,18 +126,10 @@ const getActiveCharacter = (tracker: CharacterTracker) => {
 
 function Game({
   dm,
-  rooms,
-  doors: serverDoors,
-  tracker: serverTracker,
   showPoints,
-  paused,
   game,
 }: {
   dm?: boolean;
-  rooms: Room[];
-  doors: Door[];
-  tracker: CharacterTracker;
-  paused: boolean;
   game: GameProps;
   showPoints?: boolean;
 }) {
@@ -136,9 +137,7 @@ function Game({
     gameId: string;
     characterId: string;
   }>();
-  const [doors, setDoors] = useState(serverDoors);
-
-  const emptyBoard = generateBoard({ rooms });
+  const emptyBoard = generateBoard({ rooms: game.rooms });
   const initialSightMap = calculateSightMap(emptyBoard, []);
   const initialMoveMap = calculateMoveMap(emptyBoard, []);
   const initialMaps = {
@@ -146,24 +145,34 @@ function Game({
     sight: initialSightMap,
     move: initialMoveMap,
   };
-  const [maps, setMaps] = useState(initialMaps);
+  const [maps, setMaps] = useState<Maps>(initialMaps);
+  const [viewCharacter, setViewCharacter] = useState<Character | null>(null);
 
-  const [tracker, setTracker] = useState<CharacterTracker>(serverTracker);
+  const [tracker, setTracker] = useState<CharacterTracker>({
+    active: game.active,
+    initiative: game.initiative,
+    characters: game.characters,
+  });
 
-  const updateSpeedAndVision = async () => {
+  const updateSpeedAndVision = async (
+    updatedMaps: Maps,
+    characterTracker: CharacterTracker
+  ) => {
     console.log("updating speed and vision");
     const updatedTracker: CharacterTracker = {
-      ...tracker,
+      ...characterTracker,
       characters: [],
     };
     for (
       let characterInd = 0;
-      characterInd < tracker.characters.length;
+      characterInd < characterTracker.characters.length;
       characterInd++
     ) {
-      const character = tracker.characters[characterInd];
+      const character = new Character({
+        ...characterTracker.characters[characterInd],
+      });
       const oldRevealed = [...Array.from(character.revealed)];
-      await character.processVision(maps.sight);
+      await character.processVision(updatedMaps.sight);
       if (character.id === characterId) {
         const newRevealed = [...Array.from(character.revealed)];
         if (
@@ -180,36 +189,34 @@ function Game({
           });
         }
       }
-      await character.recursiveMovement(maps.move, character.location, 0);
+      await character.recursiveMovement(
+        updatedMaps.move,
+        character.location,
+        0
+      );
       updatedTracker.characters.push(character);
     }
+    setMaps(updatedMaps);
     setTracker(updatedTracker);
   };
 
   useEffect(() => {
-    console.log("maps");
+    console.log("game effect");
+    const board = generateBoard({ rooms: game.rooms });
+    const updatedSightMap = calculateSightMap(board, game.doors);
+    const updatedMoveMap = calculateMoveMap(board, game.doors);
     const updatedMaps = {
-      board: generateBoard({ rooms }),
-      sight: [],
-      move: [],
+      board,
+      sight: updatedSightMap,
+      move: updatedMoveMap,
     };
-    setMaps(updatedMaps);
-  }, [rooms]);
 
-  useEffect(() => {
-    console.log("doors");
-    setDoors(serverDoors);
-  }, [serverDoors]);
-
-  useEffect(() => {
-    console.log("tracker");
-    setTracker(serverTracker);
-  }, [serverTracker]);
-
-  useEffect(() => {
-    console.log("speed and vision");
-    updateSpeedAndVision();
-  }, [maps]);
+    updateSpeedAndVision(updatedMaps, {
+      active: game.active,
+      initiative: game.initiative,
+      characters: game.characters,
+    });
+  }, [game]);
 
   const updateCharacter = (character: Character) => {
     const updatedTracker = { ...tracker };
@@ -319,7 +326,7 @@ function Game({
           !refreshedCharacter.actionUsed
         ) {
           setCharacterAction({ ...emptyAction });
-          bumpAction(gameId);
+          bumpGame(gameId);
         } else {
           await nextCharacter(tracker.characters);
         }
@@ -328,7 +335,7 @@ function Game({
 
     const toggleDoor = async (doorLoc: Location, open: boolean) => {
       const character = getActiveCharacter(tracker);
-      const doorInd = doors.findIndex((door) => {
+      const doorInd = game.doors.findIndex((door: Door) => {
         return (
           door.getDoors().filter((specificDoor) => {
             return (
@@ -339,7 +346,7 @@ function Game({
         );
       });
       if (character && doorInd !== -1) {
-        const door = doors[doorInd];
+        const door: Door = game.doors[doorInd];
         await API.graphql({
           query: updateGameDoorMutation,
           variables: {
@@ -358,7 +365,8 @@ function Game({
             },
           },
         });
-        bumpAction(gameId);
+        console.log("toggle door bump game");
+        bumpGame(gameId);
       }
     };
 
@@ -395,7 +403,7 @@ function Game({
             },
           },
         });
-        bumpAction(gameId);
+        bumpGame(gameId);
       }
     };
 
@@ -429,50 +437,40 @@ function Game({
   }, [characterAction]);
 
   useEffect(() => {
-    const updatedSightMap = calculateSightMap(maps.board, doors);
-    const updatedMoveMap = calculateMoveMap(maps.board, doors);
-    console.log(updatedSightMap);
-    setMaps({
-      board: maps.board,
-      sight: updatedSightMap,
-      move: updatedMoveMap,
-    });
-  }, [doors]);
+    const activeCharacter = getActiveCharacter(tracker);
+    const characterToView = characterId
+      ? tracker.characters.filter(
+          (trackerCharacter) => trackerCharacter.id === characterId
+        )[0]
+      : activeCharacter || null;
+    console.log("setting character to view");
+    setViewCharacter(
+      characterToView ? new Character({ ...characterToView }) : null
+    );
+  }, [tracker]);
 
-  const activeCharacter = getActiveCharacter(tracker);
-  const characterToView = characterId
-    ? tracker.characters.filter(
-        (trackerCharacter) => trackerCharacter.id === characterId
-      )[0]
-    : activeCharacter;
-
-  console.log(JSON.stringify(tracker.characters));
   return (
     <>
-      {rooms.length && tracker ? (
+      {game.rooms.length && tracker ? (
         <div className="flex py-5">
           <div className="flex-1">
             <div className="LayerMap">
               <div className={`Layered bg-black`}>
-                <BaseLayer
-                  board={maps.board}
-                ></BaseLayer>
+                <BaseLayer board={maps.board}></BaseLayer>
               </div>
               <div className="Layered">
-                {characterToView ? (
+                {viewCharacter ? (
                   <UserLayer
                     board={maps.board}
-                    doors={doors}
+                    doors={game.doors}
                     dm={dm}
-                    character={characterToView}
+                    character={viewCharacter}
                     showPoints={showPoints}
                     updateCharacter={(character: Character) => {
                       updateCharacter(character);
                     }}
                     renderable={tracker.characters
-                      .filter(
-                        (character) => character.id !== characterToView.id
-                      )
+                      .filter((character) => character.id !== viewCharacter.id)
                       .map((character) => ({
                         name: character.name,
                         content: character.icon,
@@ -488,25 +486,85 @@ function Game({
               </div>
             </div>
           </div>
-          {characterToView && activeCharacter ? (
+          {viewCharacter ? (
             <div className="flex-none w-full md:max-w-xs">
-              {!paused || dm ? (
+              <div
+                className={`pb-5 ${
+                  dm ? "bg-black" : viewCharacter.color
+                } text-white text-3xl text-center`}
+              >
+                {dm ? "DM VIEW" : viewCharacter.name}
+              </div>
+              {/* <div className="col-span-3">
+                <label
+                  htmlFor="character_icon"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Character Icon (emoji?)
+                </label>
+                <input
+                  type="text"
+                  name="character_icon"
+                  onChange={(e) =>
+                    setCharacterIcon(e.target.value)
+                  }
+                  value={characterIcon}
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                />
+              </div> */}
+              <AreaList
+                character={viewCharacter}
+                areas={game.areas.filter((area: AreaProps) => {
+                  if (dm) {
+                    return true;
+                  }
+                  const areaLocations = generateAreaLocations(
+                    area.origin,
+                    area.width,
+                    area.height
+                  );
+                  if (areaLocations.has(hashLocation(viewCharacter.location))) {
+                    if (area.perception === 0) {
+                      return true;
+                    }
+                    return viewCharacter.perception >= area.perception;
+                  }
+                  return false;
+                })}
+              ></AreaList>
+              <InitiativeList
+                active={tracker.active}
+                characters={tracker.characters.filter((character) => {
+                  if (!character.npc || dm) {
+                    return true;
+                  }
+                  const players = tracker.characters.filter(
+                    (character) => !character.npc
+                  );
+                  const visible =
+                    players.filter((player) =>
+                      player.visible.has(hashLocation(character.location))
+                    ).length !== 0;
+                  return visible;
+                })}
+                initiative={tracker.initiative}
+              ></InitiativeList>
+              {!game.paused || dm ? (
                 <div>
-                  {characterToView &&
-                  characterToView.id === activeCharacter.id ? (
+                  {viewCharacter && viewCharacter.id === tracker.active ? (
                     [
                       { name: "End Turn", type: "end", color: "red" },
                       { name: "Dash", type: "dash", color: "blue" },
-                      ...(activeCharacter.selectedTile?.actions || []),
+                      ...(viewCharacter.selectedTile?.actions || []),
                     ].map((action: Action) => (
                       <button
                         key={action.type}
                         className={`h-10 px-5 m-2 font-bold text-lg text-${action.color}-100 transition-colors duration-150 bg-${action.color}-700 rounded-lg focus:shadow-outline hover:bg-${action.color}-800`}
                         onClick={() => {
                           setCharacterAction({
-                            character: activeCharacter.id,
+                            character: tracker.active,
                             action: action.type,
-                            location: activeCharacter.selectedTile?.location,
+                            location: viewCharacter.selectedTile?.location,
                           });
                         }}
                       >
@@ -519,26 +577,17 @@ function Game({
                 </div>
               ) : (
                 <div>
-                  Waiting for DM... Next Active Player is{" "}
+                  Waiting for DM...
                   {(getActiveCharacter(tracker) || {}).id === characterId
-                    ? "YOU!"
-                    : (getActiveCharacter(tracker) || {}).name}
-                  .
+                    ? "Next Active Player is YOU!"
+                    : ""}
                 </div>
               )}
-              {dm ? (
+              {viewCharacter.selectedTile ? (
                 <div>
-                  <pre>{`${JSON.stringify(
-                    activeCharacter && activeCharacter.selectedTile,
-                    null,
-                    2
-                  )}`}</pre>
-                  <pre>{`${JSON.stringify(
-                    activeCharacter && activeCharacter.getStats(),
-                    null,
-                    2
-                  )}`}</pre>
-                  <pre>{`${JSON.stringify(tracker, null, 2)}`}</pre>
+                  <pre>
+                    {JSON.stringify(viewCharacter.selectedTile, null, 2)}
+                  </pre>
                 </div>
               ) : (
                 <></>

@@ -53,6 +53,7 @@ export const createGame = `mutation CreateGame(
         open
         locked
         northSouth
+        hidden
         owner
       }
       nextToken
@@ -159,6 +160,7 @@ export const updateGame = `mutation UpdateGame(
         open
         locked
         northSouth
+        hidden
         owner
       }
       nextToken
@@ -265,6 +267,7 @@ export const deleteGame = `mutation DeleteGame(
         open
         locked
         northSouth
+        hidden
         owner
       }
       nextToken
@@ -417,6 +420,7 @@ export const createGameDoor = `mutation CreateGameDoor(
     open
     locked
     northSouth
+    hidden
     owner
   }
 }
@@ -435,6 +439,7 @@ export const updateGameDoor = `mutation UpdateGameDoor(
     open
     locked
     northSouth
+    hidden
     owner
   }
 }
@@ -453,6 +458,7 @@ export const deleteGameDoor = `mutation DeleteGameDoor(
     open
     locked
     northSouth
+    hidden
     owner
   }
 }

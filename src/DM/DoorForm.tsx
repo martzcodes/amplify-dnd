@@ -66,24 +66,24 @@ function DoorForm({
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-          <div className="col-span-6">
+          <div className="col-span-3">
             <label className="inline-flex items-center mt-3">
               <input
                 type="checkbox"
                 className="form-checkbox h-5 w-5 text-gray-600"
                 checked={doorFormData.open}
                 onChange={(e) => {
-                  console.log(e.target.value);
                   setDoorFormData({
                     ...doorFormData,
                     open: !doorFormData.open,
+                    locked: !doorFormData.open ? false : doorFormData.locked,
                   });
                 }}
               />
               <span className="ml-2 text-gray-700">Open</span>
             </label>
           </div>
-          <div className="col-span-6">
+          <div className="col-span-3">
             <label className="inline-flex items-center mt-3">
               <input
                 type="checkbox"
@@ -93,13 +93,30 @@ function DoorForm({
                   setDoorFormData({
                     ...doorFormData,
                     locked: !doorFormData.locked,
+                    open: !doorFormData.locked ? false : doorFormData.open,
                   })
                 }
               />
               <span className="ml-2 text-gray-700">Locked</span>
             </label>
           </div>
-          <div className="col-span-6">
+          <div className="col-span-3">
+            <label className="inline-flex items-center mt-3">
+              <input
+                type="checkbox"
+                className="form-checkbox h-5 w-5 text-gray-600"
+                checked={doorFormData.hidden}
+                onChange={(e) =>
+                  setDoorFormData({
+                    ...doorFormData,
+                    hidden: !doorFormData.hidden,
+                  })
+                }
+              />
+              <span className="ml-2 text-gray-700">Hidden</span>
+            </label>
+          </div>
+          <div className="col-span-3">
             <label className="inline-flex items-center mt-3">
               <input
                 type="checkbox"
