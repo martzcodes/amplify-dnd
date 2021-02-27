@@ -135,19 +135,19 @@ export const tileTypes: Record<string, { class: string; speed: number }> = {
   },
   DRON: {
     class: `sprites sprite-10-14 transform rotate-180`,
-    speed: 2.5,
+    speed: 5,
   },
   DROE: {
     class: `sprites sprite-10-14 transform -rotate-90`,
-    speed: 2.5,
+    speed: 5,
   },
   DROW: {
     class: `sprites sprite-10-14 transform rotate-90`,
-    speed: 2.5,
+    speed: 5,
   },
   DROS: {
     class: `sprites sprite-10-14`,
-    speed: 2.5,
+    speed: 5,
   },
   AQUA: {
     class: `sprites sprite-3-11`,
@@ -168,7 +168,7 @@ export const getTileSpeed = (tileType: string): number => {
     return tileTypes[tileType].speed;
   }
   if (tileType.startsWith("DRO")) {
-    return 2.5;
+    return 5;
   }
   return 999;
 };
@@ -227,6 +227,8 @@ function Tile({
   lock,
   content,
 }: TileProps) {
+
+  const emoji = new RegExp(/\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff]/, "g");
   const moveClass = `bg-green-200 bg-opacity-20 border border-green-600`;
   const fogClass = `bg-black bg-opacity-30`;
   return !visible && !revealed ? (
@@ -286,25 +288,30 @@ function Tile({
       {content ? (
         <div className="Tile Layered z-40 text-white">
           <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="100%"
-          preserveAspectRatio="xMinYMin"
-          viewBox="0 0 200 200"
-        >
-          <text
-            x="50%"
-            y="50%"
-            textAnchor="middle"
-            alignmentBaseline="central"
-            dominantBaseline="central"
-            fontSize="72px"
-            fill="white"
+            xmlns="http://www.w3.org/2000/svg"
+            width="100%"
+            preserveAspectRatio="xMinYMin"
+            viewBox={content.match(emoji) ? "0 0 75 75" : "0 0 200 200"}
+            onClick={() => {
+              clickHandler();
+            }}
           >
-            {content}
-          </text>
-        </svg>
-        </div>) : <></>
-      }
+            <text
+              x="50%"
+              y="50%"
+              textAnchor="middle"
+              alignmentBaseline="central"
+              dominantBaseline="central"
+              fontSize="72px"
+              fill="white"
+            >
+              {content}
+            </text>
+          </svg>
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

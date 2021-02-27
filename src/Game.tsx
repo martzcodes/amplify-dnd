@@ -20,6 +20,7 @@ import { GameProps } from "./DM/GameEditor";
 import { AreaProps, generateAreaLocations } from "./Area";
 import InitiativeList from "./InitiativeList";
 import AreaList from "./AreaList";
+import ActionList from "./ActionList";
 
 export interface CharacterTracker {
   active: string;
@@ -109,7 +110,7 @@ const calculateMoveMap = (board: string[][], doors: Door[]) => {
           (door) => door.checkDoor({ x, y }).door
         );
         if (doorInd !== -1) {
-          return doors[doorInd].open ? 2.5 : 999;
+          return doors[doorInd].open ? 5 : 999;
         }
         return 999;
       }
@@ -372,7 +373,7 @@ function Game({
 
     const dashAction = async () => {
       const activeCharacter = getActiveCharacter(tracker);
-      if (activeCharacter) {
+      if (activeCharacter && !activeCharacter.actionUsed) {
         const refreshedCharacter = new Character({
           ...activeCharacter,
           actionUsed: true,
@@ -495,29 +496,54 @@ function Game({
               >
                 {dm ? "DM VIEW" : viewCharacter.name}
               </div>
-              {/* <div className="col-span-3">
-                <label
-                  htmlFor="character_icon"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Character Icon (emoji?)
-                </label>
-                <input
-                  type="text"
-                  name="character_icon"
-                  onChange={(e) =>
-                    setCharacterIcon(e.target.value)
-                  }
-                  value={characterIcon}
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                />
-              </div> */}
+              <div className="flex">
+                <div className="flex-1">
+                  <label
+                    htmlFor="character_icon"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Character Icon (emoji?)
+                  </label>
+                  <input
+                    type="text"
+                    name="character_icon"
+                    onChange={(e) => {
+                      if (viewCharacter) {
+                        setViewCharacter(
+                          new Character({
+                            ...viewCharacter,
+                            icon: e.target.value,
+                          })
+                        );
+                      }
+                    }}
+                    value={viewCharacter.icon}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+                <div className="flex-1">
+                  <button
+                    className={`h-10 px-5 m-2 font-bold text-lg text-white transition-colors duration-150 bg-blue-700 rounded-lg focus:shadow-outline hover:bg-blue-800`}
+                    onClick={() => {
+                      API.graphql({
+                        query: updateGameCharacterMutation,
+                        variables: {
+                          input: {
+                            id: viewCharacter.id,
+                            icon: viewCharacter.icon,
+                          },
+                        },
+                      });
+                      bumpGame(gameId);
+                    }}
+                  >
+                    Set Icon
+                  </button>
+                </div>
+              </div>
               <AreaList
                 character={viewCharacter}
                 areas={game.areas.filter((area: AreaProps) => {
-                  if (dm) {
-                    return true;
-                  }
                   const areaLocations = generateAreaLocations(
                     area.origin,
                     area.width,
@@ -527,7 +553,7 @@ function Game({
                     if (area.perception === 0) {
                       return true;
                     }
-                    return viewCharacter.perception >= area.perception;
+                    return dm || viewCharacter.perception >= area.perception;
                   }
                   return false;
                 })}
@@ -552,32 +578,14 @@ function Game({
               {!game.paused || dm ? (
                 <div>
                   {viewCharacter && viewCharacter.id === tracker.active ? (
-                    [
-                      { name: "End Turn", type: "end", color: "red" },
-                      { name: "Dash", type: "dash", color: "blue" },
-                      ...(viewCharacter.selectedTile?.actions || []),
-                    ].map((action: Action) => (
-                      <button
-                        key={action.type}
-                        className={`h-10 px-5 m-2 font-bold text-lg text-${action.color}-100 transition-colors duration-150 bg-${action.color}-700 rounded-lg focus:shadow-outline hover:bg-${action.color}-800`}
-                        onClick={() => {
-                          setCharacterAction({
-                            character: tracker.active,
-                            action: action.type,
-                            location: viewCharacter.selectedTile?.location,
-                          });
-                        }}
-                      >
-                        {action.name}
-                      </button>
-                    ))
+                    <ActionList character={viewCharacter} setCharacterAction={setCharacterAction}></ActionList>
                   ) : (
                     <></>
                   )}
                 </div>
               ) : (
                 <div>
-                  Waiting for DM...
+                  Waiting for DM or another player...
                   {(getActiveCharacter(tracker) || {}).id === characterId
                     ? "Next Active Player is YOU!"
                     : ""}

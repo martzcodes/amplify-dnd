@@ -38,7 +38,8 @@ function RoomForm({
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-          <div className="col-span-6">
+
+          <div className="col-span-3">
             <label
               htmlFor="y"
               className="block text-sm font-medium text-gray-700"
@@ -61,7 +62,7 @@ function RoomForm({
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-          <div className="col-span-6">
+          <div className="col-span-3">
             <label
               htmlFor="y"
               className="block text-sm font-medium text-gray-700"
@@ -85,6 +86,10 @@ function RoomForm({
             />
           </div>
           <div className="col-span-6">
+            Pro-tip: Toggle "Show Points" to the left to help with setting
+            coordinates
+          </div>
+          <div className="col-span-3">
             <label
               htmlFor="width"
               className="block text-sm font-medium text-gray-700"
@@ -104,7 +109,7 @@ function RoomForm({
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-          <div className="col-span-6">
+          <div className="col-span-3">
             <label
               htmlFor="height"
               className="block text-sm font-medium text-gray-700"
@@ -125,6 +130,13 @@ function RoomForm({
             />
           </div>
           <div className="col-span-6">
+            <div className="text-lg">
+              You can add special ground to rooms such as Lava, Water or
+              "VOIDS"... VOIDS are walled in areas with no accessible inner
+              area. Coordinates for special grounds are relative to the ROOM not
+              the "world" map. (Sorry, I know that's confusing but that's how it
+              evolved)
+            </div>
             <SpecialGroundList
               roomTypeGroundTypes={roomFormData.specialGrounds}
               updateRoomGroundTypes={(specialGrounds: SpecialGround[]) => {

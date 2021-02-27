@@ -21,6 +21,9 @@ function AreaForm({
       <div className="px-4 py-5 bg-white sm:p-6">
         <div className="grid grid-cols-6 gap-6">
           <div className="col-span-6">
+            Areas are flavor text that are visible to characters.  Setting Perception to 0 means everyone will see it.  Setting Perception above 0 means a character will only see it if their Perception value is greater than or equal to that of the area's perception.
+          </div>
+          <div className="col-span-6">
             <label
               htmlFor="name"
               className="block text-sm font-medium text-gray-700"
@@ -105,6 +108,10 @@ function AreaForm({
               value={areaFormData.origin.y}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
+          </div>
+          <div className="col-span-6">
+            Pro-tip: Toggle "Show Points" to the left to help with setting
+            coordinates
           </div>
           <div className="col-span-3">
             <label

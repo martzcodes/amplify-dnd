@@ -63,6 +63,10 @@ function CharacterForm({
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
+          <div className="col-span-6">
+            The Character Icon field should typically only be one character. I
+            recommend using emojis.
+          </div>
           <div className="col-span-3">
             <label
               htmlFor="y"
@@ -163,6 +167,10 @@ function CharacterForm({
               value={characterFormData.location.y}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
+          </div>
+          <div className="col-span-6">
+            Pro-tip: Toggle "Show Points" to the left to help with setting
+            coordinates
           </div>
           <div className="col-span-3">
             <label
@@ -307,6 +315,9 @@ function CharacterForm({
               />
               <span className="ml-2 text-gray-700">NPC</span>
             </label>
+          </div>
+          <div className="col-span-6">
+            NPC indicates if the character will show up in the players list when not visible.
           </div>
         </div>
       </div>

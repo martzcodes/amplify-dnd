@@ -3,19 +3,18 @@ import { API } from 'aws-amplify';
 import {
   createGame as createGameMutation,
 } from "./graphql/mutations";
-import { GameProps } from "./DM/GameEditor";
 
 
 const initialFormState = { name: "", type: "PRIVATE", dm: "", paused: false, autoPause: false };
 
-function CreateGame({ addGame }: { addGame: (game: GameProps) => void }) {
+function CreateGame({ owner, refresh }: { owner: string, refresh: () => void }) {
   const [formData, setFormData] = useState(initialFormState);
 
   async function createGame() {
     if (!formData.name) return;
     await API.graphql({
       query: createGameMutation,
-      variables: { input: formData },
+      variables: { input: {...formData, dm: owner} },
     });
     setFormData(initialFormState);
   }

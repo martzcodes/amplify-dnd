@@ -10,6 +10,7 @@ export const listPublicGames = `query ListGames(
       type
       active
       lastAction
+      dm
       characters {
         items {
           id

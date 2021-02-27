@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { API } from "aws-amplify";
+import { API, graphqlOperation } from "aws-amplify";
 import { deleteGame as deleteGameMutation } from "./graphql/mutations";
-import { listPublicGames } from "./customQueries";
 import GamesList from "./GamesList";
 import GameCharacterList from "./GameCharacterList";
 import { Character, CharacterProps } from "./Character";
 import { GameProps } from "./DM/GameEditor";
 import CreateGame from "./CreateGame";
+import { listGames } from "./graphql/queries";
 
 function Games({ user }: { user: any }) {
   const [games, setGames] = useState<any>([]);
@@ -19,13 +19,19 @@ function Games({ user }: { user: any }) {
   }, [user]);
 
   async function fetchOwnedGames(owner: string) {
-    const apiData = await API.graphql({
-      query: listPublicGames,
-      variables: { type: "PRIVATE", owner },
-    });
+    const apiData = await API.graphql(
+      graphqlOperation(listGames, {
+        filter: { dm: { eq: owner } },
+      })
+    );
     const games = (apiData as any).data.listGames.items.map((game: any) => {
-      return { ...game, characters: game.characters.items.map((character: CharacterProps) => new Character(character))};
-    })
+      return {
+        ...game,
+        characters: game.characters.items.map(
+          (character: CharacterProps) => new Character(character)
+        ),
+      };
+    });
     setGames(games);
   }
 
@@ -36,11 +42,11 @@ function Games({ user }: { user: any }) {
       query: deleteGameMutation,
       variables: { input: { id } },
     });
-  }
+  };
 
   const viewCharacters = async (game: GameProps) => {
     setGame(game);
-  }
+  };
 
   return (
     <div>
@@ -59,9 +65,18 @@ function Games({ user }: { user: any }) {
           {game ? <GameCharacterList game={game}></GameCharacterList> : <></>}
         </div>
       </div>
-      <CreateGame addGame={(game: GameProps) => {
-        setGames([...games, game]);
-      }}></CreateGame>
+      {games.length === 0 ? (
+        <CreateGame
+          owner={user.username}
+          refresh={() => {
+            fetchOwnedGames(user.username);
+          }}
+        ></CreateGame>
+      ) : (
+        <div>
+          Only one game per user, for now.
+        </div>
+      )}
     </div>
   );
 }

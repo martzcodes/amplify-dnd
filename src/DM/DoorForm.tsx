@@ -21,6 +21,9 @@ function DoorForm({
       <div className="px-4 py-5 bg-white sm:p-6">
         <div className="grid grid-cols-6 gap-6">
           <div className="col-span-6">
+            Door origins correspond with the "NORTH" or "EAST" side of the door.  The North-South toggle indicates where the other side of the door will be.
+          </div>
+          <div className="col-span-3">
             <label
               htmlFor="y"
               className="block text-sm font-medium text-gray-700"
@@ -43,7 +46,7 @@ function DoorForm({
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
           </div>
-          <div className="col-span-6">
+          <div className="col-span-3">
             <label
               htmlFor="y"
               className="block text-sm font-medium text-gray-700"
@@ -65,6 +68,10 @@ function DoorForm({
               value={doorFormData.origin.y}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
+          </div>
+          <div className="col-span-6">
+            Pro-tip: Toggle "Show Points" to the left to help with setting
+            coordinates
           </div>
           <div className="col-span-3">
             <label className="inline-flex items-center mt-3">
@@ -131,6 +138,9 @@ function DoorForm({
               />
               <span className="ml-2 text-gray-700">North-South</span>
             </label>
+          </div>
+          <div className="col-span-6">
+            Hidden Doors are not visible to characters.
           </div>
         </div>
       </div>

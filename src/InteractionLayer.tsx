@@ -182,7 +182,7 @@ function InteractionLayer({
                 character: character.name,
                 location: renderItem.location,
                 type: renderItem.name,
-                characterAtTile: null,
+                characterAtTile: character.getStats(),
                 actions: renderItem.actions,
                 description: renderItem.description,
               });

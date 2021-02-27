@@ -67,7 +67,7 @@ function BaseLayer({ board }: { board: string[][] }) {
                     if (
                       board[dirY][dirX] === "    " ||
                       (board[dirY][dirX] in tileTypes &&
-                        tileTypes[board[dirY][dirX]].speed > 2.5)
+                        tileTypes[board[dirY][dirX]].speed > 5)
                     ) {
                       cellType = tileTypes[dir.wall].class;
                     }
