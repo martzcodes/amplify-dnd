@@ -102,7 +102,6 @@ function RoomList({
               <td className="px-2 py-4 whitespace-nowrap"></td>
               <td className="px-2 py-4 whitespace-nowrap"></td>
               <td className="px-2 py-4 whitespace-nowrap"></td>
-              <td className="px-2 py-4 whitespace-nowrap"></td>
 
               <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500">
                 <div className="flex justify-start space-x-1">

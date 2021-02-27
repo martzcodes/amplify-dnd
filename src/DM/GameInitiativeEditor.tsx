@@ -37,7 +37,7 @@ function GameInitiativeEditor({
           <tbody className="bg-white divide-y divide-gray-200">
             {characters.map((character, ind) => (
               <tr key={character.id}>
-                <td className={`px-2 py-4 whitespace-nowrap ${character.color}`}></td>
+                <td className={`px-2 py-4 whitespace-nowrap ${character.color} text-center`}>{character.icon}</td>
 
                 <td className="px-2 py-4 whitespace-nowrap">{ind + 1}</td>
 

@@ -14,9 +14,6 @@
 }
 .flex-item {
   margin: 0px;
-  font-weight: bold;
-  font-size: 1.5em;
-  text-align: center;
   flex: 1 0 auto;
   height: auto;
   /* border: 1px solid black; */

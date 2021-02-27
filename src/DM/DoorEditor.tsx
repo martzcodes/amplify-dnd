@@ -30,7 +30,7 @@ function DoorEditor({
     gameId: string;
   }>();
   const [doors, setDoors] = useState<Door[]>([]);
-  const [doorForm, setDoorForm] = useState<DoorProps | null>(initialDoorFormState);
+  const [doorForm, setDoorForm] = useState<DoorProps | null>(null);
 
   useEffect(() => {
     setDoors(serverDoors);

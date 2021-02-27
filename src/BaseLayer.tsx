@@ -1,7 +1,7 @@
 import { tileTypes } from "./Tile";
 import { hashLocation } from "./utils/hashLocation";
 
-function BaseLayer({ board, dm, showPoints }: { board: string[][], dm?: boolean; showPoints?: boolean; }) {
+function BaseLayer({ board }: { board: string[][] }) {
   console.log('BaseLayer');
   return (
     <>
@@ -81,7 +81,7 @@ function BaseLayer({ board, dm, showPoints }: { board: string[][], dm?: boolean;
               <div key={hashLocation(tileLoc)} className={`flex-item`}>
                 <div
                   className={`${className} tile-${x}-${y} text-white`}
-                >{showPoints ? `${x},${y}` : ''}</div>
+                ></div>
               </div>
             );
           })}

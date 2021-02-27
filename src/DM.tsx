@@ -248,6 +248,9 @@ function DM({ user }: { user: any }) {
         paused={game.paused}
         game={game}
       ></Game>
+      <div>
+        <pre>{JSON.stringify(game, null, 2)}</pre>
+      </div>
     </div>
   );
 }

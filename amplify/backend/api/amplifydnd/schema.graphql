@@ -16,11 +16,11 @@ type Game
   active: String
   lastAction: String
   initiative: [String!]
+  discordNotification: String
   rooms: [GameRoom!] @connection(keyName: "byGame", fields: ["id"])
   doors: [GameDoor!] @connection(keyName: "byGame", fields: ["id"])
   areas: [GameArea!] @connection(keyName: "byGame", fields: ["id"])
   characters: [GameCharacter!] @connection(keyName: "byGame", fields: ["id"])
-  items: [GameItem!] @connection(keyName: "byGame", fields: ["id"])
 }
 
 type Location {
@@ -91,17 +91,6 @@ type GameCharacter
   revealed: [String!]
 }
 
-type GameItem
-  @model
-  @auth(rules: [{ allow: owner, operations: [create, delete] }])
-  @key(name: "byGame", fields: ["gameID"]) {
-  id: ID!
-  gameID: ID!
-  name: String!
-  description: String
-  location: Location!
-}
-
 type GameArea
   @model
   @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
@@ -113,4 +102,6 @@ type GameArea
   origin: Location!
   height: Int!
   width: Int!
+  perception: Int!
+  enabled: Boolean!
 }

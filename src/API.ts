@@ -12,6 +12,7 @@ export type CreateGameInput = {
   active?: string | null,
   lastAction?: string | null,
   initiative?: Array< string > | null,
+  discordNotification?: string | null,
 };
 
 export enum GameType {
@@ -30,6 +31,7 @@ export type ModelGameConditionInput = {
   active?: ModelStringInput | null,
   lastAction?: ModelStringInput | null,
   initiative?: ModelStringInput | null,
+  discordNotification?: ModelStringInput | null,
   and?: Array< ModelGameConditionInput | null > | null,
   or?: Array< ModelGameConditionInput | null > | null,
   not?: ModelGameConditionInput | null,
@@ -105,6 +107,7 @@ export type UpdateGameInput = {
   active?: string | null,
   lastAction?: string | null,
   initiative?: Array< string > | null,
+  discordNotification?: string | null,
 };
 
 export type DeleteGameInput = {
@@ -276,35 +279,6 @@ export type DeleteGameCharacterInput = {
   id?: string | null,
 };
 
-export type CreateGameItemInput = {
-  id?: string | null,
-  gameID: string,
-  name: string,
-  description?: string | null,
-  location: LocationInput,
-};
-
-export type ModelGameItemConditionInput = {
-  gameID?: ModelIDInput | null,
-  name?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  and?: Array< ModelGameItemConditionInput | null > | null,
-  or?: Array< ModelGameItemConditionInput | null > | null,
-  not?: ModelGameItemConditionInput | null,
-};
-
-export type UpdateGameItemInput = {
-  id: string,
-  gameID?: string | null,
-  name?: string | null,
-  description?: string | null,
-  location?: LocationInput | null,
-};
-
-export type DeleteGameItemInput = {
-  id?: string | null,
-};
-
 export type CreateGameAreaInput = {
   id?: string | null,
   gameID: string,
@@ -313,6 +287,8 @@ export type CreateGameAreaInput = {
   origin: LocationInput,
   height: number,
   width: number,
+  perception: number,
+  enabled: boolean,
 };
 
 export type ModelGameAreaConditionInput = {
@@ -321,6 +297,8 @@ export type ModelGameAreaConditionInput = {
   description?: ModelStringInput | null,
   height?: ModelIntInput | null,
   width?: ModelIntInput | null,
+  perception?: ModelIntInput | null,
+  enabled?: ModelBooleanInput | null,
   and?: Array< ModelGameAreaConditionInput | null > | null,
   or?: Array< ModelGameAreaConditionInput | null > | null,
   not?: ModelGameAreaConditionInput | null,
@@ -334,6 +312,8 @@ export type UpdateGameAreaInput = {
   origin?: LocationInput | null,
   height?: number | null,
   width?: number | null,
+  perception?: number | null,
+  enabled?: boolean | null,
 };
 
 export type DeleteGameAreaInput = {
@@ -351,6 +331,7 @@ export type ModelGameFilterInput = {
   active?: ModelStringInput | null,
   lastAction?: ModelStringInput | null,
   initiative?: ModelStringInput | null,
+  discordNotification?: ModelStringInput | null,
   and?: Array< ModelGameFilterInput | null > | null,
   or?: Array< ModelGameFilterInput | null > | null,
   not?: ModelGameFilterInput | null,
@@ -395,16 +376,6 @@ export type ModelGameCharacterFilterInput = {
   not?: ModelGameCharacterFilterInput | null,
 };
 
-export type ModelGameItemFilterInput = {
-  id?: ModelIDInput | null,
-  gameID?: ModelIDInput | null,
-  name?: ModelStringInput | null,
-  description?: ModelStringInput | null,
-  and?: Array< ModelGameItemFilterInput | null > | null,
-  or?: Array< ModelGameItemFilterInput | null > | null,
-  not?: ModelGameItemFilterInput | null,
-};
-
 export type ModelGameAreaFilterInput = {
   id?: ModelIDInput | null,
   gameID?: ModelIDInput | null,
@@ -412,6 +383,8 @@ export type ModelGameAreaFilterInput = {
   description?: ModelStringInput | null,
   height?: ModelIntInput | null,
   width?: ModelIntInput | null,
+  perception?: ModelIntInput | null,
+  enabled?: ModelBooleanInput | null,
   and?: Array< ModelGameAreaFilterInput | null > | null,
   or?: Array< ModelGameAreaFilterInput | null > | null,
   not?: ModelGameAreaFilterInput | null,
@@ -435,6 +408,7 @@ export type CreateGameMutation = {
     active: string | null,
     lastAction: string | null,
     initiative: Array< string > | null,
+    discordNotification: string | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
       items:  Array< {
@@ -498,6 +472,8 @@ export type CreateGameMutation = {
         },
         height: number,
         width: number,
+        perception: number,
+        enabled: boolean,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -531,23 +507,6 @@ export type CreateGameMutation = {
         vision: number,
         actionUsed: boolean,
         revealed: Array< string > | null,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
-    items:  {
-      __typename: "ModelGameItemConnection",
-      items:  Array< {
-        __typename: "GameItem",
-        id: string,
-        gameID: string,
-        name: string,
-        description: string | null,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -574,6 +533,7 @@ export type UpdateGameMutation = {
     active: string | null,
     lastAction: string | null,
     initiative: Array< string > | null,
+    discordNotification: string | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
       items:  Array< {
@@ -637,6 +597,8 @@ export type UpdateGameMutation = {
         },
         height: number,
         width: number,
+        perception: number,
+        enabled: boolean,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -670,23 +632,6 @@ export type UpdateGameMutation = {
         vision: number,
         actionUsed: boolean,
         revealed: Array< string > | null,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
-    items:  {
-      __typename: "ModelGameItemConnection",
-      items:  Array< {
-        __typename: "GameItem",
-        id: string,
-        gameID: string,
-        name: string,
-        description: string | null,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -713,6 +658,7 @@ export type DeleteGameMutation = {
     active: string | null,
     lastAction: string | null,
     initiative: Array< string > | null,
+    discordNotification: string | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
       items:  Array< {
@@ -776,6 +722,8 @@ export type DeleteGameMutation = {
         },
         height: number,
         width: number,
+        perception: number,
+        enabled: boolean,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -809,23 +757,6 @@ export type DeleteGameMutation = {
         vision: number,
         actionUsed: boolean,
         revealed: Array< string > | null,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
-    items:  {
-      __typename: "ModelGameItemConnection",
-      items:  Array< {
-        __typename: "GameItem",
-        id: string,
-        gameID: string,
-        name: string,
-        description: string | null,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -1113,69 +1044,6 @@ export type DeleteGameCharacterMutation = {
   } | null,
 };
 
-export type CreateGameItemMutationVariables = {
-  input: CreateGameItemInput,
-  condition?: ModelGameItemConditionInput | null,
-};
-
-export type CreateGameItemMutation = {
-  createGameItem:  {
-    __typename: "GameItem",
-    id: string,
-    gameID: string,
-    name: string,
-    description: string | null,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-    owner: string | null,
-  } | null,
-};
-
-export type UpdateGameItemMutationVariables = {
-  input: UpdateGameItemInput,
-  condition?: ModelGameItemConditionInput | null,
-};
-
-export type UpdateGameItemMutation = {
-  updateGameItem:  {
-    __typename: "GameItem",
-    id: string,
-    gameID: string,
-    name: string,
-    description: string | null,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-    owner: string | null,
-  } | null,
-};
-
-export type DeleteGameItemMutationVariables = {
-  input: DeleteGameItemInput,
-  condition?: ModelGameItemConditionInput | null,
-};
-
-export type DeleteGameItemMutation = {
-  deleteGameItem:  {
-    __typename: "GameItem",
-    id: string,
-    gameID: string,
-    name: string,
-    description: string | null,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-    owner: string | null,
-  } | null,
-};
-
 export type CreateGameAreaMutationVariables = {
   input: CreateGameAreaInput,
   condition?: ModelGameAreaConditionInput | null,
@@ -1195,6 +1063,8 @@ export type CreateGameAreaMutation = {
     },
     height: number,
     width: number,
+    perception: number,
+    enabled: boolean,
     owner: string | null,
   } | null,
 };
@@ -1218,6 +1088,8 @@ export type UpdateGameAreaMutation = {
     },
     height: number,
     width: number,
+    perception: number,
+    enabled: boolean,
     owner: string | null,
   } | null,
 };
@@ -1241,6 +1113,8 @@ export type DeleteGameAreaMutation = {
     },
     height: number,
     width: number,
+    perception: number,
+    enabled: boolean,
     owner: string | null,
   } | null,
 };
@@ -1262,6 +1136,7 @@ export type GetGameQuery = {
     active: string | null,
     lastAction: string | null,
     initiative: Array< string > | null,
+    discordNotification: string | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
       items:  Array< {
@@ -1325,6 +1200,8 @@ export type GetGameQuery = {
         },
         height: number,
         width: number,
+        perception: number,
+        enabled: boolean,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -1362,23 +1239,6 @@ export type GetGameQuery = {
       } | null > | null,
       nextToken: string | null,
     } | null,
-    items:  {
-      __typename: "ModelGameItemConnection",
-      items:  Array< {
-        __typename: "GameItem",
-        id: string,
-        gameID: string,
-        name: string,
-        description: string | null,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
     owner: string | null,
   } | null,
 };
@@ -1404,6 +1264,7 @@ export type ListGamesQuery = {
       active: string | null,
       lastAction: string | null,
       initiative: Array< string > | null,
+      discordNotification: string | null,
       rooms:  {
         __typename: "ModelGameRoomConnection",
         items:  Array< {
@@ -1467,6 +1328,8 @@ export type ListGamesQuery = {
           },
           height: number,
           width: number,
+          perception: number,
+          enabled: boolean,
           owner: string | null,
         } | null > | null,
         nextToken: string | null,
@@ -1500,23 +1363,6 @@ export type ListGamesQuery = {
           vision: number,
           actionUsed: boolean,
           revealed: Array< string > | null,
-          owner: string | null,
-        } | null > | null,
-        nextToken: string | null,
-      } | null,
-      items:  {
-        __typename: "ModelGameItemConnection",
-        items:  Array< {
-          __typename: "GameItem",
-          id: string,
-          gameID: string,
-          name: string,
-          description: string | null,
-          location:  {
-            __typename: "Location",
-            x: number,
-            y: number,
-          },
           owner: string | null,
         } | null > | null,
         nextToken: string | null,
@@ -1725,52 +1571,6 @@ export type ListGameCharactersQuery = {
   } | null,
 };
 
-export type GetGameItemQueryVariables = {
-  id: string,
-};
-
-export type GetGameItemQuery = {
-  getGameItem:  {
-    __typename: "GameItem",
-    id: string,
-    gameID: string,
-    name: string,
-    description: string | null,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-    owner: string | null,
-  } | null,
-};
-
-export type ListGameItemsQueryVariables = {
-  filter?: ModelGameItemFilterInput | null,
-  limit?: number | null,
-  nextToken?: string | null,
-};
-
-export type ListGameItemsQuery = {
-  listGameItems:  {
-    __typename: "ModelGameItemConnection",
-    items:  Array< {
-      __typename: "GameItem",
-      id: string,
-      gameID: string,
-      name: string,
-      description: string | null,
-      location:  {
-        __typename: "Location",
-        x: number,
-        y: number,
-      },
-      owner: string | null,
-    } | null > | null,
-    nextToken: string | null,
-  } | null,
-};
-
 export type GetGameAreaQueryVariables = {
   id: string,
 };
@@ -1789,6 +1589,8 @@ export type GetGameAreaQuery = {
     },
     height: number,
     width: number,
+    perception: number,
+    enabled: boolean,
     owner: string | null,
   } | null,
 };
@@ -1815,6 +1617,8 @@ export type ListGameAreasQuery = {
       },
       height: number,
       width: number,
+      perception: number,
+      enabled: boolean,
       owner: string | null,
     } | null > | null,
     nextToken: string | null,
@@ -1838,6 +1642,7 @@ export type OnCreateGameSubscription = {
     active: string | null,
     lastAction: string | null,
     initiative: Array< string > | null,
+    discordNotification: string | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
       items:  Array< {
@@ -1901,6 +1706,8 @@ export type OnCreateGameSubscription = {
         },
         height: number,
         width: number,
+        perception: number,
+        enabled: boolean,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -1934,23 +1741,6 @@ export type OnCreateGameSubscription = {
         vision: number,
         actionUsed: boolean,
         revealed: Array< string > | null,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
-    items:  {
-      __typename: "ModelGameItemConnection",
-      items:  Array< {
-        __typename: "GameItem",
-        id: string,
-        gameID: string,
-        name: string,
-        description: string | null,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -1972,6 +1762,7 @@ export type OnUpdateGameSubscription = {
     active: string | null,
     lastAction: string | null,
     initiative: Array< string > | null,
+    discordNotification: string | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
       items:  Array< {
@@ -2035,6 +1826,8 @@ export type OnUpdateGameSubscription = {
         },
         height: number,
         width: number,
+        perception: number,
+        enabled: boolean,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -2068,23 +1861,6 @@ export type OnUpdateGameSubscription = {
         vision: number,
         actionUsed: boolean,
         revealed: Array< string > | null,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
-    items:  {
-      __typename: "ModelGameItemConnection",
-      items:  Array< {
-        __typename: "GameItem",
-        id: string,
-        gameID: string,
-        name: string,
-        description: string | null,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -2110,6 +1886,7 @@ export type OnDeleteGameSubscription = {
     active: string | null,
     lastAction: string | null,
     initiative: Array< string > | null,
+    discordNotification: string | null,
     rooms:  {
       __typename: "ModelGameRoomConnection",
       items:  Array< {
@@ -2173,6 +1950,8 @@ export type OnDeleteGameSubscription = {
         },
         height: number,
         width: number,
+        perception: number,
+        enabled: boolean,
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -2206,23 +1985,6 @@ export type OnDeleteGameSubscription = {
         vision: number,
         actionUsed: boolean,
         revealed: Array< string > | null,
-        owner: string | null,
-      } | null > | null,
-      nextToken: string | null,
-    } | null,
-    items:  {
-      __typename: "ModelGameItemConnection",
-      items:  Array< {
-        __typename: "GameItem",
-        id: string,
-        gameID: string,
-        name: string,
-        description: string | null,
-        location:  {
-          __typename: "Location",
-          x: number,
-          y: number,
-        },
         owner: string | null,
       } | null > | null,
       nextToken: string | null,
@@ -2493,62 +2255,6 @@ export type OnDeleteGameCharacterSubscription = {
   } | null,
 };
 
-export type OnCreateGameItemSubscriptionVariables = {
-  owner: string,
-};
-
-export type OnCreateGameItemSubscription = {
-  onCreateGameItem:  {
-    __typename: "GameItem",
-    id: string,
-    gameID: string,
-    name: string,
-    description: string | null,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-    owner: string | null,
-  } | null,
-};
-
-export type OnUpdateGameItemSubscription = {
-  onUpdateGameItem:  {
-    __typename: "GameItem",
-    id: string,
-    gameID: string,
-    name: string,
-    description: string | null,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-    owner: string | null,
-  } | null,
-};
-
-export type OnDeleteGameItemSubscriptionVariables = {
-  owner: string,
-};
-
-export type OnDeleteGameItemSubscription = {
-  onDeleteGameItem:  {
-    __typename: "GameItem",
-    id: string,
-    gameID: string,
-    name: string,
-    description: string | null,
-    location:  {
-      __typename: "Location",
-      x: number,
-      y: number,
-    },
-    owner: string | null,
-  } | null,
-};
-
 export type OnCreateGameAreaSubscriptionVariables = {
   owner: string,
 };
@@ -2567,6 +2273,8 @@ export type OnCreateGameAreaSubscription = {
     },
     height: number,
     width: number,
+    perception: number,
+    enabled: boolean,
     owner: string | null,
   } | null,
 };
@@ -2589,6 +2297,8 @@ export type OnUpdateGameAreaSubscription = {
     },
     height: number,
     width: number,
+    perception: number,
+    enabled: boolean,
     owner: string | null,
   } | null,
 };
@@ -2611,6 +2321,8 @@ export type OnDeleteGameAreaSubscription = {
     },
     height: number,
     width: number,
+    perception: number,
+    enabled: boolean,
     owner: string | null,
   } | null,
 };

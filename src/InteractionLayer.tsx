@@ -45,6 +45,7 @@ function InteractionLayer({
   character,
   renderable,
   dm,
+  showPoints,
 }: {
   selectedTile: { location: Location; actions: Action[] };
   setSelectedTile: any;
@@ -54,6 +55,7 @@ function InteractionLayer({
   character: Character;
   renderable: Renderable[];
   dm?: boolean;
+  showPoints?: boolean;
 }) {
   const board = Array(height)
     .fill("")
@@ -82,6 +84,7 @@ function InteractionLayer({
               >
                 <Tile
                   tileClass={""}
+                  content={showPoints ? `${x},${y}` : ""}
                   clickHandler={() => {
                     setSelectedTile({
                       character: character.name,
@@ -138,6 +141,11 @@ function InteractionLayer({
             door={tileTypes[specificDoor.doorClass].class || ""}
             lock={(tileTypes[specificDoor.lockClass] || {}).class || ""}
             tileClass={""}
+            content={
+              showPoints
+                ? `${specificDoor.location.x},${specificDoor.location.y}`
+                : ""
+            }
             clickHandler={() => {
               setSelectedTile({
                 character: character.name,
@@ -162,6 +170,13 @@ function InteractionLayer({
         <div key={hashLocation(renderItem.location)} className="flex-item">
           <Tile
             tileClass={renderItem.class}
+            content={
+              renderItem.content
+                ? renderItem.content
+                : showPoints
+                ? `${renderItem.location.x},${renderItem.location.y}`
+                : ""
+            }
             clickHandler={() => {
               setSelectedTile({
                 character: character.name,
@@ -186,6 +201,13 @@ function InteractionLayer({
         <div key={hashLocation(character.location)} className="flex-item">
           <Tile
             tileClass={character.color}
+            content={
+              character.icon
+                ? character.icon
+                : showPoints
+                ? `${character.location.x},${character.location.y}`
+                : ""
+            }
             clickHandler={() => {
               setSelectedTile({
                 character: character.name,

@@ -43,8 +43,8 @@ function DetailedCharacterList({
             {characters.map((character) => (
               <tr key={character.id}>
                 <td
-                  className={`px-2 py-4 whitespace-nowrap ${character.color}`}
-                ></td>
+                  className={`px-2 py-4 whitespace-nowrap ${character.color} text-center`}
+                >{character.icon}</td>
 
                 <td className="px-2 py-4 whitespace-nowrap">
                   {character.name}

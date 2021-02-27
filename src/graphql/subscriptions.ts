@@ -13,6 +13,7 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
     active
     lastAction
     initiative
+    discordNotification
     rooms {
       items {
         id
@@ -65,6 +66,8 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
         }
         height
         width
+        perception
+        enabled
         owner
       }
       nextToken
@@ -93,20 +96,6 @@ export const onCreateGame = `subscription OnCreateGame($owner: String!) {
         vision
         actionUsed
         revealed
-        owner
-      }
-      nextToken
-    }
-    items {
-      items {
-        id
-        gameID
-        name
-        description
-        location {
-          x
-          y
-        }
         owner
       }
       nextToken
@@ -127,6 +116,7 @@ export const onUpdateGame = `subscription OnUpdateGame {
     active
     lastAction
     initiative
+    discordNotification
     rooms {
       items {
         id
@@ -179,6 +169,8 @@ export const onUpdateGame = `subscription OnUpdateGame {
         }
         height
         width
+        perception
+        enabled
         owner
       }
       nextToken
@@ -207,20 +199,6 @@ export const onUpdateGame = `subscription OnUpdateGame {
         vision
         actionUsed
         revealed
-        owner
-      }
-      nextToken
-    }
-    items {
-      items {
-        id
-        gameID
-        name
-        description
-        location {
-          x
-          y
-        }
         owner
       }
       nextToken
@@ -241,6 +219,7 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
     active
     lastAction
     initiative
+    discordNotification
     rooms {
       items {
         id
@@ -293,6 +272,8 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
         }
         height
         width
+        perception
+        enabled
         owner
       }
       nextToken
@@ -321,20 +302,6 @@ export const onDeleteGame = `subscription OnDeleteGame($owner: String!) {
         vision
         actionUsed
         revealed
-        owner
-      }
-      nextToken
-    }
-    items {
-      items {
-        id
-        gameID
-        name
-        description
-        location {
-          x
-          y
-        }
         owner
       }
       nextToken
@@ -547,48 +514,6 @@ export const onDeleteGameCharacter = `subscription OnDeleteGameCharacter($owner:
   }
 }
 `;
-export const onCreateGameItem = `subscription OnCreateGameItem($owner: String!) {
-  onCreateGameItem(owner: $owner) {
-    id
-    gameID
-    name
-    description
-    location {
-      x
-      y
-    }
-    owner
-  }
-}
-`;
-export const onUpdateGameItem = `subscription OnUpdateGameItem {
-  onUpdateGameItem {
-    id
-    gameID
-    name
-    description
-    location {
-      x
-      y
-    }
-    owner
-  }
-}
-`;
-export const onDeleteGameItem = `subscription OnDeleteGameItem($owner: String!) {
-  onDeleteGameItem(owner: $owner) {
-    id
-    gameID
-    name
-    description
-    location {
-      x
-      y
-    }
-    owner
-  }
-}
-`;
 export const onCreateGameArea = `subscription OnCreateGameArea($owner: String!) {
   onCreateGameArea(owner: $owner) {
     id
@@ -601,6 +526,8 @@ export const onCreateGameArea = `subscription OnCreateGameArea($owner: String!) 
     }
     height
     width
+    perception
+    enabled
     owner
   }
 }
@@ -617,6 +544,8 @@ export const onUpdateGameArea = `subscription OnUpdateGameArea($owner: String!) 
     }
     height
     width
+    perception
+    enabled
     owner
   }
 }
@@ -633,6 +562,8 @@ export const onDeleteGameArea = `subscription OnDeleteGameArea($owner: String!) 
     }
     height
     width
+    perception
+    enabled
     owner
   }
 }

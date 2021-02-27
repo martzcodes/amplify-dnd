@@ -214,6 +214,7 @@ export interface TileProps {
   clickHandler: any;
   door?: string;
   lock?: string;
+  content?: string;
 }
 
 function Tile({
@@ -224,15 +225,16 @@ function Tile({
   clickHandler,
   door,
   lock,
+  content,
 }: TileProps) {
-  const moveClass = `bg-green-300 bg-opacity-30`;
+  const moveClass = `bg-green-200 bg-opacity-20 border border-green-600`;
   const fogClass = `bg-black bg-opacity-30`;
   return !visible && !revealed ? (
     <div className={`Tile bg-black`}></div>
   ) : (
     <div className={`Tile LayerTile`}>
       <div
-        className={`Tile Layered ${tileClass} z-10`}
+        className={`Tile Layered ${tileClass} bg-opacity-50 z-10`}
         onClick={() => {
           clickHandler();
         }}
@@ -281,6 +283,28 @@ function Tile({
       ) : (
         <></>
       )}
+      {content ? (
+        <div className="Tile Layered z-40 text-white">
+          <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="100%"
+          preserveAspectRatio="xMinYMin"
+          viewBox="0 0 200 200"
+        >
+          <text
+            x="50%"
+            y="50%"
+            textAnchor="middle"
+            alignmentBaseline="central"
+            dominantBaseline="central"
+            fontSize="72px"
+            fill="white"
+          >
+            {content}
+          </text>
+        </svg>
+        </div>) : <></>
+      }
     </div>
   );
 }

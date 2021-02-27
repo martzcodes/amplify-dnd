@@ -18,6 +18,7 @@ export interface Renderable {
   location: Location;
   description: string;
   actions: string[];
+  content?: string;
 }
 
 function UserLayer({
@@ -27,6 +28,7 @@ function UserLayer({
   updateCharacter,
   renderable,
   dm,
+  showPoints,
 }: {
   board: string[][];
   doors: Door[];
@@ -34,6 +36,7 @@ function UserLayer({
   updateCharacter: any;
   renderable?: Renderable[];
   dm?: boolean;
+  showPoints?: boolean;
 }) {
   const [selectedTile, setSelectedTile] = useState(emptyTile);
 
@@ -59,6 +62,7 @@ function UserLayer({
       doors={doors}
       character={character}
       renderable={renderable || []}
+      showPoints={showPoints}
       dm={dm}
     ></InteractionLayer>
   ) : <></>;

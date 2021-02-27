@@ -456,8 +456,6 @@ function Game({
               <div className={`Layered bg-black`}>
                 <BaseLayer
                   board={maps.board}
-                  dm={dm}
-                  showPoints={showPoints}
                 ></BaseLayer>
               </div>
               <div className="Layered">
@@ -467,6 +465,7 @@ function Game({
                     doors={doors}
                     dm={dm}
                     character={characterToView}
+                    showPoints={showPoints}
                     updateCharacter={(character: Character) => {
                       updateCharacter(character);
                     }}
@@ -476,6 +475,7 @@ function Game({
                       )
                       .map((character) => ({
                         name: character.name,
+                        content: character.icon,
                         class: character.color,
                         location: character.location,
                         description: JSON.stringify(character.getStats()),

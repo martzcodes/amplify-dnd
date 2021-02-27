@@ -23,7 +23,7 @@ function CharacterForm({
     <div className="py-1">
       <div className="px-4 py-5 bg-white sm:p-6">
         <div className="grid grid-cols-6 gap-6">
-          <div className="col-span-6">
+          <div className="col-span-3">
             <label
               htmlFor="character_name"
               className="block text-sm font-medium text-gray-700"
@@ -42,6 +42,61 @@ function CharacterForm({
               value={characterFormData.name}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
+          </div>
+          <div className="col-span-3">
+            <label
+              htmlFor="character_icon"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Character Icon (emoji?)
+            </label>
+            <input
+              type="text"
+              name="character_icon"
+              onChange={(e) =>
+                setCharacterFormData({
+                  ...characterFormData,
+                  icon: e.target.value,
+                })
+              }
+              value={characterFormData.icon}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            />
+          </div>
+          <div className="col-span-3">
+            <label
+              htmlFor="y"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Color
+            </label>
+            <select
+              name="color"
+              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              onChange={(e) => {
+                setCharacterFormData({
+                  ...characterFormData,
+                  color: e.target.value,
+                });
+              }}
+              value={characterFormData.color}
+            >
+              {[
+                "bg-blue-500",
+                "bg-purple-500",
+                "bg-red-500",
+                "bg-yellow-500",
+                "bg-green-500",
+                "bg-pink-500",
+              ].map((color) => (
+                <option value={color} key={color}>
+                  {color}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className={`col-span-3 text-white ${characterFormData.color}`}>
+            {characterFormData.color}
           </div>
           <div className="col-span-6">
             <label
@@ -220,41 +275,6 @@ function CharacterForm({
               value={characterFormData.vision}
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             />
-          </div>
-          <div className="col-span-3">
-            <label
-              htmlFor="y"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Color
-            </label>
-            <select
-              name="color"
-              className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-              onChange={(e) => {
-                setCharacterFormData({
-                  ...characterFormData,
-                  color: e.target.value,
-                });
-              }}
-              value={characterFormData.color}
-            >
-              {[
-                "bg-blue-500",
-                "bg-purple-500",
-                "bg-red-500",
-                "bg-yellow-500",
-                "bg-green-500",
-                "bg-pink-500",
-              ].map((color) => (
-                <option value={color} key={color}>
-                  {color}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={`col-span-3 text-white ${characterFormData.color}`}>
-            {characterFormData.color}
           </div>
           <div className="col-span-6">
             <label className="inline-flex items-center mt-3">

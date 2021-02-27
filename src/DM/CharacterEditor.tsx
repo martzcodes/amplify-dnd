@@ -14,8 +14,8 @@ import { bumpAction } from "../Game";
 
 export const initialCharacterFormState: CharacterProps = {
   name: "",
-  email: "",
   color: "bg-blue-500",
+  icon: "",
   perception: 0,
   speed: {
     current: 0,
@@ -67,6 +67,7 @@ function CharacterEditor({
     } else {
       createCharacter(character);
     }
+    setCharacterForm(null);
   };
 
   const createCharacter = async (character: CharacterProps) => {
@@ -87,7 +88,7 @@ function CharacterEditor({
 
   const cancel = () => {
     setCharacterForm(null);
-  }
+  };
 
   const resetVision = async ({ id }: { id: string }) => {
     await API.graphql({

@@ -16,6 +16,7 @@ export const createGame = `mutation CreateGame(
     active
     lastAction
     initiative
+    discordNotification
     rooms {
       items {
         id
@@ -68,6 +69,8 @@ export const createGame = `mutation CreateGame(
         }
         height
         width
+        perception
+        enabled
         owner
       }
       nextToken
@@ -96,20 +99,6 @@ export const createGame = `mutation CreateGame(
         vision
         actionUsed
         revealed
-        owner
-      }
-      nextToken
-    }
-    items {
-      items {
-        id
-        gameID
-        name
-        description
-        location {
-          x
-          y
-        }
         owner
       }
       nextToken
@@ -133,6 +122,7 @@ export const updateGame = `mutation UpdateGame(
     active
     lastAction
     initiative
+    discordNotification
     rooms {
       items {
         id
@@ -185,6 +175,8 @@ export const updateGame = `mutation UpdateGame(
         }
         height
         width
+        perception
+        enabled
         owner
       }
       nextToken
@@ -213,20 +205,6 @@ export const updateGame = `mutation UpdateGame(
         vision
         actionUsed
         revealed
-        owner
-      }
-      nextToken
-    }
-    items {
-      items {
-        id
-        gameID
-        name
-        description
-        location {
-          x
-          y
-        }
         owner
       }
       nextToken
@@ -250,6 +228,7 @@ export const deleteGame = `mutation DeleteGame(
     active
     lastAction
     initiative
+    discordNotification
     rooms {
       items {
         id
@@ -302,6 +281,8 @@ export const deleteGame = `mutation DeleteGame(
         }
         height
         width
+        perception
+        enabled
         owner
       }
       nextToken
@@ -330,20 +311,6 @@ export const deleteGame = `mutation DeleteGame(
         vision
         actionUsed
         revealed
-        owner
-      }
-      nextToken
-    }
-    items {
-      items {
-        id
-        gameID
-        name
-        description
-        location {
-          x
-          y
-        }
         owner
       }
       nextToken
@@ -583,57 +550,6 @@ export const deleteGameCharacter = `mutation DeleteGameCharacter(
   }
 }
 `;
-export const createGameItem = `mutation CreateGameItem(
-  $input: CreateGameItemInput!
-  $condition: ModelGameItemConditionInput
-) {
-  createGameItem(input: $input, condition: $condition) {
-    id
-    gameID
-    name
-    description
-    location {
-      x
-      y
-    }
-    owner
-  }
-}
-`;
-export const updateGameItem = `mutation UpdateGameItem(
-  $input: UpdateGameItemInput!
-  $condition: ModelGameItemConditionInput
-) {
-  updateGameItem(input: $input, condition: $condition) {
-    id
-    gameID
-    name
-    description
-    location {
-      x
-      y
-    }
-    owner
-  }
-}
-`;
-export const deleteGameItem = `mutation DeleteGameItem(
-  $input: DeleteGameItemInput!
-  $condition: ModelGameItemConditionInput
-) {
-  deleteGameItem(input: $input, condition: $condition) {
-    id
-    gameID
-    name
-    description
-    location {
-      x
-      y
-    }
-    owner
-  }
-}
-`;
 export const createGameArea = `mutation CreateGameArea(
   $input: CreateGameAreaInput!
   $condition: ModelGameAreaConditionInput
@@ -649,6 +565,8 @@ export const createGameArea = `mutation CreateGameArea(
     }
     height
     width
+    perception
+    enabled
     owner
   }
 }
@@ -668,6 +586,8 @@ export const updateGameArea = `mutation UpdateGameArea(
     }
     height
     width
+    perception
+    enabled
     owner
   }
 }
@@ -687,6 +607,8 @@ export const deleteGameArea = `mutation DeleteGameArea(
     }
     height
     width
+    perception
+    enabled
     owner
   }
 }

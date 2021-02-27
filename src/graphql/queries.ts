@@ -13,6 +13,7 @@ export const getGame = `query GetGame($id: ID!) {
     active
     lastAction
     initiative
+    discordNotification
     rooms {
       items {
         id
@@ -65,6 +66,8 @@ export const getGame = `query GetGame($id: ID!) {
         }
         height
         width
+        perception
+        enabled
         owner
       }
       nextToken
@@ -97,20 +100,6 @@ export const getGame = `query GetGame($id: ID!) {
       }
       nextToken
     }
-    items {
-      items {
-        id
-        gameID
-        name
-        description
-        location {
-          x
-          y
-        }
-        owner
-      }
-      nextToken
-    }
     owner
   }
 }
@@ -132,6 +121,7 @@ export const listGames = `query ListGames(
       active
       lastAction
       initiative
+      discordNotification
       rooms {
         items {
           id
@@ -184,6 +174,8 @@ export const listGames = `query ListGames(
           }
           height
           width
+          perception
+          enabled
           owner
         }
         nextToken
@@ -212,20 +204,6 @@ export const listGames = `query ListGames(
           vision
           actionUsed
           revealed
-          owner
-        }
-        nextToken
-      }
-      items {
-        items {
-          id
-          gameID
-          name
-          description
-          location {
-            x
-            y
-          }
           owner
         }
         nextToken
@@ -393,41 +371,6 @@ export const listGameCharacters = `query ListGameCharacters(
   }
 }
 `;
-export const getGameItem = `query GetGameItem($id: ID!) {
-  getGameItem(id: $id) {
-    id
-    gameID
-    name
-    description
-    location {
-      x
-      y
-    }
-    owner
-  }
-}
-`;
-export const listGameItems = `query ListGameItems(
-  $filter: ModelGameItemFilterInput
-  $limit: Int
-  $nextToken: String
-) {
-  listGameItems(filter: $filter, limit: $limit, nextToken: $nextToken) {
-    items {
-      id
-      gameID
-      name
-      description
-      location {
-        x
-        y
-      }
-      owner
-    }
-    nextToken
-  }
-}
-`;
 export const getGameArea = `query GetGameArea($id: ID!) {
   getGameArea(id: $id) {
     id
@@ -440,6 +383,8 @@ export const getGameArea = `query GetGameArea($id: ID!) {
     }
     height
     width
+    perception
+    enabled
     owner
   }
 }
@@ -461,6 +406,8 @@ export const listGameAreas = `query ListGameAreas(
       }
       height
       width
+      perception
+      enabled
       owner
     }
     nextToken

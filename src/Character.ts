@@ -5,7 +5,6 @@ import { hashLocation, unhashLocation } from "./utils/hashLocation";
 export interface CharacterProps {
   id?: string;
   name: string;
-  email: string;
   color: string;
   perception: number;
   speed: Speed;
@@ -18,6 +17,7 @@ export interface CharacterProps {
     actions: Action[];
   }
   revealed: Set<string> | string[];
+  icon?: string;
 }
 
 export interface Speed {
@@ -38,8 +38,8 @@ export interface Movement {
 export class Character implements CharacterProps {
   id: string = '';
   name: string = '';
-  email: string = '';
   color: string = 'bg-purple-600';
+  icon?: string;
   perception: number = 0;
   location: Location = {
     x: 0,
