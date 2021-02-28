@@ -53,6 +53,7 @@ function DM({ user }: { user: any }) {
       const subscription = API.graphql(
         graphqlOperation(onUpdateGame, { input: { id: gameId } })
       );
+      console.log(subscription);
       if (subscription instanceof Observable) {
         const subscribed = subscription.subscribe({
           next: (apiData) => {
