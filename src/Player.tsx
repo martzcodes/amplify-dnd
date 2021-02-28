@@ -32,24 +32,28 @@ function Player({ user }: { user: any }) {
 
   useEffect(() => {
     fetchGame();
-    const subscription = API.graphql(
-      graphqlOperation(onUpdateGame, { input: { id: gameId } })
-    );
-    if (subscription instanceof Observable) {
+    try {
+      const subscription = API.graphql(
+        graphqlOperation(onUpdateGame, { input: { id: gameId } })
+      ) as any;
+      console.log(subscription);
       const subscribed = subscription.subscribe({
-        next: (apiData) => {
+        next: (apiData: any) => {
+          console.log(apiData);
           const apiGame = (apiData as any).value.data.onUpdateGame;
           if (apiGame.id === gameId) {
             restoreGame(apiGame);
           }
         },
-        error: (err) => {
+        error: (err: any) => {
           console.error(err);
         },
       });
       return () => {
         subscribed.unsubscribe();
       };
+    } catch (e) {
+      console.error(e);
     }
   }, []);
 

@@ -52,24 +52,23 @@ function DM({ user }: { user: any }) {
     try {
       const subscription = API.graphql(
         graphqlOperation(onUpdateGame, { input: { id: gameId } })
-      );
+      ) as any;
       console.log(subscription);
-      if (subscription instanceof Observable) {
-        const subscribed = subscription.subscribe({
-          next: (apiData) => {
-            const apiGame = (apiData as any).value.data.onUpdateGame;
-            if (apiGame.id === gameId) {
-              restoreGame(apiGame);
-            }
-          },
-          error: (err) => {
-            console.error(err);
+      const subscribed = subscription.subscribe({
+        next: (apiData: any) => {
+          console.log(apiData);
+          const apiGame = (apiData as any).value.data.onUpdateGame;
+          if (apiGame.id === gameId) {
+            restoreGame(apiGame);
           }
-        });
-        return () => {
-          subscribed.unsubscribe();
-        };
-      }
+        },
+        error: (err: any) => {
+          console.error(err);
+        },
+      });
+      return () => {
+        subscribed.unsubscribe();
+      };
     } catch (e) {
       console.error(e);
     }
