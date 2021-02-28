@@ -140,7 +140,7 @@ function GameEditor({
                 active: e.target.value,
               });
             }}
-            value={gameFormData.active}
+            value={gameFormData.active || ''}
           >
             {characterInitiative(characters, gameFormData.initiative || []).map(
               (character) => (

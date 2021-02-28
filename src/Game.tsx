@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from "react";
 import BaseLayer from "./BaseLayer";
 import "./Game.css";
-import { Action } from "./models/Action";
 import { Location } from "./models/Location";
 import { Character } from "./Character";
 import { Room } from "./Room";

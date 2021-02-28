@@ -67,7 +67,7 @@ function SpecialGroundList({
                       (updatedGrounds[ind] as any).type = e.target.value;
                       updateRoomGroundTypes(updatedGrounds);
                     }}
-                    value={groundType.type}
+                    value={groundTypes[ind].type}
                   >
                     <option value="LAVA">LAVA</option>
                     <option value="AQUA">WATER</option>
@@ -86,7 +86,7 @@ function SpecialGroundList({
                       );
                       updateRoomGroundTypes(updatedGrounds);
                     }}
-                    value={groundType.origin.x}
+                    value={groundTypes[ind].origin.x}
                     className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-16"
                   />
                   ,{" "}
@@ -100,7 +100,7 @@ function SpecialGroundList({
                       );
                       updateRoomGroundTypes(updatedGrounds);
                     }}
-                    value={groundType.origin.y}
+                    value={groundTypes[ind].origin.y}
                     className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-16"
                   />
                   )
@@ -116,7 +116,7 @@ function SpecialGroundList({
                       );
                       updateRoomGroundTypes(updatedGrounds);
                     }}
-                    value={groundType.width}
+                    value={groundTypes[ind].width}
                     className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-16"
                   />
                   x{" "}
@@ -130,7 +130,7 @@ function SpecialGroundList({
                       );
                       updateRoomGroundTypes(updatedGrounds);
                     }}
-                    value={groundType.height}
+                    value={groundTypes[ind].height}
                     className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline w-16"
                   />
                 </td>

@@ -17,6 +17,7 @@ type Game
   lastAction: String
   initiative: [String!]
   discordNotification: String
+  owner: String
   rooms: [GameRoom!] @connection(keyName: "byGame", fields: ["id"])
   doors: [GameDoor!] @connection(keyName: "byGame", fields: ["id"])
   areas: [GameArea!] @connection(keyName: "byGame", fields: ["id"])
@@ -51,6 +52,7 @@ type GameRoom
   origin: Location!
   height: Int!
   width: Int!
+  owner: String
   defaultGroundType: String!
   specialGrounds: [GameRoomGround!]!
 }
@@ -71,6 +73,7 @@ type GameDoor
   locked: Boolean
   northSouth: Boolean
   hidden: Boolean
+  owner: String
 }
 
 type GameCharacter
@@ -90,6 +93,7 @@ type GameCharacter
   vision: Int!
   actionUsed: Boolean!
   revealed: [String!]
+  owner: String
 }
 
 type GameArea
@@ -105,4 +109,5 @@ type GameArea
   width: Int!
   perception: Int!
   enabled: Boolean!
+  owner: String
 }

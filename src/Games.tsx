@@ -74,7 +74,7 @@ function Games({ user }: { user: any }) {
         ></CreateGame>
       ) : (
         <div>
-          Only one game per user, for now.
+          Only one game per user, for now.  Let me know if you need more <a href="https://twitter.com/martzcodes">@martzcodes</a>
         </div>
       )}
     </div>

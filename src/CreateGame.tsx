@@ -3,20 +3,22 @@ import { API } from 'aws-amplify';
 import {
   createGame as createGameMutation,
 } from "./graphql/mutations";
+import { useHistory } from "react-router-dom";
 
 
 const initialFormState = { name: "", type: "PRIVATE", dm: "", paused: false, autoPause: false };
 
 function CreateGame({ owner, refresh }: { owner: string, refresh: () => void }) {
   const [formData, setFormData] = useState(initialFormState);
+  const { push } = useHistory();
 
   async function createGame() {
     if (!formData.name) return;
-    await API.graphql({
+    const res = await API.graphql({
       query: createGameMutation,
       variables: { input: {...formData, dm: owner} },
-    });
-    setFormData(initialFormState);
+    }) as any;
+    push(`/games/${res.data.createGame.id}/dm`);
   }
 
   return (

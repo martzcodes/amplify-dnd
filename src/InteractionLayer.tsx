@@ -105,6 +105,7 @@ function InteractionLayer({
           })}
       </div>
     ));
+  console.log(doors);
   doors.forEach((door) => {
     const specificDoors = door.getDoors();
     specificDoors.forEach((specificDoor) => {
@@ -164,67 +165,67 @@ function InteractionLayer({
         </div>
       );
     });
-    renderable.forEach((renderItem) => {
-      const tileLoc = renderItem.location;
-      board[renderItem.location.y].props.children[renderItem.location.x] = (
-        <div key={hashLocation(renderItem.location)} className="flex-item">
-          <Tile
-            tileClass={renderItem.class}
-            content={
-              renderItem.content
-                ? renderItem.content
-                : showPoints
-                ? `${renderItem.location.x},${renderItem.location.y}`
-                : ""
-            }
-            clickHandler={() => {
-              setSelectedTile({
-                character: character.name,
-                location: renderItem.location,
-                type: renderItem.name,
-                characterAtTile: character.getStats(),
-                actions: renderItem.actions,
-                description: renderItem.description,
-              });
-            }}
-            revealed={
-              character ? character.revealed.has(hashLocation(tileLoc)) : true
-            }
-            visible={dm || character.visible.has(hashLocation(tileLoc))}
-            move={canMove({ character, tileLoc, renderable })}
-          ></Tile>
-        </div>
-      );
-    });
-    if (character) {
-      board[character.location.y].props.children[character.location.x] = (
-        <div key={hashLocation(character.location)} className="flex-item">
-          <Tile
-            tileClass={character.color}
-            content={
-              character.icon
-                ? character.icon
-                : showPoints
-                ? `${character.location.x},${character.location.y}`
-                : ""
-            }
-            clickHandler={() => {
-              setSelectedTile({
-                character: character.name,
-                location: character.location,
-                type: "CHARACTER",
-                characterAtTile: character.getStats(),
-                actions: [],
-              });
-            }}
-            revealed={true}
-            visible={true}
-            move={false}
-          ></Tile>
-        </div>
-      );
-    }
   });
+  renderable.forEach((renderItem) => {
+    const tileLoc = renderItem.location;
+    board[renderItem.location.y].props.children[renderItem.location.x] = (
+      <div key={hashLocation(renderItem.location)} className="flex-item">
+        <Tile
+          tileClass={renderItem.class}
+          content={
+            renderItem.content
+              ? renderItem.content
+              : showPoints
+              ? `${renderItem.location.x},${renderItem.location.y}`
+              : ""
+          }
+          clickHandler={() => {
+            setSelectedTile({
+              character: character.name,
+              location: renderItem.location,
+              type: renderItem.name,
+              characterAtTile: character.getStats(),
+              actions: renderItem.actions,
+              description: renderItem.description,
+            });
+          }}
+          revealed={
+            character ? character.revealed.has(hashLocation(tileLoc)) : true
+          }
+          visible={dm || character.visible.has(hashLocation(tileLoc))}
+          move={canMove({ character, tileLoc, renderable })}
+        ></Tile>
+      </div>
+    );
+  });
+  if (character) {
+    board[character.location.y].props.children[character.location.x] = (
+      <div key={hashLocation(character.location)} className="flex-item">
+        <Tile
+          tileClass={character.color}
+          content={
+            character.icon
+              ? character.icon
+              : showPoints
+              ? `${character.location.x},${character.location.y}`
+              : ""
+          }
+          clickHandler={() => {
+            setSelectedTile({
+              character: character.name,
+              location: character.location,
+              type: "CHARACTER",
+              characterAtTile: character.getStats(),
+              actions: [],
+            });
+          }}
+          revealed={true}
+          visible={true}
+          move={false}
+        ></Tile>
+      </div>
+    );
+  }
   return <>{board}</>;
 }
 

@@ -119,6 +119,7 @@ function DM({ user }: { user: any }) {
         variables: {
           input: {
             id: gameId,
+            active: game.active ? game.active : characterId,
             initiative: [...game.initiative, characterId],
           },
         },
