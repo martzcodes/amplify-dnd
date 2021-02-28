@@ -4,7 +4,8 @@ enum GameType {
 }
 
 type Game
-  @model {
+  @model
+  @auth(rules: [{ allow: owner, operations: [create, delete] }]) {
   id: ID!
   name: String!
   type: GameType!
@@ -16,6 +17,7 @@ type Game
   lastAction: String
   initiative: [String!]
   discordNotification: String
+  owner: String
   rooms: [GameRoom!] @connection(keyName: "byGame", fields: ["id"])
   doors: [GameDoor!] @connection(keyName: "byGame", fields: ["id"])
   areas: [GameArea!] @connection(keyName: "byGame", fields: ["id"])
@@ -42,6 +44,7 @@ type GameRoomGround {
 
 type GameRoom
   @model
+  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
@@ -49,6 +52,7 @@ type GameRoom
   origin: Location!
   height: Int!
   width: Int!
+  owner: String
   defaultGroundType: String!
   specialGrounds: [GameRoomGround!]!
 }
@@ -69,6 +73,7 @@ type GameDoor
   locked: Boolean
   northSouth: Boolean
   hidden: Boolean
+  owner: String
 }
 
 type GameCharacter
@@ -88,10 +93,12 @@ type GameCharacter
   vision: Int!
   actionUsed: Boolean!
   revealed: [String!]
+  owner: String
 }
 
 type GameArea
   @model
+  @auth(rules: [{ allow: owner, operations: [create, update, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
@@ -102,4 +109,5 @@ type GameArea
   width: Int!
   perception: Int!
   enabled: Boolean!
+  owner: String
 }

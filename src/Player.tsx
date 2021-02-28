@@ -43,6 +43,9 @@ function Player({ user }: { user: any }) {
             restoreGame(apiGame);
           }
         },
+        error: (err) => {
+          console.error(err);
+        },
       });
       return () => {
         subscribed.unsubscribe();
