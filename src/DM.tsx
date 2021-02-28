@@ -49,21 +49,25 @@ function DM({ user }: { user: any }) {
 
   useEffect(() => {
     fetchGame();
-    const subscription = API.graphql(
-      graphqlOperation(onUpdateGame, { input: { id: gameId } })
-    );
-    if (subscription instanceof Observable) {
-      const subscribed = subscription.subscribe({
-        next: (apiData) => {
-          const apiGame = (apiData as any).value.data.onUpdateGame;
-          if (apiGame.id === gameId) {
-            restoreGame(apiGame);
-          }
-        },
-      });
-      return () => {
-        subscribed.unsubscribe();
-      };
+    try {
+      const subscription = API.graphql(
+        graphqlOperation(onUpdateGame, { input: { id: gameId } })
+      );
+      if (subscription instanceof Observable) {
+        const subscribed = subscription.subscribe({
+          next: (apiData) => {
+            const apiGame = (apiData as any).value.data.onUpdateGame;
+            if (apiGame.id === gameId) {
+              restoreGame(apiGame);
+            }
+          },
+        });
+        return () => {
+          subscribed.unsubscribe();
+        };
+      }
+    } catch (e) {
+      console.error(e);
     }
   }, []);
 
