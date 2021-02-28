@@ -4,7 +4,7 @@ enum GameType {
 }
 
 type Game
-  @model
+  @model {
   id: ID!
   name: String!
   type: GameType!
@@ -60,6 +60,7 @@ type CurrentMax {
 
 type GameDoor
   @model
+  @auth(rules: [{ allow: owner, operations: [create, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
@@ -72,6 +73,7 @@ type GameDoor
 
 type GameCharacter
   @model
+  @auth(rules: [{ allow: owner, operations: [create, delete] }])
   @key(name: "byGame", fields: ["gameID"]) {
   id: ID!
   gameID: ID!
